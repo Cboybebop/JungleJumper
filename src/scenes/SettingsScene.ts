@@ -33,6 +33,7 @@ export class SettingsScene extends Phaser.Scene {
   private fromGame = false;
   private menuNavigator: MenuNavigator | null = null;
   private mobileRow: ToggleRow | null = null;
+  private displayModeRow: ToggleRow | null = null;
 
   constructor() {
     super({ key: 'Settings' });
@@ -139,8 +140,38 @@ export class SettingsScene extends Phaser.Scene {
       this.menuNavigator?.setIndex(actions.length);
     });
 
+    const displayRowY = mobileRowY + rowHeight;
+    const displayBg = this.add.rectangle(GAME.WIDTH / 2, displayRowY, GAME.WIDTH - 60, 36, ROW_DEFAULT_COLOR)
+      .setAlpha(0.75);
+
+    const displayLabel = this.add.text(50, displayRowY, 'Display Mode', {
+      fontSize: '16px',
+      color: '#ECF0F1',
+      fontFamily: 'Arial',
+    }).setOrigin(0, 0.5);
+
+    const displayValue = this.add.text(GAME.WIDTH - 50, displayRowY, '', {
+      fontSize: '16px',
+      color: '#5DADE2',
+      fontFamily: 'Arial',
+      fontStyle: 'bold',
+    }).setOrigin(1, 0.5);
+
+    this.displayModeRow = {
+      label: displayLabel,
+      valueText: displayValue,
+      bg: displayBg,
+    };
+
+    this.add.text(GAME.WIDTH / 2, displayRowY + 24, `Viewport: ${SettingsManager.getResolutionLabel()}`, {
+      fontSize: '11px',
+      color: '#7F8C8D',
+      fontFamily: 'Arial',
+      align: 'center',
+    }).setOrigin(0.5);
+
     // Gamepad and touch info
-    this.add.text(GAME.WIDTH / 2, mobileRowY + 42, 'UI: Arrow keys / D-pad / Left stick + Enter or A', {
+    this.add.text(GAME.WIDTH / 2, mobileRowY + 86, 'UI: Arrow keys / D-pad / Left stick + Enter or A', {
       fontSize: '12px',
       color: '#7F8C8D',
       fontFamily: 'Arial',
@@ -148,7 +179,7 @@ export class SettingsScene extends Phaser.Scene {
       align: 'center',
     }).setOrigin(0.5);
 
-    this.add.text(GAME.WIDTH / 2, mobileRowY + 66, 'Gamepad in-game: D-Pad/Stick = Move, A = Jump, Start = Pause', {
+    this.add.text(GAME.WIDTH / 2, mobileRowY + 110, 'Gamepad in-game: D-Pad/Stick = Move, A = Jump, Start = Pause', {
       fontSize: '12px',
       color: '#7F8C8D',
       fontFamily: 'Arial',
@@ -353,6 +384,11 @@ export class SettingsScene extends Phaser.Scene {
       const enabled = SettingsManager.getMobileControlsEnabled();
       this.mobileRow.valueText.setText(enabled ? 'ON' : 'OFF');
       this.mobileRow.valueText.setColor(enabled ? '#2ECC71' : '#E74C3C');
+    }
+
+    if (this.displayModeRow) {
+      this.displayModeRow.valueText.setText(SettingsManager.getDisplayModeLabel());
+      this.displayModeRow.valueText.setColor('#5DADE2');
     }
   }
 }

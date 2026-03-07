@@ -1,4 +1,7 @@
 import Phaser from 'phaser';
-import { gameConfig } from './config';
+import { createGameConfig } from './config';
+import { SettingsManager } from './systems/SettingsManager';
 
-new Phaser.Game(gameConfig);
+SettingsManager.applyAutoDisplaySettings();
+
+new Phaser.Game(createGameConfig());

@@ -1,4 +1,4 @@
-import { DEFAULT_KEYS } from '../constants';
+import { DEFAULT_KEYS, GAME } from '../constants';
 
 export interface KeyBindings {
   left: string;
@@ -10,6 +10,14 @@ export interface KeyBindings {
   altJump: string;
 }
 
+export type DisplayMode = 'mobile' | 'desktop';
+
+interface DisplaySettings {
+  mode: DisplayMode;
+  width: number;
+  height: number;
+}
+
 const STORAGE_KEY = 'jungle-jumper-settings';
 const HIGHSCORE_KEY = 'jungle-jumper-highscore';
 const CHARACTER_KEY = 'jungle-jumper-character';
@@ -19,6 +27,14 @@ export class SettingsManager {
   private static keys: KeyBindings = { ...DEFAULT_KEYS };
   private static _selectedCharacter = 0;
   private static mobileControlsEnabled = true;
+  private static displayMode: DisplayMode = 'desktop';
+
+  static applyAutoDisplaySettings(): void {
+    const display = this.getAutoDisplaySettings();
+    this.displayMode = display.mode;
+    GAME.WIDTH = display.width;
+    GAME.HEIGHT = display.height;
+  }
 
   static init(): void {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -74,6 +90,14 @@ export class SettingsManager {
     localStorage.setItem(MOBILE_CONTROLS_KEY, enabled ? 'true' : 'false');
   }
 
+  static getDisplayModeLabel(): string {
+    return this.displayMode === 'mobile' ? 'AUTO (MOBILE)' : 'AUTO (DESKTOP WIDE)';
+  }
+
+  static getResolutionLabel(): string {
+    return `${GAME.WIDTH}x${GAME.HEIGHT}`;
+  }
+
   static getHighScore(): number {
     const saved = localStorage.getItem(HIGHSCORE_KEY);
     return saved ? parseInt(saved, 10) || 0 : 0;
@@ -84,5 +108,40 @@ export class SettingsManager {
     if (score > current) {
       localStorage.setItem(HIGHSCORE_KEY, score.toString());
     }
+  }
+
+  private static getAutoDisplaySettings(): DisplaySettings {
+    if (typeof window === 'undefined') {
+      return {
+        mode: 'desktop',
+        width: GAME.WIDTH,
+        height: GAME.HEIGHT,
+      };
+    }
+
+    const width = Math.max(320, Math.floor(window.innerWidth));
+    const height = Math.max(480, Math.floor(window.innerHeight));
+    const mode: DisplayMode = this.isMobileDevice() ? 'mobile' : 'desktop';
+
+    return { mode, width, height };
+  }
+
+  private static isMobileDevice(): boolean {
+    if (typeof navigator === 'undefined') return false;
+
+    const nav = navigator as Navigator & { userAgentData?: { mobile?: boolean } };
+
+    if (typeof nav.userAgentData?.mobile === 'boolean') {
+      return nav.userAgentData.mobile;
+    }
+
+    const ua = nav.userAgent.toLowerCase();
+    const uaSuggestsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/.test(ua);
+    const hasCoarsePointer = typeof window !== 'undefined'
+      && typeof window.matchMedia === 'function'
+      && window.matchMedia('(pointer: coarse)').matches;
+    const hasTouch = nav.maxTouchPoints > 1;
+
+    return uaSuggestsMobile || (hasCoarsePointer && hasTouch);
   }
 }
