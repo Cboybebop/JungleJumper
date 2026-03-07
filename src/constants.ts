@@ -1,0 +1,86 @@
+// Colors matching the reference art style
+export const COLORS = {
+  SKY: 0x87CEEB,
+  SKY_HEX: '#87CEEB',
+  TRUNK: 0x5B3A6B,
+  BRANCH: 0x6B4A7B,
+  BRANCH_DARK: 0x4A2A5A,
+  JUNGLE_TREE: 0x2E8B7A,
+  JUNGLE_TREE_DARK: 0x1E6B5A,
+  PINK_DOT: 0xFF69B4,
+  CLOUD: 0xFFFFFF,
+  FLOWER: 0xFF85C8,
+
+  // Character colors
+  MONKEY_BODY: 0x8B6914,
+  MONKEY_FACE: 0xD4A854,
+  PARROT_BODY: 0x4A90D9,
+  PARROT_WING: 0x2ECC71,
+  FROG_BODY: 0x27AE60,
+  FROG_BELLY: 0x82E0AA,
+  TOUCAN_BODY: 0x2C3E50,
+  TOUCAN_BEAK: 0xF39C12,
+  GECKO_BODY: 0x1ABC9C,
+  GECKO_SPOTS: 0x16A085,
+
+  // Obstacles
+  SNAKE_BODY: 0x27AE60,
+  SNAKE_PATTERN: 0x1E8449,
+  COCONUT: 0x8B4513,
+  COCONUT_HAIR: 0x5C3317,
+  THORN: 0xC0392B,
+  BAT_BODY: 0x4A235A,
+  BAT_WING: 0x6C3483,
+
+  // UI
+  BUTTON: 0x2ECC71,
+  BUTTON_HOVER: 0x27AE60,
+  BUTTON_TEXT: 0xFFFFFF,
+  SHIELD: 0x00BFFF,
+  SHIELD_GLOW: 0x87CEFA,
+
+  // Spring platform
+  SPRING: 0xF1C40F,
+  SPRING_COIL: 0xD4AC0D,
+};
+
+export const GAME = {
+  WIDTH: 480,
+  HEIGHT: 800,
+  GRAVITY: 800,
+  PLAYER_SPEED: 200,
+  JUMP_VELOCITY: -450,
+  SPRING_VELOCITY: -650,
+  MAX_PLATFORM_GAP: 120,
+  MIN_PLATFORM_GAP: 60,
+  PLATFORM_WIDTH: 80,
+  PLATFORM_HEIGHT: 16,
+  PLAYER_SIZE: 32,
+  TRUNK_WIDTH: 40,
+  GENERATION_AHEAD: 800,
+  CLEANUP_BEHIND: 400,
+};
+
+export const DIFFICULTY = {
+  EASY_END: 500,
+  MEDIUM_END: 2000,
+  HARD_END: 5000,
+};
+
+export const CHARACTERS = [
+  { key: 'monkey', name: 'Miko', color: COLORS.MONKEY_BODY, accent: COLORS.MONKEY_FACE },
+  { key: 'parrot', name: 'Pico', color: COLORS.PARROT_BODY, accent: COLORS.PARROT_WING },
+  { key: 'frog', name: 'Hoppy', color: COLORS.FROG_BODY, accent: COLORS.FROG_BELLY },
+  { key: 'toucan', name: 'Tuki', color: COLORS.TOUCAN_BODY, accent: COLORS.TOUCAN_BEAK },
+  { key: 'gecko', name: 'Zippy', color: COLORS.GECKO_BODY, accent: COLORS.GECKO_SPOTS },
+];
+
+export const DEFAULT_KEYS = {
+  left: 'A',
+  right: 'D',
+  jump: 'SPACE',
+  pause: 'ESC',
+  altLeft: 'LEFT',
+  altRight: 'RIGHT',
+  altJump: 'UP',
+};
