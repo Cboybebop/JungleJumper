@@ -1,5 +1,5 @@
 # Jungle Jumper
-
+![Jungle Jumper screenshot](https://raw.githubusercontent.com/Cboybebop/JungleJumper/1c7d4d7fb0e1320707c72c16e41f5f0b513b6fc8/screenshots/gameplay-1.png)
 A jungle-themed vertical platformer built with Phaser 3, TypeScript, and Vite.
 
 ## Features
