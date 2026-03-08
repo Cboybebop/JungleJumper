@@ -10,11 +10,20 @@ import { GameOverScene } from './scenes/GameOverScene';
 
 function getRendererType(): number {
   if (typeof window === 'undefined') {
-    return Phaser.AUTO;
+    return Phaser.CANVAS;
   }
 
   const renderer = new URLSearchParams(window.location.search).get('renderer');
-  return renderer === 'canvas' ? Phaser.CANVAS : Phaser.AUTO;
+
+  if (renderer === 'webgl') {
+    return Phaser.WEBGL;
+  }
+
+  if (renderer === 'auto') {
+    return Phaser.AUTO;
+  }
+
+  return Phaser.CANVAS;
 }
 
 export function createGameConfig(): Phaser.Types.Core.GameConfig {
@@ -24,6 +33,9 @@ export function createGameConfig(): Phaser.Types.Core.GameConfig {
     height: GAME.HEIGHT,
     parent: 'game-container',
     backgroundColor: '#87CEEB',
+    audio: {
+      noAudio: true,
+    },
     physics: {
       default: 'arcade',
       arcade: {

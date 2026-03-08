@@ -25,6 +25,14 @@ export class CharacterSelectScene extends Phaser.Scene {
   create(): void {
     this.cameras.main.setBackgroundColor(COLORS.SKY);
     this.selectedIndex = SettingsManager.selectedCharacter;
+    this.focusedCharacterIndex = null;
+    this.frames = [];
+    this.characterSprites = [];
+
+    this.menuNavigator?.destroy();
+    this.menuNavigator = null;
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
+    this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
 
     // Background decoration
     this.add.tileSprite(GAME.WIDTH / 2, GAME.HEIGHT / 2, GAME.TRUNK_WIDTH, GAME.HEIGHT, 'trunk');
@@ -173,21 +181,35 @@ export class CharacterSelectScene extends Phaser.Scene {
 
   private updateSelection(): void {
     for (let i = 0; i < this.frames.length; i++) {
+      const frame = this.frames[i];
+      const charSprite = this.characterSprites[i];
+      if (!frame?.scene || !charSprite?.scene) {
+        continue;
+      }
+
       const isSelected = i === this.selectedIndex;
       const isFocused = i === this.focusedCharacterIndex;
 
-      this.frames[i].setTexture(isSelected ? 'char-frame-selected' : 'char-frame');
+      frame.setTexture(isSelected ? 'char-frame-selected' : 'char-frame');
       if (isFocused) {
-        this.frames[i].setTint(0xD8ECFF);
+        frame.setTint(0xD8ECFF);
       } else {
-        this.frames[i].clearTint();
+        frame.clearTint();
       }
 
       const baseScale = isSelected ? 2.3 : 2;
-      this.characterSprites[i].setScale(isFocused ? baseScale + 0.1 : baseScale);
+      charSprite.setScale(isFocused ? baseScale + 0.1 : baseScale);
     }
 
     this.nameText.setText(CHARACTERS[this.selectedIndex].name);
+  }
+
+  private cleanup(): void {
+    this.menuNavigator?.destroy();
+    this.menuNavigator = null;
+    this.frames = [];
+    this.characterSprites = [];
+    this.focusedCharacterIndex = null;
   }
 
   private setButtonFocused(button: MenuButton, focused: boolean): void {
@@ -200,3 +222,4 @@ export class CharacterSelectScene extends Phaser.Scene {
     }
   }
 }
+

@@ -13,6 +13,7 @@ interface MenuButton {
 export class GameOverScene extends Phaser.Scene {
   private finalScore = 0;
   private menuNavigator: MenuNavigator | null = null;
+  private transitioning = false;
 
   constructor() {
     super({ key: 'GameOver' });
@@ -23,6 +24,10 @@ export class GameOverScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.transitioning = false;
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
+    this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
+
     this.cameras.main.setBackgroundColor(0x1A1A2E);
 
     // Save high score
@@ -85,16 +90,16 @@ export class GameOverScene extends Phaser.Scene {
 
     const playAgainButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 200, 'PLAY AGAIN', () => {
       AudioManager.buttonClick();
-      this.scene.start('CharacterSelect');
+      this.transitionTo('CharacterSelect');
     });
 
     const mainMenuButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 130, 'MAIN MENU', () => {
       AudioManager.buttonClick();
-      this.scene.start('MainMenu');
+      this.transitionTo('MainMenu');
     });
 
     const buttons = [playAgainButton, mainMenuButton];
-    this.menuNavigator = new MenuNavigator(this, buttons.map(button => ({
+    this.menuNavigator = new MenuNavigator(this, buttons.map((button) => ({
       onFocus: () => this.setButtonFocused(button, true),
       onBlur: () => this.setButtonFocused(button, false),
       activate: button.activate,
@@ -137,5 +142,28 @@ export class GameOverScene extends Phaser.Scene {
       button.image.clearTint();
       button.text.setScale(1);
     }
+  }
+
+  private transitionTo(sceneKey: string): void {
+    if (this.transitioning || !this.sys.isActive()) {
+      return;
+    }
+
+    this.transitioning = true;
+    this.menuNavigator?.destroy();
+    this.menuNavigator = null;
+
+    const scenePlugin = (this as unknown as { scene?: Phaser.Scenes.ScenePlugin }).scene;
+    if (!scenePlugin) {
+      return;
+    }
+
+    scenePlugin.start(sceneKey);
+  }
+
+  private cleanup(): void {
+    this.menuNavigator?.destroy();
+    this.menuNavigator = null;
+    this.transitioning = false;
   }
 }

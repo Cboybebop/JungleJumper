@@ -15,7 +15,6 @@ interface PauseMenuButton {
   activate: () => void;
 }
 
-
 export class GameScene extends Phaser.Scene {
   private player!: Player;
   private platforms!: Phaser.GameObjects.Group;
@@ -219,6 +218,10 @@ export class GameScene extends Phaser.Scene {
     // Only land if player is falling down
     if (playerBody.velocity.y < 0) return;
 
+    if (platform.platformType === 'normal') {
+      player.rechargeAirJump();
+    }
+
     if (platform.platformType === 'spring') {
       player.springJump();
     } else if (platform.platformType === 'crumbling') {
@@ -381,4 +384,5 @@ export class GameScene extends Phaser.Scene {
     this.bgManager?.destroy();
   }
 }
+
 

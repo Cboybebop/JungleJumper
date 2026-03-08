@@ -24,11 +24,13 @@ export interface ShieldData {
 export class LevelGenerator {
   private generatedUpTo: number;
   private lastPlatformX: number;
+  private previousGap: number;
   private rng: () => number;
 
   constructor(startY: number, startX: number = GAME.WIDTH / 2) {
     this.generatedUpTo = startY;
     this.lastPlatformX = startX;
+    this.previousGap = GAME.MIN_PLATFORM_GAP;
     // Simple seeded-ish RNG using Math.random
     this.rng = Math.random;
   }
@@ -90,13 +92,21 @@ export class LevelGenerator {
     }
 
     // Keep generation inside jump physics limits so every platform is reachable.
-    const safeMaxGap = Math.floor(this.getMaxReachableVerticalGap() - 12);
-    max = Math.min(max, safeMaxGap);
+    const safeMaxGap = Math.floor(this.getMaxReachableVerticalGap() - 22);
+    max = Math.min(max, safeMaxGap, GAME.MAX_SAFE_PLATFORM_GAP);
     if (min > max) {
       min = max;
     }
 
-    return min + this.rng() * (max - min);
+    const rawGap = min + this.rng() * (max - min);
+    const smoothedGap = Phaser.Math.Clamp(
+      rawGap,
+      Math.max(min, this.previousGap - GAME.MAX_PLATFORM_GAP_STEP),
+      Math.min(max, this.previousGap + GAME.MAX_PLATFORM_GAP_STEP)
+    );
+
+    this.previousGap = smoothedGap;
+    return smoothedGap;
   }
 
   private generatePlatform(y: number, height: number, gap: number): PlatformData {
