@@ -1,13 +1,49 @@
 export class AudioManager {
   private static ctx: AudioContext | null = null;
+  private static unlocked = false;
+  private static unlockHandlersBound = false;
 
-  private static getContext(): AudioContext {
+  static armUnlock(): void {
+    if (this.unlockHandlersBound || typeof window === 'undefined') {
+      return;
+    }
+
+    this.unlockHandlersBound = true;
+
+    const unlock = () => {
+      this.unlocked = true;
+
+      if (!this.ctx) {
+        this.ctx = new AudioContext();
+      }
+
+      if (this.ctx.state === 'suspended') {
+        void this.ctx.resume().catch(() => {
+          // Audio resume blocked
+        });
+      }
+    };
+
+    window.addEventListener('pointerdown', unlock, { once: true, passive: true });
+    window.addEventListener('touchstart', unlock, { once: true, passive: true });
+    window.addEventListener('keydown', unlock, { once: true });
+  }
+
+  private static getContext(): AudioContext | null {
+    if (!this.unlocked) {
+      return null;
+    }
+
     if (!this.ctx) {
       this.ctx = new AudioContext();
     }
+
     if (this.ctx.state === 'suspended') {
-      this.ctx.resume();
+      void this.ctx.resume().catch(() => {
+        // Audio resume blocked
+      });
     }
+
     return this.ctx;
   }
 
@@ -15,8 +51,12 @@ export class AudioManager {
     freq: number, duration: number, type: OscillatorType = 'square',
     freqEnd?: number, volume = 0.15
   ): void {
+    this.armUnlock();
+
     try {
       const ctx = this.getContext();
+      if (!ctx) return;
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = type;
@@ -50,8 +90,12 @@ export class AudioManager {
   }
 
   static shieldBreak(): void {
+    this.armUnlock();
+
     try {
       const ctx = this.getContext();
+      if (!ctx) return;
+
       const bufferSize = ctx.sampleRate * 0.3;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);

@@ -7,8 +7,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private hasShield = false;
   private shieldSprite: Phaser.GameObjects.Image | null = null;
   private isAlive = true;
-  private wasOnGround = false;
+  private wasOnGround = true;
   private facingRight = true;
+  private airJumpsRemaining = GAME.AIR_JUMP_COUNT;
+  private lastJumpAt = -Infinity;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     const charIndex = SettingsManager.selectedCharacter;
@@ -49,11 +51,26 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   jump(): void {
     if (!this.isAlive) return;
+
     const body = this.body as Phaser.Physics.Arcade.Body;
-    if (body.touching.down || body.blocked.down) {
-      body.setVelocityY(GAME.JUMP_VELOCITY);
-      AudioManager.jump();
+    const now = this.scene.time.now;
+    const onGround = body.touching.down || body.blocked.down;
+
+    if (now - this.lastJumpAt < GAME.DOUBLE_JUMP_COOLDOWN_MS) return;
+
+    if (!onGround) {
+      if (this.airJumpsRemaining <= 0) return;
+      this.airJumpsRemaining -= 1;
     }
+
+    body.setVelocityY(GAME.JUMP_VELOCITY);
+    this.lastJumpAt = now;
+    AudioManager.jump();
+  }
+
+  rechargeAirJump(): void {
+    if (!this.isAlive) return;
+    this.airJumpsRemaining = GAME.AIR_JUMP_COUNT;
   }
 
   springJump(): void {

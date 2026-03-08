@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
-import { COLORS, GAME } from '../constants';
+import { GAME } from '../constants';
 import { TextureGenerator } from '../graphics/TextureGenerator';
 import { SettingsManager } from '../systems/SettingsManager';
+import { AudioManager } from '../systems/AudioManager';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -10,6 +11,7 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     SettingsManager.init();
+    AudioManager.armUnlock();
 
     // Loading text
     const text = this.add.text(GAME.WIDTH / 2, GAME.HEIGHT / 2, 'Loading...', {
@@ -28,3 +30,4 @@ export class BootScene extends Phaser.Scene {
     });
   }
 }
+
