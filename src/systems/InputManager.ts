@@ -9,6 +9,11 @@ export interface InputState {
   pause: boolean;
 }
 
+interface TouchButton {
+  visual: Phaser.GameObjects.Container;
+  hitArea: Phaser.GameObjects.Zone;
+}
+
 export class InputManager {
   private scene: Phaser.Scene;
   private keys: Map<string, Phaser.Input.Keyboard.Key> = new Map();
@@ -23,9 +28,9 @@ export class InputManager {
   private isTouchDevice = false;
 
   // Touch UI elements
-  private leftBtn!: Phaser.GameObjects.Container;
-  private rightBtn!: Phaser.GameObjects.Container;
-  private jumpBtn!: Phaser.GameObjects.Container;
+  private leftBtn: TouchButton | null = null;
+  private rightBtn: TouchButton | null = null;
+  private jumpBtn: TouchButton | null = null;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -35,6 +40,7 @@ export class InputManager {
     if (this.isTouchDevice && SettingsManager.getMobileControlsEnabled()) {
       this.setupTouchControls();
     }
+    this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN, this.destroy, this);
   }
 
   private setupKeyboard(): void {
@@ -67,37 +73,33 @@ export class InputManager {
   }
 
   private setupTouchControls(): void {
-    const cam = this.scene.cameras.main;
     const btnSize = 60;
-    const margin = 20;
-    const bottomY = cam.height - margin - btnSize / 2;
-
-    // Left button
     this.leftBtn = this.createTouchButton(
-      margin + btnSize / 2, bottomY, btnSize, '<',
+      btnSize, '<',
       () => { this.touchLeft = true; },
       () => { this.touchLeft = false; }
     );
 
-    // Right button
     this.rightBtn = this.createTouchButton(
-      margin + btnSize + 10 + btnSize / 2, bottomY, btnSize, '>',
+      btnSize, '>',
       () => { this.touchRight = true; },
       () => { this.touchRight = false; }
     );
 
-    // Jump button
     this.jumpBtn = this.createTouchButton(
-      cam.width - margin - btnSize / 2, bottomY, btnSize * 1.2, 'JUMP',
+      btnSize * 1.2, 'JUMP',
       () => { this.touchJump = true; this.touchJumpJustDown = true; },
       () => { this.touchJump = false; }
     );
+
+    this.layoutTouchControls();
+    this.scene.scale.on(Phaser.Scale.Events.RESIZE, this.layoutTouchControls, this);
   }
 
   private createTouchButton(
-    x: number, y: number, size: number, label: string,
+    size: number, label: string,
     onDown: () => void, onUp: () => void
-  ): Phaser.GameObjects.Container {
+  ): TouchButton {
     const bg = this.scene.add.circle(0, 0, size / 2, 0x000000, 0.3);
     const text = this.scene.add.text(0, 0, label, {
       fontSize: size < 70 ? '20px' : '16px',
@@ -105,16 +107,38 @@ export class InputManager {
       fontFamily: 'Arial',
     }).setOrigin(0.5);
 
-    const container = this.scene.add.container(x, y, [bg, text]);
-    container.setScrollFactor(0);
-    container.setDepth(1000);
+    const visual = this.scene.add.container(0, 0, [bg, text]);
+    visual.setScrollFactor(0);
+    visual.setDepth(1000);
 
-    bg.setInteractive({ useHandCursor: false })
+    // Keep the hit area in screen-space so taps stay aligned with the visuals.
+    const hitArea = this.scene.add.zone(0, 0, size, size);
+    hitArea.setOrigin(0.5);
+    hitArea.setScrollFactor(0);
+    hitArea.setDepth(1001);
+    hitArea.setInteractive({ useHandCursor: false })
       .on('pointerdown', onDown)
       .on('pointerup', onUp)
       .on('pointerout', onUp);
 
-    return container;
+    return { visual, hitArea };
+  }
+
+  private layoutTouchControls(): void {
+    const cam = this.scene.cameras.main;
+    const btnSize = 60;
+    const margin = 20;
+    const bottomY = cam.height - margin - btnSize / 2;
+
+    this.positionTouchButton(this.leftBtn, margin + btnSize / 2, bottomY);
+    this.positionTouchButton(this.rightBtn, margin + btnSize + 10 + btnSize / 2, bottomY);
+    this.positionTouchButton(this.jumpBtn, cam.width - margin - (btnSize * 1.2) / 2, bottomY);
+  }
+
+  private positionTouchButton(button: TouchButton | null, x: number, y: number): void {
+    if (!button) return;
+    button.visual.setPosition(x, y);
+    button.hitArea.setPosition(x, y);
   }
 
   private isKeyDown(keyName: string): boolean {
@@ -163,9 +187,23 @@ export class InputManager {
   }
 
   destroy(): void {
+    this.scene.scale.off(Phaser.Scale.Events.RESIZE, this.layoutTouchControls, this);
+    this.touchLeft = false;
+    this.touchRight = false;
+    this.touchJump = false;
+    this.touchJumpJustDown = false;
     this.keys.clear();
-    if (this.leftBtn) this.leftBtn.destroy();
-    if (this.rightBtn) this.rightBtn.destroy();
-    if (this.jumpBtn) this.jumpBtn.destroy();
+    this.destroyTouchButton(this.leftBtn);
+    this.destroyTouchButton(this.rightBtn);
+    this.destroyTouchButton(this.jumpBtn);
+    this.leftBtn = null;
+    this.rightBtn = null;
+    this.jumpBtn = null;
+  }
+
+  private destroyTouchButton(button: TouchButton | null): void {
+    if (!button) return;
+    button.hitArea.destroy();
+    button.visual.destroy();
   }
 }
