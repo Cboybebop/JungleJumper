@@ -52,7 +52,7 @@ export class MainMenuScene extends Phaser.Scene {
       stroke: '#5B3A6B',
       strokeThickness: 8,
       shadow: { offsetX: 3, offsetY: 3, color: '#3A1A4B', blur: 5, fill: true },
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setDepth(100);
 
     // Bounce the title
     this.tweens.add({
