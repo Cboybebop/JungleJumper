@@ -1,4 +1,6 @@
 import Phaser from 'phaser';
+import { RUN_BIOMES } from '../ui/RunProgress';
+import { SettingsManager } from './SettingsManager';
 import { COLORS, GAME } from '../constants';
 
 export type BackgroundBiome = 'lower-jungle' | 'bright-canopy' | 'misty-heights' | 'sunset-canopy' | 'night-storm';
@@ -45,11 +47,11 @@ export const BACKGROUND_LAYERS: Readonly<Record<LayerName, BackgroundLayerConfig
 
 const BASE: Record<LayerName, number> = { sky: 0xffffff, distantCanopy: 0x60817f, mist: 0xb7d4d1, midTrees: 0x55766d, trunkStructures: 0x4a5e58, foregroundLeaves: 0x668064, lightShafts: 0xffefc2, landmarks: 0x5c7480 };
 const ALTITUDE_BANDS: readonly AltitudeBand[] = [
-  { biome: 'lower-jungle', startsAt: 0, skyColor: 0x2f7e86, palette: { ...BASE, sky: 0x80c7ca, mist: 0x86aaa6, lightShafts: 0xb7cba7 }, alpha: { distantCanopy: 0.55, trunkStructures: 0.7 } },
-  { biome: 'bright-canopy', startsAt: 120, skyColor: 0x82d7dc, palette: { ...BASE, sky: 0xffffff, distantCanopy: 0x739b86, lightShafts: 0xfff0b5 }, alpha: { distantCanopy: 0.45, midTrees: 0.65, mist: 0.35, lightShafts: 0.8 } },
-  { biome: 'misty-heights', startsAt: 320, skyColor: 0x91b8c2, palette: { ...BASE, sky: 0xc8dadd, distantCanopy: 0x708990, mist: 0xc8dcdf, midTrees: 0x637b7c }, alpha: { distantCanopy: 0.35, mist: 0.75, midTrees: 0.55, landmarks: 0.5 } },
-  { biome: 'sunset-canopy', startsAt: 600, skyColor: 0xd88979, palette: { ...BASE, sky: 0xf0a58c, distantCanopy: 0x745f72, mist: 0xb58b91, midTrees: 0x564e65, lightShafts: 0xffc17c, landmarks: 0x514c68 }, alpha: { distantCanopy: 0.4, foregroundLeaves: 0.65, lightShafts: 0.75, landmarks: 0.5 } },
-  { biome: 'night-storm', startsAt: 900, skyColor: 0x182945, palette: { ...BASE, sky: 0x33486b, distantCanopy: 0x37495d, mist: 0x7085a0, midTrees: 0x334657, trunkStructures: 0x293946, foregroundLeaves: 0x354b4c, lightShafts: 0x6d87a1, landmarks: 0x29374d }, alpha: { distantCanopy: 0.35, mist: 0.45, trunkStructures: 0.6, landmarks: 0.6 } },
+  { biome: 'lower-jungle', startsAt: RUN_BIOMES[0].startsAt, skyColor: 0x2f7e86, palette: { ...BASE, sky: 0x80c7ca, mist: 0x86aaa6, lightShafts: 0xb7cba7 }, alpha: { distantCanopy: 0.55, trunkStructures: 0.7 } },
+  { biome: 'bright-canopy', startsAt: RUN_BIOMES[1].startsAt, skyColor: 0x82d7dc, palette: { ...BASE, sky: 0xffffff, distantCanopy: 0x739b86, lightShafts: 0xfff0b5 }, alpha: { distantCanopy: 0.45, midTrees: 0.65, mist: 0.35, lightShafts: 0.8 } },
+  { biome: 'misty-heights', startsAt: RUN_BIOMES[2].startsAt, skyColor: 0x91b8c2, palette: { ...BASE, sky: 0xc8dadd, distantCanopy: 0x708990, mist: 0xc8dcdf, midTrees: 0x637b7c }, alpha: { distantCanopy: 0.35, mist: 0.75, midTrees: 0.55, landmarks: 0.5 } },
+  { biome: 'sunset-canopy', startsAt: RUN_BIOMES[3].startsAt, skyColor: 0xd88979, palette: { ...BASE, sky: 0xf0a58c, distantCanopy: 0x745f72, mist: 0xb58b91, midTrees: 0x564e65, lightShafts: 0xffc17c, landmarks: 0x514c68 }, alpha: { distantCanopy: 0.4, foregroundLeaves: 0.65, lightShafts: 0.75, landmarks: 0.5 } },
+  { biome: 'night-storm', startsAt: RUN_BIOMES[4].startsAt, skyColor: 0x182945, palette: { ...BASE, sky: 0x33486b, distantCanopy: 0x37495d, mist: 0x7085a0, midTrees: 0x334657, trunkStructures: 0x293946, foregroundLeaves: 0x354b4c, lightShafts: 0x6d87a1, landmarks: 0x29374d }, alpha: { distantCanopy: 0.35, mist: 0.45, trunkStructures: 0.6, landmarks: 0.6 } },
 ];
 
 const TRUNK_KEYS = ['world-trunk-0', 'world-trunk-1', 'world-trunk-2', 'world-trunk-3'] as const;
@@ -122,22 +124,23 @@ export class BackgroundManager {
     const altitude = Math.max(score, Math.max(0, -cameraY / 10));
     const { from, to, mix } = this.getBandBlend(altitude);
     this.scene.cameras.main.setBackgroundColor(this.mixColor(from.skyColor, to.skyColor, mix));
+    const decorativeY = SettingsManager.getReducedMotion() ? 0 : cameraY;
     for (const layer of this.managedLayers) {
       const tint = this.mixColor(from.palette[layer.name], to.palette[layer.name], mix);
       const alpha = Phaser.Math.Linear(this.bandAlpha(layer, from), this.bandAlpha(layer, to), mix);
       for (const object of layer.objects) object.setTint(tint).setAlpha(alpha);
       if (layer.config.repeatBehavior.mode === 'vertical-tile') {
-        (layer.objects[0] as Phaser.GameObjects.TileSprite).tilePositionY = cameraY * layer.config.parallaxFactor;
+        (layer.objects[0] as Phaser.GameObjects.TileSprite).tilePositionY = decorativeY * layer.config.parallaxFactor;
       } else if (layer.config.repeatBehavior.mode === 'pooled-landmark') {
         const { spacing, poolSize } = layer.config.repeatBehavior;
         const cycle = spacing * poolSize;
         layer.objects.forEach((object, index) => {
-          object.y = Phaser.Math.Wrap((-cameraY * layer.config.parallaxFactor) + index * spacing, -GAME.HEIGHT, cycle - GAME.HEIGHT);
+          object.y = Phaser.Math.Wrap((-decorativeY * layer.config.parallaxFactor) + index * spacing, -GAME.HEIGHT, cycle - GAME.HEIGHT);
         });
       }
     }
     if (this.fallback) {
-      this.fallback.tilePositionY = cameraY * 0.06;
+      this.fallback.tilePositionY = decorativeY * 0.06;
       this.fallback.setTint(this.mixColor(from.palette.distantCanopy, to.palette.distantCanopy, mix));
     }
     this.recycleLivingTree(cameraY);

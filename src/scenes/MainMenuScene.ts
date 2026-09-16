@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SceneTransition } from '../ui/SceneTransition';
 import { COLORS, GAME, CHARACTERS } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
@@ -12,6 +13,7 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    SceneTransition.install(this);
     const ui = new UIFactory(this);
     const compact = GAME.HEIGHT < 620;
     this.cameras.main.setBackgroundColor(COLORS.SKY);
@@ -51,7 +53,7 @@ export class MainMenuScene extends Phaser.Scene {
 
     // Bounce the title
     const titleRestY = title.y;
-    this.tweens.add({
+    if (!SettingsManager.getReducedMotion()) this.tweens.add({
       targets: title,
       y: titleRestY + (compact ? 4 : 8),
       yoyo: true,
@@ -78,11 +80,11 @@ export class MainMenuScene extends Phaser.Scene {
 
     const firstButtonY = compact ? GAME.HEIGHT - 185 : GAME.HEIGHT - 250;
     const playButton = ui.button(GAME.WIDTH / 2, firstButtonY, 'PLAY', {
-      onActivate: () => this.scene.start('CharacterSelect'),
+      onActivate: () => SceneTransition.start(this, 'CharacterSelect'),
     });
 
     const settingsButton = ui.button(GAME.WIDTH / 2, firstButtonY + 70, 'SETTINGS', {
-      onActivate: () => this.scene.start('Settings'),
+      onActivate: () => SceneTransition.start(this, 'Settings', {}, 'palette'),
     });
 
     const buttons = [playButton, settingsButton];

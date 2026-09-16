@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SceneTransition } from '../ui/SceneTransition';
 import { COLORS, GAME, CHARACTERS } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
@@ -20,6 +21,7 @@ export class CharacterSelectScene extends Phaser.Scene {
   }
 
   create(): void {
+    SceneTransition.install(this);
     const ui = new UIFactory(this);
     const compact = GAME.HEIGHT < 620 || GAME.WIDTH < 440;
     this.cameras.main.setBackgroundColor(COLORS.SKY);
@@ -100,14 +102,15 @@ export class CharacterSelectScene extends Phaser.Scene {
     const startButton = ui.button(GAME.WIDTH / 2, GAME.HEIGHT - (compact ? 110 : 160), 'START', {
       fontSize: compact ? 16 : 18,
       onActivate: () => {
-      SettingsManager.selectedCharacter = this.selectedIndex;
-      this.scene.start('Game');
+        if (SceneTransition.isBusy(this)) return;
+        SettingsManager.selectedCharacter = this.selectedIndex;
+        SceneTransition.start(this, 'Game');
       },
     });
 
     const backButton = ui.button(GAME.WIDTH / 2, GAME.HEIGHT - 50, 'BACK', {
       size: 'small',
-      onActivate: () => this.scene.start('MainMenu'),
+      onActivate: () => SceneTransition.start(this, 'MainMenu', {}, 'palette'),
     });
 
     const navItems = this.frames.map((_, index) => ({
@@ -142,7 +145,7 @@ export class CharacterSelectScene extends Phaser.Scene {
       startIndex: this.selectedIndex,
       onBack: () => {
         AudioManager.buttonClick();
-        this.scene.start('MainMenu');
+        SceneTransition.start(this, 'MainMenu', {}, 'palette');
       },
     });
 
@@ -158,6 +161,7 @@ export class CharacterSelectScene extends Phaser.Scene {
   }
 
   private selectCharacter(index: number, playSound: boolean): void {
+    if (SceneTransition.isBusy(this)) return;
     this.selectedIndex = index;
     if (playSound) {
       AudioManager.buttonClick();

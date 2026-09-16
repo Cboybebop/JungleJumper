@@ -1,4 +1,7 @@
 import Phaser from 'phaser';
+import { SceneTransition } from '../ui/SceneTransition';
+import { FeedbackManager } from '../systems/FeedbackManager';
+import { SettingsManager } from '../systems/SettingsManager';
 import { GAME } from '../constants';
 import { Player, type PlayerFeedbackEvent } from '../entities/Player';
 import { Platform } from '../entities/Platform';
@@ -15,6 +18,8 @@ import {
 } from '../graphics/AnimationRegistry';
 
 export class GameScene extends Phaser.Scene {
+  private feedback!: FeedbackManager;
+  private lastObstacleHit = -Infinity;
   private player!: Player;
   private platforms!: Phaser.GameObjects.Group;
   private obstacles!: Phaser.GameObjects.Group;
@@ -38,6 +43,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    SceneTransition.install(this);
+    this.feedback = new FeedbackManager(this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.shutdown, this);
+    this.lastObstacleHit = -Infinity;
+    this.supportingPlatform = null;
+    this.supportContactAt = -Infinity;
     this.score = 0;
     this.gameOver = false;
     this.deathPending = false;
@@ -66,7 +77,7 @@ export class GameScene extends Phaser.Scene {
     this.spawnFromData(initial);
 
     // Player
-    this.player = new Player(this, GAME.WIDTH / 2, this.startY - 40);
+    this.player = new Player(this, GAME.WIDTH / 2, this.startY - 40, this.feedback);
     this.player.on('feedback', this.onPlayerFeedback, this);
     this.highestY = this.player.y;
 
@@ -106,7 +117,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(): void {
-    if (this.gameOver) return;
+    if (this.gameOver || SceneTransition.isBusy(this)) return;
     if (this.isPaused) return;
 
     const input = this.inputManager.getState();
@@ -116,6 +127,9 @@ export class GameScene extends Phaser.Scene {
       this.togglePause();
       return;
     }
+
+    // Hit-stop freezes gameplay updates too; pause input remains available.
+    if (this.physics.world.isPaused) return;
 
     // Player movement
     if (input.left) {
@@ -131,6 +145,9 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.player.update();
+    if (this.player.alive && (this.player.body as Phaser.Physics.Arcade.Body).velocity.y < -400) {
+      this.feedback.trail(this.player.x, this.player.y + 14);
+    }
 
     // Track score (height climbed)
     if (this.player.y < this.highestY) {
@@ -176,7 +193,7 @@ export class GameScene extends Phaser.Scene {
           shield.destroy();
         }
         const baseY = shield.getData('baseY') as number;
-        shield.y = baseY + Math.sin(this.time.now * 0.005 + shield.x) * 3;
+        shield.y = baseY + (SettingsManager.getReducedMotion() ? 0 : Math.sin(this.time.now * 0.005 + shield.x) * 3);
       }
     }
 
@@ -211,7 +228,7 @@ export class GameScene extends Phaser.Scene {
     }
     for (const s of data.shields) {
       const shield = this.add.sprite(s.x, s.y, EFFECT_TEXTURES.shieldIdle);
-      shield.play(EFFECT_ANIMATIONS.shieldIdle);
+      if (!SettingsManager.getReducedMotion()) shield.play(EFFECT_ANIMATIONS.shieldIdle);
       shield.setData('baseY', s.y);
       this.physics.add.existing(shield, true);
       shield.setDepth(6);
@@ -245,7 +262,8 @@ export class GameScene extends Phaser.Scene {
   private onObstacleHit(playerObj: any, obstacleObj: any): void {
     const player = playerObj as Player;
     const obstacle = obstacleObj as Obstacle;
-    if (!player.alive) return;
+    if (!player.alive || this.time.now - this.lastObstacleHit < 450) return;
+    this.lastObstacleHit = this.time.now;
     AudioManager.impact();
     const died = player.hitObstacle();
     obstacle.reactToHit(!died);
@@ -274,76 +292,44 @@ export class GameScene extends Phaser.Scene {
     shield.destroy();
   }
 
-  private onPlayerFeedback(kind: PlayerFeedbackEvent, x: number, y: number): void {
+  private onPlayerFeedback(kind: PlayerFeedbackEvent, x: number, y: number, speed = 0): void {
+    const fx = this.feedback;
     switch (kind) {
+      case 'landing': {
+        const weight = Phaser.Math.Clamp(speed / 700, 0, 1);
+        fx.burst(x, y + 14, 0xd8c49b, 3 + Math.round(weight * 7), 10 + weight * 24);
+        if (speed > 450) fx.impulse(weight * 2, 70);
+        break;
+      }
+      case 'jump': fx.burst(x, y + 14, 0xffe6a3, 5, 18); break;
+      case 'double-jump':
+        fx.ring(x, y + 12, 0x9ef4ff);
+        fx.burst(x, y + 14, 0x9ef4ff, 6, 24);
+        break;
       case 'shield-pickup':
-        this.playEffect(EFFECT_TEXTURES.shieldPickupBurst, EFFECT_ANIMATIONS.shieldPickupBurst, x, y, 12);
-        this.spawnParticles(x, y, 0x87CEFA, 8, 34);
-        this.cameras.main.flash(80, 135, 206, 250, false);
+        fx.burst(x, y, 0x87cefa, 10, 30);
+        fx.ring(x, y, 0x87cefa);
+        fx.label(x, y, 'SHIELD');
         break;
       case 'shield-break':
-        this.playEffect(EFFECT_TEXTURES.shieldPickupBurst, EFFECT_ANIMATIONS.shieldPickupBurst, x, y, 12);
-        this.playEffect(EFFECT_TEXTURES.damageFlash, EFFECT_ANIMATIONS.damageFlash, x, y, 13);
-        this.spawnParticles(x, y, 0x00BFFF, 10, 48);
-        this.cameras.main.shake(120, 0.004);
-        this.cameras.main.flash(90, 0, 191, 255, false);
+        fx.burst(x, y, 0x00bfff, 12, 40, true);
+        fx.label(x, y, 'SHIELD BROKEN');
+        fx.impulse(2.5); fx.hitStop(); fx.flash(0x87cefa);
         break;
       case 'obstacle-damage':
-        this.playEffect(EFFECT_TEXTURES.impact, EFFECT_ANIMATIONS.impact, x, y, 12);
-        this.playEffect(EFFECT_TEXTURES.damageFlash, EFFECT_ANIMATIONS.damageFlash, x, y, 13);
-        this.spawnParticles(x, y, 0xC0392B, 9, 42);
-        this.cameras.main.shake(180, 0.009);
-        this.cameras.main.flash(110, 192, 57, 43, false);
+        fx.burst(x, y, 0xffad65, 9, 30);
+        fx.impulse(3, 110); fx.hitStop(50); fx.flash(0xc0392b);
         break;
       case 'spring-launch':
-        this.playEffect(EFFECT_TEXTURES.impact, EFFECT_ANIMATIONS.impact, x, y + 14, 8, 0xF1C40F);
-        this.spawnParticles(x, y + 16, 0xF1C40F, 7, 28);
-        this.cameras.main.shake(80, 0.0025);
+        fx.ring(x, y + 16, 0xf1c40f);
+        fx.burst(x, y + 16, 0xf1c40f, 8, 30);
+        fx.impulse(1.5, 75);
         break;
       case 'death':
-        this.playEffect(EFFECT_TEXTURES.damageFlash, EFFECT_ANIMATIONS.damageFlash, x, y, 14);
-        this.spawnParticles(x, y, 0xC0392B, 12, 60);
-        this.cameras.main.shake(280, 0.012);
-        this.cameras.main.flash(150, 192, 57, 43, false);
+        fx.burst(x, y, 0xc0392b, 12, 44, true);
+        fx.label(x, y, 'DEFEAT');
+        fx.impulse(3, 110);
         break;
-    }
-  }
-
-  private playEffect(
-    texture: string,
-    animation: string,
-    x: number,
-    y: number,
-    depth: number,
-    tint?: number
-  ): void {
-    const effect = this.add.sprite(x, y, texture).setDepth(depth);
-    if (tint !== undefined) effect.setTint(tint);
-    effect.play(animation);
-    effect.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => effect.destroy());
-  }
-
-  private spawnParticles(
-    x: number,
-    y: number,
-    tint: number,
-    count: number,
-    distance: number
-  ): void {
-    for (let index = 0; index < count; index++) {
-      const angle = (Math.PI * 2 * index) / count + Math.random() * 0.3;
-      const size = index % 3 === 0 ? 3 : 2;
-      const particle = this.add.rectangle(x, y, size, size, tint).setDepth(13);
-      this.tweens.add({
-        targets: particle,
-        x: x + Math.cos(angle) * distance * (0.65 + Math.random() * 0.35),
-        y: y + Math.sin(angle) * distance * (0.65 + Math.random() * 0.35),
-        alpha: 0,
-        scale: 0,
-        duration: 260 + Math.random() * 180,
-        ease: 'Quad.easeOut',
-        onComplete: () => particle.destroy(),
-      });
     }
   }
 
@@ -354,21 +340,26 @@ export class GameScene extends Phaser.Scene {
   }
 
   private playerDied(): void {
-    if (this.gameOver) return;
+    if (this.gameOver || SceneTransition.isBusy(this)) return;
     this.gameOver = true;
     AudioManager.gameOver();
     this.hidePauseMenu();
     this.scene.stop('GameUI');
-    this.time.delayedCall(500, () => {
-      this.scene.start('GameOver', { score: this.score });
-    });
+    SceneTransition.start(this, 'GameOver', { score: this.score }, 'mosaic');
   }
 
   getScore(): number {
     return this.score;
   }
 
+  isHudAreaClear(bottom: number): boolean {
+    const playerTop = this.player.y - this.cameras.main.scrollY - this.player.displayHeight / 2;
+    return playerTop > bottom + 12;
+  }
+
   togglePause(): void {
+    if (this.gameOver || this.deathPending || SceneTransition.isBusy(this)) return;
+    this.feedback.cancelHitStop();
     this.isPaused = !this.isPaused;
 
     if (this.isPaused) {
@@ -404,9 +395,9 @@ export class GameScene extends Phaser.Scene {
     const menuButton = ui.button(cx, cy + 58, 'MAIN MENU', {
       size: 'small', fontSize: 11,
       onActivate: () => {
-        this.physics.resume();
+        if (SceneTransition.isBusy(this)) return;
         this.scene.stop('GameUI');
-        this.scene.start('MainMenu');
+        SceneTransition.start(this, 'MainMenu', {}, 'palette');
       },
     }).setDepth(102);
 
@@ -457,6 +448,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   shutdown(): void {
+    this.feedback?.destroy();
     this.player?.off('feedback', this.onPlayerFeedback, this);
     this.pauseMenuNavigator?.destroy();
     this.pauseMenuNavigator = null;

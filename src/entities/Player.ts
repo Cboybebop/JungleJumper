@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GAME, CHARACTERS, type CharacterKey } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
+import { FeedbackManager } from '../systems/FeedbackManager';
 import { AudioManager } from '../systems/AudioManager';
 import {
   EFFECT_ANIMATIONS,
@@ -11,6 +12,9 @@ import {
 } from '../graphics/AnimationRegistry';
 
 export type PlayerFeedbackEvent =
+  | 'landing'
+  | 'jump'
+  | 'double-jump'
   | 'shield-pickup'
   | 'shield-break'
   | 'obstacle-damage'
@@ -56,6 +60,9 @@ const CHARACTER_ABILITIES: Record<CharacterKey, Partial<CharacterAbilities>> = {
 };
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
+  private visual!: Phaser.GameObjects.Sprite;
+  private fallSpeed = 0;
+  private feedback?: FeedbackManager;
   private hasShield = false;
   private shieldSprite: Phaser.GameObjects.Sprite | null = null;
   private isAlive = true;
@@ -69,12 +76,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private action: CharacterAction = null;
   private actionUntil = 0;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, feedback?: FeedbackManager) {
     const charIndex = SettingsManager.selectedCharacter;
     const character = CHARACTERS[charIndex] ?? CHARACTERS[0];
     const usesCharacterAnimations = scene.textures.exists(character.texture);
     super(scene, x, y, usesCharacterAnimations ? character.texture : character.key);
 
+    this.feedback = feedback;
     this.character = character;
     this.abilities = this.resolveAbilities(character.key);
     this.animationPrefix = usesCharacterAnimations ? character.animationPrefix : null;
@@ -86,6 +94,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(false);
     this.setBounce(0);
     this.setDepth(10);
+    this.setAlpha(0);
+    this.visual = scene.add.sprite(x, y, this.texture.key, this.frame.name).setDepth(10);
+    scene.events.on(Phaser.Scenes.Events.POST_UPDATE, this.syncVisual, this);
 
     // This fixed body is intentionally independent of each frame's transparent
     // pixels, so pose changes can never resize or shift collision geometry.
@@ -145,6 +156,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.setAction('anticipation', 80);
     }
 
+    this.feedback?.squash(this.visual, 0.92, 1.1);
+    this.emitFeedback(onGround ? 'jump' : 'double-jump');
     body.setVelocityY(this.getJumpVelocity());
     this.lastJumpAt = now;
     AudioManager.jump();
@@ -164,6 +177,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(springVelocity);
+    this.feedback?.squash(this.visual, 0.88, 1.12);
     this.setAction('springLaunch', 140);
     AudioManager.spring();
     this.emitFeedback('spring-launch');
@@ -221,7 +235,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     this.shieldSprite = this.scene.add.sprite(this.x, this.y, EFFECT_TEXTURES.shieldShell);
-    this.shieldSprite.setDepth(11).play(EFFECT_ANIMATIONS.shieldShell);
+    this.shieldSprite.setDepth(11);
+    if (!SettingsManager.getReducedMotion()) this.shieldSprite.play(EFFECT_ANIMATIONS.shieldShell);
   }
 
   private resolveAbilities(charKey: CharacterKey): CharacterAbilities {
@@ -247,8 +262,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  private emitFeedback(kind: PlayerFeedbackEvent): void {
-    this.emit('feedback', kind, this.x, this.y);
+  private emitFeedback(kind: PlayerFeedbackEvent, strength = 0): void {
+    this.emit('feedback', kind, this.x, this.y, strength);
   }
 
   celebrate(): void {
@@ -291,11 +306,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (onGround && !this.wasOnGround) {
       AudioManager.land();
       this.setAction('landing', 145);
+      this.emitFeedback('landing', this.fallSpeed);
+      const weight = Phaser.Math.Clamp(this.fallSpeed / 700, 0, 1);
+      this.feedback?.squash(this.visual, 1 + weight * 0.12, 1 - weight * 0.12);
     }
     this.wasOnGround = onGround;
 
-    // Sprite art carries squash/stretch while preserving integer 1x rendering.
-    this.setScale(1);
+    this.fallSpeed = Math.max(0, body.velocity.y);
 
     if (this.action && this.scene.time.now >= this.actionUntil) this.action = null;
     this.playCharacterAnimation(onGround);
@@ -306,4 +323,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.shieldSprite.y = this.y;
     }
   }
+  private syncVisual(): void {
+    // Only the render proxy is transformed. The Arcade sprite stays at scale 1.
+    this.visual.setTexture(this.texture.key, this.frame.name).setFlipX(this.flipX);
+    this.visual.setPosition(this.x, this.y + (1 - this.visual.scaleY) * 14);
+    this.shieldSprite?.setPosition(this.x, this.y);
+  }
+
+  destroy(fromScene?: boolean): void {
+    this.scene?.events.off(Phaser.Scenes.Events.POST_UPDATE, this.syncVisual, this);
+    if (this.visual?.scene) {
+      this.scene.tweens.killTweensOf(this.visual);
+      this.visual.destroy();
+    }
+    this.shieldSprite?.destroy();
+    this.shieldSprite = null;
+    super.destroy(fromScene);
+  }
+
 }

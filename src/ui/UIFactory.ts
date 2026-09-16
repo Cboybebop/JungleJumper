@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SceneTransition } from './SceneTransition';
 import { AudioManager } from '../systems/AudioManager';
 
 export const UI_FONT = 'Silkscreen';
@@ -108,13 +109,13 @@ export class UIFactory {
     };
 
     const activate = () => {
-      if (!enabled) return;
+      if (!enabled || SceneTransition.isBusy(this.scene)) return;
       AudioManager.buttonClick();
       options.onActivate();
     };
 
     image.on('pointerdown', () => {
-      if (!enabled) return;
+      if (!enabled || SceneTransition.isBusy(this.scene)) return;
       pressed = true;
       render();
     });
@@ -180,7 +181,7 @@ export class UIFactory {
       container.setScale(focused && !active ? 1.01 : 1);
     };
     const activate = () => {
-      if (!options.onActivate) return;
+      if (!options.onActivate || SceneTransition.isBusy(this.scene)) return;
       AudioManager.buttonClick();
       options.onActivate();
     };
@@ -227,7 +228,7 @@ export class UIFactory {
       container.setScale(pressed ? 0.96 : focused ? 1.06 : 1);
     };
     const activate = () => {
-      if (!enabled) return;
+      if (!enabled || SceneTransition.isBusy(this.scene)) return;
       AudioManager.buttonClick();
       onActivate();
     };

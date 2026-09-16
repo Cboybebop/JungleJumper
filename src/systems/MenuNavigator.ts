@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SceneTransition } from '../ui/SceneTransition';
 
 export interface MenuNavItem {
   activate: () => void;
@@ -21,6 +22,8 @@ export class MenuNavigator {
   private destroyed = false;
 
   private gamepad: Phaser.Input.Gamepad.Gamepad | null = null;
+  private padArmed = false;
+  private keyboardArmed = false;
   private prevPadUp = false;
   private prevPadDown = false;
   private prevPadLeft = false;
@@ -151,13 +154,20 @@ export class MenuNavigator {
   }
 
   private update(): void {
-    if (!this.enabled || this.items.length === 0) return;
+    if (!this.enabled || this.items.length === 0 || SceneTransition.isBusy(this.scene)) return;
 
     this.handleKeyboard();
-    this.handleGamepad();
+    if (!SceneTransition.isBusy(this.scene)) this.handleGamepad();
   }
 
   private handleKeyboard(): void {
+    // Require a release in each new menu so a held confirm cannot cross scenes.
+    if (!this.keyboardArmed) {
+      const keys = [this.enterKey, this.spaceKey, this.escapeKey, this.backspaceKey];
+      if (keys.some(key => key?.isDown)) return;
+      keys.forEach(key => { if (key) Phaser.Input.Keyboard.JustDown(key); });
+      this.keyboardArmed = true;
+    }
     const backward = this.wasJustPressed(this.upKey) || this.wasJustPressed(this.wKey) || this.wasJustPressed(this.leftKey) || this.wasJustPressed(this.aKey);
     const forward = this.wasJustPressed(this.downKey) || this.wasJustPressed(this.sKey) || this.wasJustPressed(this.rightKey) || this.wasJustPressed(this.dKey) || this.wasJustPressed(this.tabKey);
 
@@ -171,7 +181,7 @@ export class MenuNavigator {
       this.activateCurrent();
     }
 
-    if (this.onBack && (this.wasJustPressed(this.escapeKey) || this.wasJustPressed(this.backspaceKey))) {
+    if (!SceneTransition.isBusy(this.scene) && this.onBack && (this.wasJustPressed(this.escapeKey) || this.wasJustPressed(this.backspaceKey))) {
       this.onBack();
     }
   }
@@ -192,6 +202,10 @@ export class MenuNavigator {
     const confirm = pad.A || (pad.buttons[0]?.pressed ?? false);
     const back = pad.B || (pad.buttons[1]?.pressed ?? false);
 
+    if (!this.padArmed) {
+      if (confirm || back || up || down || left || right) return;
+      this.padArmed = true;
+    }
     const backward = up || left;
     const forward = down || right;
     const prevBackward = this.prevPadUp || this.prevPadLeft;
@@ -207,7 +221,7 @@ export class MenuNavigator {
       this.activateCurrent();
     }
 
-    if (this.onBack && back && !this.prevPadBack) {
+    if (!SceneTransition.isBusy(this.scene) && this.onBack && back && !this.prevPadBack) {
       this.onBack();
     }
 

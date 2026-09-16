@@ -1,13 +1,15 @@
 import Phaser from 'phaser';
+import { SceneTransition } from '../ui/SceneTransition';
 import { GAME, CHARACTERS } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
+import { getAnimationKey } from '../graphics/AnimationRegistry';
+import { getRunProgress } from '../ui/RunProgress';
 import { UIFactory } from '../ui/UIFactory';
 
 export class GameOverScene extends Phaser.Scene {
   private finalScore = 0;
   private menuNavigator: MenuNavigator | null = null;
-  private transitioning = false;
 
   constructor() {
     super({ key: 'GameOver' });
@@ -18,18 +20,19 @@ export class GameOverScene extends Phaser.Scene {
   }
 
   create(): void {
+    SceneTransition.install(this);
     const ui = new UIFactory(this);
     const compact = GAME.HEIGHT < 620;
-    this.transitioning = false;
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
 
     this.cameras.main.setBackgroundColor(0x1A1A2E);
 
     // Save high score
+    const previousBest = SettingsManager.getHighScore();
     SettingsManager.setHighScore(this.finalScore);
     const highScore = SettingsManager.getHighScore();
-    const isNewBest = this.finalScore >= highScore;
+    const isNewBest = this.finalScore > previousBest;
 
     // Game over title
     ui.text(GAME.WIDTH / 2, compact ? 70 : 120, 'GAME\nOVER', {
@@ -44,7 +47,7 @@ export class GameOverScene extends Phaser.Scene {
     // Score
     const scoreY = compact ? 175 : 280;
     ui.scorePlaque(GAME.WIDTH / 2, scoreY);
-    ui.text(GAME.WIDTH / 2, scoreY, `${this.finalScore}M`, {
+    const scoreText = ui.text(GAME.WIDTH / 2, scoreY, `${SettingsManager.getReducedMotion() ? this.finalScore : 0}M`, {
       fontSize: compact ? '24px' : '32px',
       color: '#F1C40F',
       fontStyle: 'bold',
@@ -52,30 +55,48 @@ export class GameOverScene extends Phaser.Scene {
       strokeThickness: 4,
     }).setOrigin(0.5);
 
-    ui.text(GAME.WIDTH / 2, compact ? 210 : 320, 'HEIGHT REACHED', {
-      fontSize: compact ? '10px' : '13px',
+    if (!SettingsManager.getReducedMotion()) {
+      const counter = { height: 0 };
+      this.tweens.add({ targets: counter, height: this.finalScore, duration: 420, ease: 'Cubic.easeOut',
+        onUpdate: () => scoreText.setText(`${Math.floor(counter.height)}M`),
+        onComplete: () => scoreText.setText(`${this.finalScore}M`),
+      });
+    }
+    const progress = getRunProgress(this.finalScore);
+    ui.text(GAME.WIDTH / 2, compact ? 210 : 320, `${progress.biome.label.toUpperCase()} / ${progress.milestones} MILESTONE${progress.milestones === 1 ? '' : 'S'}`, {
+      fontSize: compact ? '8px' : '10px',
       color: '#95A5A6',
     }).setOrigin(0.5);
 
     const character = CHARACTERS[SettingsManager.selectedCharacter] ?? CHARACTERS[0];
-    this.add.image(GAME.WIDTH / 2, compact ? 300 : 445, character.portrait).setScale(compact ? 0.75 : 1);
+    const resultY = compact ? 284 : 435;
+    const result = this.add.sprite(GAME.WIDTH / 2, resultY,
+      this.textures.exists(character.texture) ? character.texture : character.key).setScale(compact ? 1.75 : 3);
+    const animation = getAnimationKey(character, isNewBest ? 'celebration' : 'defeat');
+    if (this.anims.exists(animation)) {
+      result.play(animation);
+      if (SettingsManager.getReducedMotion()) result.anims.pause();
+    }
+    ui.text(GAME.WIDTH / 2, resultY + (compact ? 38 : 54), character.name.toUpperCase(), {
+      fontSize: '10px', color: '#FFE6A3',
+    }).setOrigin(0.5);
 
     // High score
     if (isNewBest) {
-      const newBestText = ui.text(GAME.WIDTH / 2, compact ? 245 : 370, 'NEW BEST!', {
-        fontSize: compact ? '16px' : '22px',
+      const newBestText = ui.text(GAME.WIDTH / 2, compact ? 245 : 370, `NEW BEST! +${this.finalScore - previousBest}M`, {
+        fontSize: compact ? '12px' : '16px',
         color: '#2ECC71',
         fontStyle: 'bold',
         stroke: '#000000',
         strokeThickness: 3,
       }).setOrigin(0.5);
 
-      this.tweens.add({
+      if (!SettingsManager.getReducedMotion()) this.tweens.add({
         targets: newBestText,
-        scale: 1.2,
+        scale: 1.06,
         yoyo: true,
-        repeat: -1,
-        duration: 500,
+        repeat: 0,
+        duration: 180,
       });
     } else {
       ui.text(GAME.WIDTH / 2, compact ? 245 : 370, `BEST ${highScore}M`, {
@@ -113,25 +134,11 @@ export class GameOverScene extends Phaser.Scene {
   }
 
   private transitionTo(sceneKey: string): void {
-    if (this.transitioning || !this.sys.isActive()) {
-      return;
-    }
-
-    this.transitioning = true;
-    this.menuNavigator?.destroy();
-    this.menuNavigator = null;
-
-    const scenePlugin = (this as unknown as { scene?: Phaser.Scenes.ScenePlugin }).scene;
-    if (!scenePlugin) {
-      return;
-    }
-
-    scenePlugin.start(sceneKey);
+    SceneTransition.start(this, sceneKey);
   }
 
   private cleanup(): void {
     this.menuNavigator?.destroy();
     this.menuNavigator = null;
-    this.transitioning = false;
   }
 }

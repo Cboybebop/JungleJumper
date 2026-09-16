@@ -21,9 +21,11 @@ interface DisplaySettings {
 const STORAGE_KEY = 'jungle-jumper-settings';
 const HIGHSCORE_KEY = 'jungle-jumper-highscore';
 const CHARACTER_KEY = 'jungle-jumper-character';
+const MOTION_KEY = 'jungle-jumper-reduced-motion';
 const MOBILE_CONTROLS_KEY = 'jungle-jumper-mobile-controls';
 
 export class SettingsManager {
+  private static reducedMotion = false;
   private static keys: KeyBindings = { ...DEFAULT_KEYS };
   private static _selectedCharacter = 0;
   private static mobileControlsEnabled = true;
@@ -37,6 +39,10 @@ export class SettingsManager {
   }
 
   static init(): void {
+    const motion = localStorage.getItem(MOTION_KEY);
+    this.reducedMotion = motion === null
+      ? (typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+      : motion === 'true';
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
@@ -56,6 +62,13 @@ export class SettingsManager {
     if (savedMobileControls !== null) {
       this.mobileControlsEnabled = savedMobileControls === 'true';
     }
+  }
+
+  static getReducedMotion(): boolean { return this.reducedMotion; }
+
+  static setReducedMotion(enabled: boolean): void {
+    this.reducedMotion = enabled;
+    localStorage.setItem(MOTION_KEY, String(enabled));
   }
 
   static getKeys(): KeyBindings {

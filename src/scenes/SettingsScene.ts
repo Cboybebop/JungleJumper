@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SceneTransition } from '../ui/SceneTransition';
 import { GAME } from '../constants';
 import { SettingsManager, type KeyBindings } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
@@ -14,6 +15,7 @@ export class SettingsScene extends Phaser.Scene {
   private listeningRow: BindingRow | null = null;
   private fromGame = false;
   private menuNavigator: MenuNavigator | null = null;
+  private motionRow: UIRow | null = null;
   private mobileRow: UIRow | null = null;
   private displayModeRow: UIRow | null = null;
   private keyListener: ((event: KeyboardEvent) => void) | null = null;
@@ -27,11 +29,12 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   create(): void {
+    SceneTransition.install(this);
     const ui = new UIFactory(this);
-    const compact = GAME.HEIGHT < 650;
+    const compact = GAME.HEIGHT < 740;
     const rowWidth = Math.min(560, GAME.WIDTH - 32);
-    const rowHeight = compact ? 30 : 44;
-    const visualHeight = compact ? 26 : 36;
+    const rowHeight = compact ? 26 : 36;
+    const visualHeight = compact ? 24 : 32;
     const startY = compact ? 76 : 120;
     const fontSize = compact ? 10 : 13;
 
@@ -76,7 +79,15 @@ export class SettingsScene extends Phaser.Scene {
     });
     this.mobileRow.panel.on('pointerover', () => this.menuNavigator?.setIndex(this.rows.length));
 
-    const displayY = mobileY + rowHeight;
+    this.motionRow = ui.row(GAME.WIDTH / 2, mobileY + rowHeight, 'REDUCED MOTION', {
+      width: rowWidth, height: visualHeight, fontSize, value: '',
+      onActivate: () => {
+        SettingsManager.setReducedMotion(!SettingsManager.getReducedMotion());
+        this.refreshValues();
+      },
+    });
+    this.motionRow.panel.on('pointerover', () => this.menuNavigator?.setIndex(this.rows.length + 1));
+    const displayY = mobileY + rowHeight * 2;
     this.displayModeRow = ui.row(GAME.WIDTH / 2, displayY, 'DISPLAY MODE', {
       width: rowWidth, height: visualHeight, fontSize, value: '',
     });
@@ -109,6 +120,11 @@ export class SettingsScene extends Phaser.Scene {
       onBlur: () => this.mobileRow?.setFocused(false),
       activate: () => this.mobileRow?.activate(),
     });
+    navItems.push({
+      onFocus: () => this.motionRow?.setFocused(true),
+      onBlur: () => this.motionRow?.setFocused(false),
+      activate: () => this.motionRow?.activate(),
+    });
     navItems.push(this.buttonNav(resetButton), this.buttonNav(backButton));
 
     this.menuNavigator = new MenuNavigator(this, navItems, {
@@ -116,12 +132,12 @@ export class SettingsScene extends Phaser.Scene {
         if (!this.listeningRow) { AudioManager.buttonClick(); this.navigateBack(); }
       },
     });
-    resetButton.image.on('pointerover', () => this.menuNavigator?.setIndex(this.rows.length + 1));
-    backButton.image.on('pointerover', () => this.menuNavigator?.setIndex(this.rows.length + 2));
+    resetButton.image.on('pointerover', () => this.menuNavigator?.setIndex(this.rows.length + 2));
+    backButton.image.on('pointerover', () => this.menuNavigator?.setIndex(this.rows.length + 3));
 
     this.refreshValues();
     this.keyListener = (event) => {
-      if (!this.listeningRow) return;
+      if (!this.listeningRow || SceneTransition.isBusy(this)) return;
       event.preventDefault();
       this.captureKey(event);
     };
@@ -146,7 +162,7 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private captureKey(event: KeyboardEvent): void {
-    if (!this.listeningRow) return;
+    if (!this.listeningRow || SceneTransition.isBusy(this)) return;
     const keyName = this.getKeyName(event.code);
     if (!keyName) return;
     SettingsManager.setKey(this.listeningRow.action, keyName);
@@ -168,13 +184,14 @@ export class SettingsScene extends Phaser.Scene {
     for (const row of this.rows) {
       if (row !== this.listeningRow) row.setValue(bindings[row.action], '#FFE6A3');
     }
+    this.motionRow?.setValue(SettingsManager.getReducedMotion() ? 'ON' : 'OFF', '#87CEEB');
     const enabled = SettingsManager.getMobileControlsEnabled();
     this.mobileRow?.setValue(enabled ? 'ON' : 'OFF', enabled ? '#2ECC71' : '#FF6B6B');
     this.displayModeRow?.setValue(SettingsManager.getDisplayModeLabel(), '#87CEEB');
   }
 
   private navigateBack(): void {
-    this.scene.start(this.fromGame ? 'Game' : 'MainMenu');
+    SceneTransition.start(this, this.fromGame ? 'Game' : 'MainMenu', {}, 'palette');
   }
 
   private getKeyName(code: string): string | null {
