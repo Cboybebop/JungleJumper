@@ -4,12 +4,7 @@ import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
 import { getAnimationKey } from '../graphics/AnimationRegistry';
-
-interface MenuButton {
-  image: Phaser.GameObjects.Image;
-  text: Phaser.GameObjects.Text;
-  activate: () => void;
-}
+import { UIFactory } from '../ui/UIFactory';
 
 export class CharacterSelectScene extends Phaser.Scene {
   private selectedIndex = 0;
@@ -25,6 +20,8 @@ export class CharacterSelectScene extends Phaser.Scene {
   }
 
   create(): void {
+    const ui = new UIFactory(this);
+    const compact = GAME.HEIGHT < 620 || GAME.WIDTH < 440;
     this.cameras.main.setBackgroundColor(COLORS.SKY);
     this.selectedIndex = SettingsManager.selectedCharacter;
     this.focusedCharacterIndex = null;
@@ -42,10 +39,9 @@ export class CharacterSelectScene extends Phaser.Scene {
     this.add.image(400, 150, 'world-cloud').setScale(0.7).setAlpha(0.5);
 
     // Title
-    this.add.text(GAME.WIDTH / 2, 60, 'CHOOSE YOUR\nCLIMBER', {
-      fontSize: '32px',
+    ui.text(GAME.WIDTH / 2, compact ? 42 : 60, 'CHOOSE YOUR\nCLIMBER', {
+      fontSize: compact ? '22px' : '28px',
       color: '#FFFFFF',
-      fontFamily: 'Arial Black, Arial',
       fontStyle: 'bold',
       align: 'center',
       stroke: '#5B3A6B',
@@ -53,20 +49,25 @@ export class CharacterSelectScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Character grid
-    const startX = GAME.WIDTH / 2 - (CHARACTERS.length - 1) * 45;
-    const charY = 220;
+    const columns = compact ? 3 : CHARACTERS.length;
+    const spacingX = compact ? 86 : 90;
+    const startY = compact ? 112 : 220;
 
     for (let i = 0; i < CHARACTERS.length; i++) {
-      const x = startX + i * 90;
+      const row = Math.floor(i / columns);
+      const column = i % columns;
+      const rowCount = Math.min(columns, CHARACTERS.length - row * columns);
+      const x = GAME.WIDTH / 2 + (column - (rowCount - 1) / 2) * spacingX;
+      const y = startY + row * 86;
 
       // Frame
-      const frame = this.add.image(x, charY, 'char-frame').setInteractive({ useHandCursor: true });
+      const frame = ui.selectionFrame(x, y).setInteractive({ useHandCursor: true });
       this.frames.push(frame);
 
       // Character sprite
       const character = CHARACTERS[i];
       const characterTexture = this.textures.exists(character.texture) ? character.texture : character.key;
-      const charSprite = this.add.sprite(x, charY, characterTexture, 0).setScale(3);
+      const charSprite = this.add.sprite(x, y, characterTexture, 0).setScale(2);
       if (this.textures.exists(character.texture)) charSprite.play(getAnimationKey(character, 'idle'));
       this.characterSprites.push(charSprite);
 
@@ -81,28 +82,32 @@ export class CharacterSelectScene extends Phaser.Scene {
     }
 
     // Character name
-    this.nameText = this.add.text(GAME.WIDTH / 2, 300, '', {
-      fontSize: '28px',
+    const nameY = compact ? 282 : 300;
+    this.nameText = ui.text(GAME.WIDTH / 2, nameY, '', {
+      fontSize: compact ? '20px' : '24px',
       color: '#FFFFFF',
-      fontFamily: 'Arial',
       fontStyle: 'bold',
       stroke: '#5B3A6B',
       strokeThickness: 4,
     }).setOrigin(0.5);
 
     // Preview area - larger character
-    this.portrait = this.add.image(GAME.WIDTH / 2, 400, CHARACTERS[this.selectedIndex].portrait);
-    this.add.image(GAME.WIDTH / 2, 420, 'platform-normal', 1).setScale(2);
+    const portraitY = compact ? 325 : 400;
+    this.portrait = this.add.image(GAME.WIDTH / 2, portraitY, CHARACTERS[this.selectedIndex].portrait)
+      .setScale(compact ? 0.75 : 1);
+    if (!compact) this.add.image(GAME.WIDTH / 2, 420, 'platform-normal', 1).setScale(2);
 
-    const startButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 160, 'button', 'START', '24px', () => {
-      AudioManager.buttonClick();
+    const startButton = ui.button(GAME.WIDTH / 2, GAME.HEIGHT - (compact ? 110 : 160), 'START', {
+      fontSize: compact ? 16 : 18,
+      onActivate: () => {
       SettingsManager.selectedCharacter = this.selectedIndex;
       this.scene.start('Game');
+      },
     });
 
-    const backButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 100, 'button-small', 'BACK', '18px', () => {
-      AudioManager.buttonClick();
-      this.scene.start('MainMenu');
+    const backButton = ui.button(GAME.WIDTH / 2, GAME.HEIGHT - 50, 'BACK', {
+      size: 'small',
+      onActivate: () => this.scene.start('MainMenu'),
     });
 
     const navItems = this.frames.map((_, index) => ({
@@ -122,14 +127,14 @@ export class CharacterSelectScene extends Phaser.Scene {
     }));
 
     navItems.push({
-      onFocus: () => this.setButtonFocused(startButton, true),
-      onBlur: () => this.setButtonFocused(startButton, false),
+      onFocus: () => startButton.setFocused(true),
+      onBlur: () => startButton.setFocused(false),
       activate: startButton.activate,
     });
 
     navItems.push({
-      onFocus: () => this.setButtonFocused(backButton, true),
-      onBlur: () => this.setButtonFocused(backButton, false),
+      onFocus: () => backButton.setFocused(true),
+      onBlur: () => backButton.setFocused(false),
       activate: backButton.activate,
     });
 
@@ -152,31 +157,6 @@ export class CharacterSelectScene extends Phaser.Scene {
     this.updateSelection();
   }
 
-  private createButton(
-    x: number,
-    y: number,
-    texture: string,
-    label: string,
-    fontSize: string,
-    callback: () => void
-  ): MenuButton {
-    const image = this.add.image(x, y, texture).setInteractive({ useHandCursor: true });
-    const text = this.add.text(x, y, label, {
-      fontSize,
-      color: '#FFFFFF',
-      fontFamily: 'Arial',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    image.on('pointerdown', callback);
-
-    return {
-      image,
-      text,
-      activate: callback,
-    };
-  }
-
   private selectCharacter(index: number, playSound: boolean): void {
     this.selectedIndex = index;
     if (playSound) {
@@ -196,14 +176,11 @@ export class CharacterSelectScene extends Phaser.Scene {
       const isSelected = i === this.selectedIndex;
       const isFocused = i === this.focusedCharacterIndex;
 
-      frame.setTexture(isSelected ? 'char-frame-selected' : 'char-frame');
-      if (isFocused) {
-        frame.setTint(0xD8ECFF);
-      } else {
-        frame.clearTint();
-      }
+      frame.setTexture(isFocused
+        ? 'ui-selection-frame-focused'
+        : isSelected ? 'ui-selection-frame-selected' : 'ui-selection-frame-normal');
 
-      charSprite.setScale(3);
+      charSprite.setScale(GAME.HEIGHT < 620 || GAME.WIDTH < 440 ? 2 : 3);
       const character = CHARACTERS[i];
       if (this.textures.exists(character.texture)) {
         const state = isSelected ? 'celebration' : 'idle';
@@ -222,15 +199,5 @@ export class CharacterSelectScene extends Phaser.Scene {
     this.frames = [];
     this.characterSprites = [];
     this.focusedCharacterIndex = null;
-  }
-
-  private setButtonFocused(button: MenuButton, focused: boolean): void {
-    if (focused) {
-      button.image.setTint(0xD8ECFF);
-      button.text.setScale(1.05);
-    } else {
-      button.image.clearTint();
-      button.text.setScale(1);
-    }
   }
 }

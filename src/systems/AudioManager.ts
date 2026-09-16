@@ -142,4 +142,8 @@ export class AudioManager {
   static buttonClick(): void {
     this.playTone(600, 0.05, 'square', 800, 0.06);
   }
+
+  static buttonFocus(): void {
+    this.playTone(420, 0.035, 'square', 520, 0.035);
+  }
 }

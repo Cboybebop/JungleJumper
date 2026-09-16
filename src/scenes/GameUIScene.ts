@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { GAME } from '../constants';
+import { UIFactory } from '../ui/UIFactory';
+import { getSafeArea } from '../ui/SafeArea';
 
 export class GameUIScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
@@ -14,36 +16,24 @@ export class GameUIScene extends Phaser.Scene {
   }
 
   create(): void {
-    // Score display
-    this.scoreText = this.add.text(GAME.WIDTH / 2, 20, '0m', {
-      fontSize: '24px',
-      color: '#FFFFFF',
-      fontFamily: 'Arial',
-      fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 4,
-    }).setOrigin(0.5, 0);
+    const ui = new UIFactory(this);
+    const safe = getSafeArea(this, 12);
+    const scoreY = safe.top + 21;
+    ui.scorePlaque(GAME.WIDTH / 2, scoreY).setDepth(100);
+    this.scoreText = ui.text(GAME.WIDTH / 2, scoreY, '0M', {
+      fontSize: '16px', color: '#FFFFFF', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(101);
 
-    // Pause button (top right)
-    const pauseBtn = this.add.text(GAME.WIDTH - 15, 15, '||', {
-      fontSize: '24px',
-      color: '#FFFFFF',
-      fontFamily: 'Arial',
-      fontStyle: 'bold',
-      stroke: '#000000',
-      strokeThickness: 3,
-    }).setOrigin(1, 0).setInteractive({ useHandCursor: true });
-
-    pauseBtn.on('pointerdown', () => {
+    ui.pauseButton(GAME.WIDTH - safe.right - 18, safe.top + 18, () => {
       const game = this.scene.get('Game') as any;
       if (game.togglePause) game.togglePause();
-    });
+    }).setDepth(102);
   }
 
   update(): void {
     const game = this.gameScene as any;
     if (game.getScore) {
-      this.scoreText.setText(`${game.getScore()}m`);
+      this.scoreText.setText(`${game.getScore()}M`);
     }
   }
 }

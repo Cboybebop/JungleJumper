@@ -1,14 +1,8 @@
 import Phaser from 'phaser';
 import { COLORS, GAME, CHARACTERS } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
-import { AudioManager } from '../systems/AudioManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
-
-interface MenuButton {
-  image: Phaser.GameObjects.Image;
-  text: Phaser.GameObjects.Text;
-  activate: () => void;
-}
+import { UIFactory } from '../ui/UIFactory';
 
 export class MainMenuScene extends Phaser.Scene {
   private menuNavigator: MenuNavigator | null = null;
@@ -18,6 +12,8 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    const ui = new UIFactory(this);
+    const compact = GAME.HEIGHT < 620;
     this.cameras.main.setBackgroundColor(COLORS.SKY);
 
     // Decorative clouds
@@ -43,10 +39,9 @@ export class MainMenuScene extends Phaser.Scene {
     this.add.image(360, 260, charKeys[1]).setScale(1.5);
 
     // Title
-    const title = this.add.text(GAME.WIDTH / 2, 100, 'JUNGLE\nJUMPER', {
-      fontSize: '56px',
+    const title = ui.text(GAME.WIDTH / 2, compact ? 72 : 100, 'JUNGLE\nJUMPER', {
+      fontSize: `${Math.min(56, Math.max(34, GAME.WIDTH / 8))}px`,
       color: '#FFFFFF',
-      fontFamily: 'Arial Black, Arial',
       fontStyle: 'bold',
       align: 'center',
       stroke: '#5B3A6B',
@@ -55,9 +50,10 @@ export class MainMenuScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(100);
 
     // Bounce the title
+    const titleRestY = title.y;
     this.tweens.add({
       targets: title,
-      y: 108,
+      y: titleRestY + (compact ? 4 : 8),
       yoyo: true,
       repeat: -1,
       duration: 1500,
@@ -72,30 +68,27 @@ export class MainMenuScene extends Phaser.Scene {
     // High score
     const highScore = SettingsManager.getHighScore();
     if (highScore > 0) {
-      this.add.text(GAME.WIDTH / 2, 200, `Best: ${highScore}m`, {
-        fontSize: '18px',
+      ui.scorePlaque(GAME.WIDTH / 2, compact ? 154 : 200);
+      ui.text(GAME.WIDTH / 2, compact ? 154 : 200, `BEST ${highScore}M`, {
+        fontSize: '14px',
         color: '#F1C40F',
-        fontFamily: 'Arial',
         fontStyle: 'bold',
-        stroke: '#5B3A6B',
-        strokeThickness: 3,
       }).setOrigin(0.5);
     }
 
-    const playButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 250, 'PLAY', () => {
-      AudioManager.buttonClick();
-      this.scene.start('CharacterSelect');
+    const firstButtonY = compact ? GAME.HEIGHT - 185 : GAME.HEIGHT - 250;
+    const playButton = ui.button(GAME.WIDTH / 2, firstButtonY, 'PLAY', {
+      onActivate: () => this.scene.start('CharacterSelect'),
     });
 
-    const settingsButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 180, 'SETTINGS', () => {
-      AudioManager.buttonClick();
-      this.scene.start('Settings');
+    const settingsButton = ui.button(GAME.WIDTH / 2, firstButtonY + 70, 'SETTINGS', {
+      onActivate: () => this.scene.start('Settings'),
     });
 
     const buttons = [playButton, settingsButton];
     this.menuNavigator = new MenuNavigator(this, buttons.map(button => ({
-      onFocus: () => this.setButtonFocused(button, true),
-      onBlur: () => this.setButtonFocused(button, false),
+      onFocus: () => button.setFocused(true),
+      onBlur: () => button.setFocused(false),
       activate: button.activate,
     })));
 
@@ -106,38 +99,9 @@ export class MainMenuScene extends Phaser.Scene {
     });
 
     // Version text
-    this.add.text(GAME.WIDTH / 2, GAME.HEIGHT - 20, 'v1.0', {
+    ui.text(GAME.WIDTH / 2, GAME.HEIGHT - 20, 'v1.0', {
       fontSize: '12px',
       color: '#5B3A6B',
-      fontFamily: 'Arial',
     }).setOrigin(0.5);
-  }
-
-  private createButton(x: number, y: number, label: string, callback: () => void): MenuButton {
-    const image = this.add.image(x, y, 'button').setInteractive({ useHandCursor: true });
-    const text = this.add.text(x, y, label, {
-      fontSize: '22px',
-      color: '#FFFFFF',
-      fontFamily: 'Arial',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    image.on('pointerdown', callback);
-
-    return {
-      image,
-      text,
-      activate: callback,
-    };
-  }
-
-  private setButtonFocused(button: MenuButton, focused: boolean): void {
-    if (focused) {
-      button.image.setTint(0xE6F7EE);
-      button.text.setScale(1.05);
-    } else {
-      button.image.clearTint();
-      button.text.setScale(1);
-    }
   }
 }

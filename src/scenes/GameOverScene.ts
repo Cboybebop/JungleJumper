@@ -1,14 +1,8 @@
 import Phaser from 'phaser';
 import { GAME, CHARACTERS } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
-import { AudioManager } from '../systems/AudioManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
-
-interface MenuButton {
-  image: Phaser.GameObjects.Image;
-  text: Phaser.GameObjects.Text;
-  activate: () => void;
-}
+import { UIFactory } from '../ui/UIFactory';
 
 export class GameOverScene extends Phaser.Scene {
   private finalScore = 0;
@@ -24,6 +18,8 @@ export class GameOverScene extends Phaser.Scene {
   }
 
   create(): void {
+    const ui = new UIFactory(this);
+    const compact = GAME.HEIGHT < 620;
     this.transitioning = false;
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
     this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
@@ -36,10 +32,9 @@ export class GameOverScene extends Phaser.Scene {
     const isNewBest = this.finalScore >= highScore;
 
     // Game over title
-    this.add.text(GAME.WIDTH / 2, 120, 'GAME\nOVER', {
-      fontSize: '56px',
+    ui.text(GAME.WIDTH / 2, compact ? 70 : 120, 'GAME\nOVER', {
+      fontSize: compact ? '36px' : '52px',
       color: '#E74C3C',
-      fontFamily: 'Arial Black, Arial',
       fontStyle: 'bold',
       align: 'center',
       stroke: '#000000',
@@ -47,30 +42,29 @@ export class GameOverScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Score
-    this.add.text(GAME.WIDTH / 2, 280, `${this.finalScore}m`, {
-      fontSize: '48px',
+    const scoreY = compact ? 175 : 280;
+    ui.scorePlaque(GAME.WIDTH / 2, scoreY);
+    ui.text(GAME.WIDTH / 2, scoreY, `${this.finalScore}M`, {
+      fontSize: compact ? '24px' : '32px',
       color: '#F1C40F',
-      fontFamily: 'Arial',
       fontStyle: 'bold',
       stroke: '#000000',
       strokeThickness: 4,
     }).setOrigin(0.5);
 
-    this.add.text(GAME.WIDTH / 2, 320, 'HEIGHT REACHED', {
-      fontSize: '16px',
+    ui.text(GAME.WIDTH / 2, compact ? 210 : 320, 'HEIGHT REACHED', {
+      fontSize: compact ? '10px' : '13px',
       color: '#95A5A6',
-      fontFamily: 'Arial',
     }).setOrigin(0.5);
 
     const character = CHARACTERS[SettingsManager.selectedCharacter] ?? CHARACTERS[0];
-    this.add.image(GAME.WIDTH / 2, 445, character.portrait);
+    this.add.image(GAME.WIDTH / 2, compact ? 300 : 445, character.portrait).setScale(compact ? 0.75 : 1);
 
     // High score
     if (isNewBest) {
-      const newBestText = this.add.text(GAME.WIDTH / 2, 370, 'NEW BEST!', {
-        fontSize: '28px',
+      const newBestText = ui.text(GAME.WIDTH / 2, compact ? 245 : 370, 'NEW BEST!', {
+        fontSize: compact ? '16px' : '22px',
         color: '#2ECC71',
-        fontFamily: 'Arial',
         fontStyle: 'bold',
         stroke: '#000000',
         strokeThickness: 3,
@@ -84,27 +78,26 @@ export class GameOverScene extends Phaser.Scene {
         duration: 500,
       });
     } else {
-      this.add.text(GAME.WIDTH / 2, 370, `Best: ${highScore}m`, {
-        fontSize: '20px',
+      ui.text(GAME.WIDTH / 2, compact ? 245 : 370, `BEST ${highScore}M`, {
+        fontSize: compact ? '12px' : '16px',
         color: '#7F8C8D',
-        fontFamily: 'Arial',
       }).setOrigin(0.5);
     }
 
-    const playAgainButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 200, 'PLAY AGAIN', () => {
-      AudioManager.buttonClick();
-      this.transitionTo('CharacterSelect');
+    const playAgainButton = ui.button(GAME.WIDTH / 2, GAME.HEIGHT - (compact ? 120 : 200), 'PLAY AGAIN', {
+      fontSize: compact ? 14 : 17,
+      onActivate: () => this.transitionTo('CharacterSelect'),
     });
 
-    const mainMenuButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 130, 'MAIN MENU', () => {
-      AudioManager.buttonClick();
-      this.transitionTo('MainMenu');
+    const mainMenuButton = ui.button(GAME.WIDTH / 2, GAME.HEIGHT - (compact ? 55 : 130), 'MAIN MENU', {
+      fontSize: compact ? 14 : 17,
+      onActivate: () => this.transitionTo('MainMenu'),
     });
 
     const buttons = [playAgainButton, mainMenuButton];
     this.menuNavigator = new MenuNavigator(this, buttons.map((button) => ({
-      onFocus: () => this.setButtonFocused(button, true),
-      onBlur: () => this.setButtonFocused(button, false),
+      onFocus: () => button.setFocused(true),
+      onBlur: () => button.setFocused(false),
       activate: button.activate,
     })));
 
@@ -117,34 +110,6 @@ export class GameOverScene extends Phaser.Scene {
     // Decorative elements
     this.add.image(80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(0.6).setAlpha(0.3);
     this.add.image(GAME.WIDTH - 80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(0.6).setAlpha(0.3).setFlipX(true);
-  }
-
-  private createButton(x: number, y: number, label: string, callback: () => void): MenuButton {
-    const image = this.add.image(x, y, 'button').setInteractive({ useHandCursor: true });
-    const text = this.add.text(x, y, label, {
-      fontSize: '20px',
-      color: '#FFFFFF',
-      fontFamily: 'Arial',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    image.on('pointerdown', callback);
-
-    return {
-      image,
-      text,
-      activate: callback,
-    };
-  }
-
-  private setButtonFocused(button: MenuButton, focused: boolean): void {
-    if (focused) {
-      button.image.setTint(0xF6E8D0);
-      button.text.setScale(1.05);
-    } else {
-      button.image.clearTint();
-      button.text.setScale(1);
-    }
   }
 
   private transitionTo(sceneKey: string): void {

@@ -7,7 +7,6 @@ export class TextureGenerator {
     this.generatePlatforms(scene);
     this.generateObstacles(scene);
     this.generateBackground(scene);
-    this.generateUI(scene);
     this.generateShield(scene);
   }
 
@@ -444,40 +443,6 @@ export class TextureGenerator {
     g.fillCircle(10, 10, 1);
     g.fillCircle(8, 14, 1);
     g.generateTexture('world-fruit-berries', 16, 18);
-    g.destroy();
-  }
-
-  private static generateUI(scene: Phaser.Scene): void {
-    // Button
-    let g = scene.make.graphics({ x: 0, y: 0 });
-    g.fillStyle(COLORS.BUTTON);
-    g.fillRoundedRect(0, 0, 180, 50, 12);
-    g.fillStyle(COLORS.BUTTON_HOVER, 0.3);
-    g.fillRoundedRect(0, 0, 180, 25, { tl: 12, tr: 12, bl: 0, br: 0 });
-    g.generateTexture('button', 180, 50);
-    g.destroy();
-
-    // Small button
-    g = scene.make.graphics({ x: 0, y: 0 });
-    g.fillStyle(COLORS.BUTTON);
-    g.fillRoundedRect(0, 0, 120, 40, 10);
-    g.generateTexture('button-small', 120, 40);
-    g.destroy();
-
-    // Character frame
-    g = scene.make.graphics({ x: 0, y: 0 });
-    g.lineStyle(3, 0xF1C40F);
-    g.strokeRoundedRect(2, 2, 76, 76, 10);
-    g.generateTexture('char-frame', 80, 80);
-    g.destroy();
-
-    // Selected character frame
-    g = scene.make.graphics({ x: 0, y: 0 });
-    g.fillStyle(0xF1C40F, 0.2);
-    g.fillRoundedRect(0, 0, 80, 80, 10);
-    g.lineStyle(4, 0xF1C40F);
-    g.strokeRoundedRect(2, 2, 76, 76, 10);
-    g.generateTexture('char-frame-selected', 80, 80);
     g.destroy();
   }
 

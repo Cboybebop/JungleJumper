@@ -1,39 +1,22 @@
 import Phaser from 'phaser';
 import { GAME } from '../constants';
-import { SettingsManager, KeyBindings } from '../systems/SettingsManager';
+import { SettingsManager, type KeyBindings } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
+import { UIFactory, type UIButton, type UIRow } from '../ui/UIFactory';
 
-interface BindingRow {
-  label: Phaser.GameObjects.Text;
-  valueText: Phaser.GameObjects.Text;
-  bg: Phaser.GameObjects.Rectangle;
+interface BindingRow extends UIRow {
   action: keyof KeyBindings;
 }
-
-interface ToggleRow {
-  label: Phaser.GameObjects.Text;
-  valueText: Phaser.GameObjects.Text;
-  bg: Phaser.GameObjects.Rectangle;
-}
-
-interface MenuButton {
-  image: Phaser.GameObjects.Image;
-  text: Phaser.GameObjects.Text;
-  activate: () => void;
-}
-
-const ROW_DEFAULT_COLOR = 0x34495E;
-const ROW_FOCUS_COLOR = 0x4A6375;
-const ROW_LISTENING_COLOR = 0xE74C3C;
 
 export class SettingsScene extends Phaser.Scene {
   private rows: BindingRow[] = [];
   private listeningRow: BindingRow | null = null;
   private fromGame = false;
   private menuNavigator: MenuNavigator | null = null;
-  private mobileRow: ToggleRow | null = null;
-  private displayModeRow: ToggleRow | null = null;
+  private mobileRow: UIRow | null = null;
+  private displayModeRow: UIRow | null = null;
+  private keyListener: ((event: KeyboardEvent) => void) | null = null;
 
   constructor() {
     super({ key: 'Settings' });
@@ -44,286 +27,130 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor(0x2C3E50);
+    const ui = new UIFactory(this);
+    const compact = GAME.HEIGHT < 650;
+    const rowWidth = Math.min(560, GAME.WIDTH - 32);
+    const rowHeight = compact ? 30 : 44;
+    const visualHeight = compact ? 26 : 36;
+    const startY = compact ? 76 : 120;
+    const fontSize = compact ? 10 : 13;
 
-    // Title
-    this.add.text(GAME.WIDTH / 2, 40, 'SETTINGS', {
-      fontSize: '32px',
-      color: '#FFFFFF',
-      fontFamily: 'Arial Black, Arial',
-      fontStyle: 'bold',
-      stroke: '#1A252F',
-      strokeThickness: 4,
+    this.rows = [];
+    this.listeningRow = null;
+    this.cameras.main.setBackgroundColor(0x1A1A2E);
+
+    ui.text(GAME.WIDTH / 2, compact ? 24 : 40, 'SETTINGS', {
+      fontSize: compact ? '22px' : '30px', fontStyle: 'bold',
+      stroke: '#211936', strokeThickness: 4,
+    }).setOrigin(0.5);
+    ui.text(GAME.WIDTH / 2, compact ? 50 : 75, 'CONTROLS & DISPLAY', {
+      fontSize: compact ? '9px' : '11px', color: '#AAB4C8',
     }).setOrigin(0.5);
 
-    this.add.text(GAME.WIDTH / 2, 75, 'Rebind keys and control options', {
-      fontSize: '14px',
-      color: '#95A5A6',
-      fontFamily: 'Arial',
-    }).setOrigin(0.5);
-
-    // Key binding rows
     const bindings = SettingsManager.getKeys();
     const actions: { key: keyof KeyBindings; label: string }[] = [
-      { key: 'left', label: 'Move Left' },
-      { key: 'right', label: 'Move Right' },
-      { key: 'jump', label: 'Jump' },
-      { key: 'pause', label: 'Pause' },
-      { key: 'altLeft', label: 'Alt Left' },
-      { key: 'altRight', label: 'Alt Right' },
-      { key: 'altJump', label: 'Alt Jump' },
+      { key: 'left', label: 'MOVE LEFT' },
+      { key: 'right', label: 'MOVE RIGHT' },
+      { key: 'jump', label: 'JUMP' },
+      { key: 'pause', label: 'PAUSE' },
+      { key: 'altLeft', label: 'ALT LEFT' },
+      { key: 'altRight', label: 'ALT RIGHT' },
+      { key: 'altJump', label: 'ALT JUMP' },
     ];
 
-    const startY = 120;
-    const rowHeight = 44;
-
-    for (let i = 0; i < actions.length; i++) {
-      const y = startY + i * rowHeight;
-      const action = actions[i];
-
-      const bg = this.add.rectangle(GAME.WIDTH / 2, y, GAME.WIDTH - 60, 36, ROW_DEFAULT_COLOR)
-        .setInteractive({ useHandCursor: true });
-
-      const label = this.add.text(50, y, action.label, {
-        fontSize: '16px',
-        color: '#ECF0F1',
-        fontFamily: 'Arial',
-      }).setOrigin(0, 0.5);
-
-      const valueText = this.add.text(GAME.WIDTH - 50, y, bindings[action.key], {
-        fontSize: '16px',
-        color: '#F1C40F',
-        fontFamily: 'Arial',
-        fontStyle: 'bold',
-      }).setOrigin(1, 0.5);
-
-      const row: BindingRow = { label, valueText, bg, action: action.key };
+    actions.forEach((action, index) => {
+      let row!: BindingRow;
+      const base = ui.row(GAME.WIDTH / 2, startY + index * rowHeight, action.label, {
+        width: rowWidth, height: visualHeight, fontSize, value: bindings[action.key],
+        onActivate: () => this.startListening(row),
+      });
+      row = Object.assign(base, { action: action.key });
+      row.panel.on('pointerover', () => this.menuNavigator?.setIndex(index));
       this.rows.push(row);
-
-      bg.on('pointerdown', () => {
-        this.startListening(row);
-      });
-
-      bg.on('pointerover', () => {
-        this.menuNavigator?.setIndex(i);
-      });
-    }
-
-    const mobileRowY = startY + actions.length * rowHeight + 16;
-    const mobileBg = this.add.rectangle(GAME.WIDTH / 2, mobileRowY, GAME.WIDTH - 60, 36, ROW_DEFAULT_COLOR)
-      .setInteractive({ useHandCursor: true });
-
-    const mobileLabel = this.add.text(50, mobileRowY, 'Touch Overlay', {
-      fontSize: '16px',
-      color: '#ECF0F1',
-      fontFamily: 'Arial',
-    }).setOrigin(0, 0.5);
-
-    const mobileValue = this.add.text(GAME.WIDTH - 50, mobileRowY, '', {
-      fontSize: '16px',
-      color: '#2ECC71',
-      fontFamily: 'Arial',
-      fontStyle: 'bold',
-    }).setOrigin(1, 0.5);
-
-    this.mobileRow = {
-      label: mobileLabel,
-      valueText: mobileValue,
-      bg: mobileBg,
-    };
-
-    mobileBg.on('pointerdown', () => {
-      this.toggleMobileControls();
     });
 
-    mobileBg.on('pointerover', () => {
-      this.menuNavigator?.setIndex(actions.length);
+    const mobileY = startY + actions.length * rowHeight + (compact ? 5 : 16);
+    this.mobileRow = ui.row(GAME.WIDTH / 2, mobileY, 'TOUCH OVERLAY', {
+      width: rowWidth, height: visualHeight, fontSize, value: '',
+      onActivate: () => this.toggleMobileControls(),
     });
+    this.mobileRow.panel.on('pointerover', () => this.menuNavigator?.setIndex(this.rows.length));
 
-    const displayRowY = mobileRowY + rowHeight;
-    const displayBg = this.add.rectangle(GAME.WIDTH / 2, displayRowY, GAME.WIDTH - 60, 36, ROW_DEFAULT_COLOR)
-      .setAlpha(0.75);
-
-    const displayLabel = this.add.text(50, displayRowY, 'Display Mode', {
-      fontSize: '16px',
-      color: '#ECF0F1',
-      fontFamily: 'Arial',
-    }).setOrigin(0, 0.5);
-
-    const displayValue = this.add.text(GAME.WIDTH - 50, displayRowY, '', {
-      fontSize: '16px',
-      color: '#5DADE2',
-      fontFamily: 'Arial',
-      fontStyle: 'bold',
-    }).setOrigin(1, 0.5);
-
-    this.displayModeRow = {
-      label: displayLabel,
-      valueText: displayValue,
-      bg: displayBg,
-    };
-
-    this.add.text(GAME.WIDTH / 2, displayRowY + 24, `Viewport: ${SettingsManager.getResolutionLabel()}`, {
-      fontSize: '11px',
-      color: '#7F8C8D',
-      fontFamily: 'Arial',
-      align: 'center',
-    }).setOrigin(0.5);
-
-    // Gamepad and touch info
-    this.add.text(GAME.WIDTH / 2, mobileRowY + 86, 'UI: Arrow keys / D-pad / Left stick + Enter or A', {
-      fontSize: '12px',
-      color: '#7F8C8D',
-      fontFamily: 'Arial',
-      wordWrap: { width: GAME.WIDTH - 60 },
-      align: 'center',
-    }).setOrigin(0.5);
-
-    this.add.text(GAME.WIDTH / 2, mobileRowY + 110, 'Gamepad in-game: D-Pad/Stick = Move, A = Jump, Start = Pause', {
-      fontSize: '12px',
-      color: '#7F8C8D',
-      fontFamily: 'Arial',
-      wordWrap: { width: GAME.WIDTH - 60 },
-      align: 'center',
-    }).setOrigin(0.5);
-
-    // Reset button
-    const resetY = GAME.HEIGHT - 160;
-    const resetButton = this.createButton(GAME.WIDTH / 2, resetY, 'button-small', 'RESET KEYS', '14px', () => {
-      AudioManager.buttonClick();
-      SettingsManager.resetKeys();
-      this.refreshValues();
+    const displayY = mobileY + rowHeight;
+    this.displayModeRow = ui.row(GAME.WIDTH / 2, displayY, 'DISPLAY MODE', {
+      width: rowWidth, height: visualHeight, fontSize, value: '',
     });
+    this.displayModeRow.container.setAlpha(0.8);
 
-    // Back button
-    const backButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 100, 'button-small', 'BACK', '16px', () => {
-      AudioManager.buttonClick();
-      this.navigateBack();
+    ui.text(GAME.WIDTH / 2, displayY + (compact ? 25 : 30), `VIEWPORT ${SettingsManager.getResolutionLabel()}`, {
+      fontSize: compact ? '8px' : '10px', color: '#87CEEB',
+    }).setOrigin(0.5);
+    ui.text(GAME.WIDTH / 2, displayY + (compact ? 43 : 58), compact
+      ? 'ARROWS / D-PAD   ENTER / A'
+      : 'ARROWS / D-PAD / STICK     ENTER / A TO SELECT', {
+      fontSize: compact ? '8px' : '10px', color: '#AAB4C8', align: 'center',
+      wordWrap: { width: rowWidth },
+    }).setOrigin(0.5);
+
+    const resetButton = ui.button(GAME.WIDTH / 2, GAME.HEIGHT - (compact ? 88 : 160), 'RESET KEYS', {
+      size: 'small', fontSize: compact ? 10 : 12,
+      onActivate: () => { SettingsManager.resetKeys(); this.refreshValues(); },
+    });
+    const backButton = ui.button(GAME.WIDTH / 2, GAME.HEIGHT - (compact ? 40 : 100), 'BACK', {
+      size: 'small', fontSize: compact ? 11 : 13,
+      onActivate: () => this.navigateBack(),
     });
 
     const navItems = this.rows.map((row) => ({
-      onFocus: () => this.setBindingRowFocused(row, true),
-      onBlur: () => this.setBindingRowFocused(row, false),
-      activate: () => this.startListening(row),
+      onFocus: () => row.setFocused(true), onBlur: () => row.setFocused(false), activate: row.activate,
     }));
-
-    if (this.mobileRow) {
-      navItems.push({
-        onFocus: () => this.setToggleRowFocused(this.mobileRow!, true),
-        onBlur: () => this.setToggleRowFocused(this.mobileRow!, false),
-        activate: () => this.toggleMobileControls(),
-      });
-    }
-
     navItems.push({
-      onFocus: () => this.setButtonFocused(resetButton, true),
-      onBlur: () => this.setButtonFocused(resetButton, false),
-      activate: resetButton.activate,
+      onFocus: () => this.mobileRow?.setFocused(true),
+      onBlur: () => this.mobileRow?.setFocused(false),
+      activate: () => this.mobileRow?.activate(),
     });
-
-    navItems.push({
-      onFocus: () => this.setButtonFocused(backButton, true),
-      onBlur: () => this.setButtonFocused(backButton, false),
-      activate: backButton.activate,
-    });
+    navItems.push(this.buttonNav(resetButton), this.buttonNav(backButton));
 
     this.menuNavigator = new MenuNavigator(this, navItems, {
       onBack: () => {
-        if (!this.listeningRow) {
-          AudioManager.buttonClick();
-          this.navigateBack();
-        }
+        if (!this.listeningRow) { AudioManager.buttonClick(); this.navigateBack(); }
       },
     });
-
-    resetButton.image.on('pointerover', () => {
-      this.menuNavigator?.setIndex(this.rows.length + 1);
-    });
-
-    backButton.image.on('pointerover', () => {
-      this.menuNavigator?.setIndex(this.rows.length + 2);
-    });
+    resetButton.image.on('pointerover', () => this.menuNavigator?.setIndex(this.rows.length + 1));
+    backButton.image.on('pointerover', () => this.menuNavigator?.setIndex(this.rows.length + 2));
 
     this.refreshValues();
-
-    // Global key listener for rebinding
-    if (this.input.keyboard) {
-      this.input.keyboard.on('keydown', (event: KeyboardEvent) => {
-        if (this.listeningRow) {
-          event.preventDefault();
-          this.captureKey(event);
-        }
-      });
-    }
+    this.keyListener = (event) => {
+      if (!this.listeningRow) return;
+      event.preventDefault();
+      this.captureKey(event);
+    };
+    this.input.keyboard?.on('keydown', this.keyListener);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this);
   }
 
-  private createButton(
-    x: number,
-    y: number,
-    texture: string,
-    label: string,
-    fontSize: string,
-    callback: () => void
-  ): MenuButton {
-    const image = this.add.image(x, y, texture).setInteractive({ useHandCursor: true });
-    const text = this.add.text(x, y, label, {
-      fontSize,
-      color: '#FFFFFF',
-      fontFamily: 'Arial',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    image.on('pointerdown', callback);
-
+  private buttonNav(button: UIButton) {
     return {
-      image,
-      text,
-      activate: callback,
+      onFocus: () => button.setFocused(true),
+      onBlur: () => button.setFocused(false),
+      activate: button.activate,
     };
   }
 
-  private setButtonFocused(button: MenuButton, focused: boolean): void {
-    if (focused) {
-      button.image.setTint(0xD8ECFF);
-      button.text.setScale(1.05);
-    } else {
-      button.image.clearTint();
-      button.text.setScale(1);
-    }
-  }
-
-  private setBindingRowFocused(row: BindingRow, focused: boolean): void {
-    if (this.listeningRow === row) return;
-    row.bg.setFillStyle(focused ? ROW_FOCUS_COLOR : ROW_DEFAULT_COLOR);
-  }
-
-  private setToggleRowFocused(row: ToggleRow, focused: boolean): void {
-    row.bg.setFillStyle(focused ? ROW_FOCUS_COLOR : ROW_DEFAULT_COLOR);
-  }
-
   private startListening(row: BindingRow): void {
-    // Reset previous
-    if (this.listeningRow) {
-      this.listeningRow.bg.setFillStyle(ROW_DEFAULT_COLOR);
-      this.refreshValues();
-    }
-
+    this.listeningRow?.setActive(false);
     this.listeningRow = row;
-    row.bg.setFillStyle(ROW_LISTENING_COLOR);
-    row.valueText.setText('Press a key...');
-    row.valueText.setColor('#FFFFFF');
+    row.setActive(true);
+    row.setValue('PRESS A KEY', '#FFFFFF');
     this.menuNavigator?.setEnabled(false);
   }
 
   private captureKey(event: KeyboardEvent): void {
     if (!this.listeningRow) return;
-
-    // Map the key code to a Phaser key name
     const keyName = this.getKeyName(event.code);
     if (!keyName) return;
-
     SettingsManager.setKey(this.listeningRow.action, keyName);
-    this.listeningRow.bg.setFillStyle(ROW_DEFAULT_COLOR);
+    this.listeningRow.setActive(false);
     this.listeningRow = null;
     AudioManager.buttonClick();
     this.refreshValues();
@@ -332,63 +159,42 @@ export class SettingsScene extends Phaser.Scene {
   }
 
   private toggleMobileControls(): void {
-    const next = !SettingsManager.getMobileControlsEnabled();
-    SettingsManager.setMobileControlsEnabled(next);
-    AudioManager.buttonClick();
+    SettingsManager.setMobileControlsEnabled(!SettingsManager.getMobileControlsEnabled());
     this.refreshValues();
-  }
-
-  private navigateBack(): void {
-    if (this.fromGame) {
-      this.scene.start('Game');
-    } else {
-      this.scene.start('MainMenu');
-    }
-  }
-
-  private getKeyName(code: string): string | null {
-    // Map browser key codes to Phaser key names
-    const mapping: Record<string, string> = {
-      KeyA: 'A', KeyB: 'B', KeyC: 'C', KeyD: 'D',
-      KeyE: 'E', KeyF: 'F', KeyG: 'G', KeyH: 'H',
-      KeyI: 'I', KeyJ: 'J', KeyK: 'K', KeyL: 'L',
-      KeyM: 'M', KeyN: 'N', KeyO: 'O', KeyP: 'P',
-      KeyQ: 'Q', KeyR: 'R', KeyS: 'S', KeyT: 'T',
-      KeyU: 'U', KeyV: 'V', KeyW: 'W', KeyX: 'X',
-      KeyY: 'Y', KeyZ: 'Z',
-      Digit0: 'ZERO', Digit1: 'ONE', Digit2: 'TWO',
-      Digit3: 'THREE', Digit4: 'FOUR', Digit5: 'FIVE',
-      Digit6: 'SIX', Digit7: 'SEVEN', Digit8: 'EIGHT',
-      Digit9: 'NINE',
-      Space: 'SPACE', Enter: 'ENTER', Escape: 'ESC',
-      ArrowUp: 'UP', ArrowDown: 'DOWN',
-      ArrowLeft: 'LEFT', ArrowRight: 'RIGHT',
-      ShiftLeft: 'SHIFT', ShiftRight: 'SHIFT',
-      ControlLeft: 'CTRL', ControlRight: 'CTRL',
-      Tab: 'TAB', Backspace: 'BACKSPACE',
-    };
-    return mapping[code] ?? null;
   }
 
   private refreshValues(): void {
     const bindings = SettingsManager.getKeys();
-
     for (const row of this.rows) {
-      if (row !== this.listeningRow) {
-        row.valueText.setText(bindings[row.action]);
-        row.valueText.setColor('#F1C40F');
-      }
+      if (row !== this.listeningRow) row.setValue(bindings[row.action], '#FFE6A3');
     }
+    const enabled = SettingsManager.getMobileControlsEnabled();
+    this.mobileRow?.setValue(enabled ? 'ON' : 'OFF', enabled ? '#2ECC71' : '#FF6B6B');
+    this.displayModeRow?.setValue(SettingsManager.getDisplayModeLabel(), '#87CEEB');
+  }
 
-    if (this.mobileRow) {
-      const enabled = SettingsManager.getMobileControlsEnabled();
-      this.mobileRow.valueText.setText(enabled ? 'ON' : 'OFF');
-      this.mobileRow.valueText.setColor(enabled ? '#2ECC71' : '#E74C3C');
-    }
+  private navigateBack(): void {
+    this.scene.start(this.fromGame ? 'Game' : 'MainMenu');
+  }
 
-    if (this.displayModeRow) {
-      this.displayModeRow.valueText.setText(SettingsManager.getDisplayModeLabel());
-      this.displayModeRow.valueText.setColor('#5DADE2');
-    }
+  private getKeyName(code: string): string | null {
+    const letters = /^Key([A-Z])$/.exec(code);
+    if (letters) return letters[1];
+    const digits = /^Digit([0-9])$/.exec(code);
+    const digitNames = ['ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'];
+    if (digits) return digitNames[Number(digits[1])];
+    const mapping: Record<string, string> = {
+      Space: 'SPACE', Enter: 'ENTER', Escape: 'ESC', ArrowUp: 'UP', ArrowDown: 'DOWN',
+      ArrowLeft: 'LEFT', ArrowRight: 'RIGHT', ShiftLeft: 'SHIFT', ShiftRight: 'SHIFT',
+      ControlLeft: 'CTRL', ControlRight: 'CTRL', Tab: 'TAB', Backspace: 'BACKSPACE',
+    };
+    return mapping[code] ?? null;
+  }
+
+  private cleanup(): void {
+    if (this.keyListener) this.input.keyboard?.off('keydown', this.keyListener);
+    this.keyListener = null;
+    this.menuNavigator?.destroy();
+    this.menuNavigator = null;
   }
 }

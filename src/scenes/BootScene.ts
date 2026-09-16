@@ -15,6 +15,7 @@ import {
   PLATFORM_TEXTURES,
   WORLD_IMAGE_ASSETS,
 } from '../graphics/WorldAssets';
+import { UIFactory, UI_FONT } from '../ui/UIFactory';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -22,6 +23,8 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
+    UIFactory.preload(this);
+
     for (const character of CHARACTERS) {
       this.load.spritesheet(character.texture, `assets/characters/${character.key}/${character.key}-actions.png`, {
         frameWidth: 32,
@@ -77,17 +80,26 @@ export class BootScene extends Phaser.Scene {
     const text = this.add.text(GAME.WIDTH / 2, GAME.HEIGHT / 2, 'Loading...', {
       fontSize: '24px',
       color: '#ffffff',
-      fontFamily: 'Arial',
+      fontFamily: UI_FONT,
     }).setOrigin(0.5);
 
     // Generate UI, obstacle, character, and development/loading fallbacks.
     TextureGenerator.generate(this);
     registerAnimations(this);
 
-    // Transition to menu
-    this.time.delayedCall(300, () => {
+    const begin = () => {
+      if (!this.sys.isActive()) return;
       text.destroy();
       this.scene.start('MainMenu');
-    });
+    };
+
+    if (typeof document !== 'undefined' && document.fonts) {
+      void Promise.all([
+        document.fonts.load(`16px ${UI_FONT}`),
+        document.fonts.load(`bold 16px ${UI_FONT}`),
+      ]).finally(() => this.time.delayedCall(100, begin));
+    } else {
+      this.time.delayedCall(300, begin);
+    }
   }
 }

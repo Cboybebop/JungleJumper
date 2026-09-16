@@ -8,16 +8,11 @@ import { LevelGenerator } from '../systems/LevelGenerator';
 import { BackgroundManager } from '../systems/BackgroundManager';
 import { AudioManager } from '../systems/AudioManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
+import { UIFactory } from '../ui/UIFactory';
 import {
   EFFECT_ANIMATIONS,
   EFFECT_TEXTURES,
 } from '../graphics/AnimationRegistry';
-
-interface PauseMenuButton {
-  image: Phaser.GameObjects.Image;
-  text: Phaser.GameObjects.Text;
-  activate: () => void;
-}
 
 export class GameScene extends Phaser.Scene {
   private player!: Player;
@@ -386,6 +381,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private showPauseMenu(): void {
+    const ui = new UIFactory(this);
     const cam = this.cameras.main;
     const cx = cam.scrollX + GAME.WIDTH / 2;
     const cy = cam.scrollY + GAME.HEIGHT / 2;
@@ -393,67 +389,46 @@ export class GameScene extends Phaser.Scene {
     const overlay = this.add.rectangle(cx, cy, GAME.WIDTH, GAME.HEIGHT, 0x000000, 0.6);
     overlay.setDepth(100);
 
-    const title = this.add.text(cx, cy - 80, 'PAUSED', {
-      fontSize: '36px',
+    const panel = ui.panel(cx, cy, 280, 260, true).setDepth(101);
+    const title = ui.text(cx, cy - 82, 'PAUSED', {
+      fontSize: '28px',
       color: '#FFFFFF',
-      fontFamily: 'Arial Black, Arial',
       fontStyle: 'bold',
-    }).setOrigin(0.5).setDepth(101);
+    }).setOrigin(0.5).setDepth(102);
 
-    const resumeButton: PauseMenuButton = {
-      image: this.add.image(cx, cy, 'button').setInteractive({ useHandCursor: true }).setDepth(101),
-      text: this.add.text(cx, cy, 'RESUME', {
-        fontSize: '20px',
-        color: '#FFFFFF',
-        fontFamily: 'Arial',
-        fontStyle: 'bold',
-      }).setOrigin(0.5).setDepth(102),
-      activate: () => {
-        AudioManager.buttonClick();
-        this.togglePause();
-      },
-    };
+    const resumeButton = ui.button(cx, cy - 10, 'RESUME', {
+      fontSize: 16,
+      onActivate: () => this.togglePause(),
+    }).setDepth(102);
 
-    resumeButton.image.on('pointerdown', resumeButton.activate);
-
-    const menuButton: PauseMenuButton = {
-      image: this.add.image(cx, cy + 60, 'button-small').setInteractive({ useHandCursor: true }).setDepth(101),
-      text: this.add.text(cx, cy + 60, 'MAIN MENU', {
-        fontSize: '16px',
-        color: '#FFFFFF',
-        fontFamily: 'Arial',
-        fontStyle: 'bold',
-      }).setOrigin(0.5).setDepth(102),
-      activate: () => {
-        AudioManager.buttonClick();
+    const menuButton = ui.button(cx, cy + 58, 'MAIN MENU', {
+      size: 'small', fontSize: 11,
+      onActivate: () => {
         this.physics.resume();
         this.scene.stop('GameUI');
         this.scene.start('MainMenu');
       },
-    };
-
-    menuButton.image.on('pointerdown', menuButton.activate);
+    }).setDepth(102);
 
     this.pauseOverlay = this.add.container(0, 0, [
       overlay,
+      panel,
       title,
-      resumeButton.image,
-      resumeButton.text,
-      menuButton.image,
-      menuButton.text,
+      resumeButton.container,
+      menuButton.container,
     ]);
     this.pauseOverlay.setDepth(100);
 
     this.pauseMenuNavigator?.destroy();
     this.pauseMenuNavigator = new MenuNavigator(this, [
       {
-        onFocus: () => this.setPauseButtonFocused(resumeButton, true),
-        onBlur: () => this.setPauseButtonFocused(resumeButton, false),
+        onFocus: () => resumeButton.setFocused(true),
+        onBlur: () => resumeButton.setFocused(false),
         activate: resumeButton.activate,
       },
       {
-        onFocus: () => this.setPauseButtonFocused(menuButton, true),
-        onBlur: () => this.setPauseButtonFocused(menuButton, false),
+        onFocus: () => menuButton.setFocused(true),
+        onBlur: () => menuButton.setFocused(false),
         activate: menuButton.activate,
       },
     ], {
@@ -469,16 +444,6 @@ export class GameScene extends Phaser.Scene {
     menuButton.image.on('pointerover', () => {
       this.pauseMenuNavigator?.setIndex(1);
     });
-  }
-
-  private setPauseButtonFocused(button: PauseMenuButton, focused: boolean): void {
-    if (focused) {
-      button.image.setTint(0xD8ECFF);
-      button.text.setScale(1.05);
-    } else {
-      button.image.clearTint();
-      button.text.setScale(1);
-    }
   }
 
   private hidePauseMenu(): void {
