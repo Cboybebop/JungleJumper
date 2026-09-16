@@ -33,6 +33,9 @@ export function createGameConfig(): Phaser.Types.Core.GameConfig {
     height: GAME.HEIGHT,
     parent: 'game-container',
     backgroundColor: '#87CEEB',
+    pixelArt: true,
+    roundPixels: true,
+    antialias: false,
     audio: {
       noAudio: true,
     },
