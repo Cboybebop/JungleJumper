@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
-import { GAME } from '../constants';
+import { GAME, CHARACTERS } from '../constants';
 import { TextureGenerator } from '../graphics/TextureGenerator';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
-import { MIKO_TEXTURE, registerAnimations } from '../graphics/AnimationRegistry';
+import { registerAnimations } from '../graphics/AnimationRegistry';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -11,12 +11,13 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // The separately named key lets Player fall back to the generated `monkey`
-    // texture when this production sheet cannot be decoded or fetched.
-    this.load.spritesheet(MIKO_TEXTURE, 'assets/characters/miko/miko-actions.png', {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
+    for (const character of CHARACTERS) {
+      this.load.spritesheet(character.texture, `assets/characters/${character.key}/${character.key}-actions.png`, {
+        frameWidth: 32,
+        frameHeight: 32,
+      });
+      this.load.image(character.portrait, `assets/characters/${character.key}/${character.key}-portrait.png`);
+    }
   }
 
   create(): void {

@@ -1,10 +1,28 @@
+export const ANIMATION_SUFFIXES = {
+  idle: 'idle',
+  anticipation: 'anticipation',
+  jumpAscent: 'jump',
+  apex: 'apex',
+  fall: 'fall',
+  landing: 'land',
+  run: 'run',
+  doubleJump: 'double-jump',
+  springLaunch: 'spring-launch',
+  shielded: 'shielded',
+  hit: 'hit',
+  defeat: 'defeat',
+  celebration: 'celebration',
+} as const;
+
+export type AnimationState = keyof typeof ANIMATION_SUFFIXES;
+
 export const MIKO_ANIMATIONS = {
   idle: 'miko-idle',
   anticipation: 'miko-anticipation',
-  jumpAscent: 'miko-jump-ascent',
+  jumpAscent: 'miko-jump',
   apex: 'miko-apex',
   fall: 'miko-fall',
-  landing: 'miko-landing',
+  landing: 'miko-land',
   run: 'miko-run',
   doubleJump: 'miko-double-jump',
   springLaunch: 'miko-spring-launch',
@@ -15,24 +33,29 @@ export const MIKO_ANIMATIONS = {
 } as const;
 
 export type MikoAnimation = typeof MIKO_ANIMATIONS[keyof typeof MIKO_ANIMATIONS];
-export type MikoAction = 'anticipation' | 'landing' | 'doubleJump' | 'springLaunch' |
+export type CharacterAction = 'anticipation' | 'landing' | 'doubleJump' | 'springLaunch' |
   'shielded' | 'hit' | 'defeat' | 'celebration' | null;
+export type MikoAction = CharacterAction;
 
-export interface MikoAnimationState {
+export interface CharacterAnimationState {
   alive: boolean;
   onGround: boolean;
   velocityX: number;
   velocityY: number;
-  action: MikoAction;
+  action: CharacterAction;
+}
+export type MikoAnimationState = CharacterAnimationState;
+
+/** Pure shared selector kept separate from Phaser so every character uses identical transitions. */
+export function selectAnimationState(state: CharacterAnimationState): AnimationState {
+  if (!state.alive || state.action === 'defeat') return 'defeat';
+  if (state.action) return state.action;
+  if (state.onGround) return Math.abs(state.velocityX) > 1 ? 'run' : 'idle';
+  if (Math.abs(state.velocityY) <= 55) return 'apex';
+  return state.velocityY < 0 ? 'jumpAscent' : 'fall';
 }
 
-/** Pure state selector kept separate from Phaser so transitions can be unit tested. */
+/** Backwards-compatible Miko-specific view used by the existing transition test. */
 export function selectMikoAnimation(state: MikoAnimationState): MikoAnimation {
-  if (!state.alive || state.action === 'defeat') return MIKO_ANIMATIONS.defeat;
-  if (state.action) return MIKO_ANIMATIONS[state.action];
-  if (state.onGround) {
-    return Math.abs(state.velocityX) > 1 ? MIKO_ANIMATIONS.run : MIKO_ANIMATIONS.idle;
-  }
-  if (Math.abs(state.velocityY) <= 55) return MIKO_ANIMATIONS.apex;
-  return state.velocityY < 0 ? MIKO_ANIMATIONS.jumpAscent : MIKO_ANIMATIONS.fall;
+  return MIKO_ANIMATIONS[selectAnimationState(state)];
 }

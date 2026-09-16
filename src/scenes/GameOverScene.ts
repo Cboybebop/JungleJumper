@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GAME } from '../constants';
+import { GAME, CHARACTERS } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
@@ -61,6 +61,9 @@ export class GameOverScene extends Phaser.Scene {
       color: '#95A5A6',
       fontFamily: 'Arial',
     }).setOrigin(0.5);
+
+    const character = CHARACTERS[SettingsManager.selectedCharacter] ?? CHARACTERS[0];
+    this.add.image(GAME.WIDTH / 2, 445, character.portrait);
 
     // High score
     if (isNewBest) {

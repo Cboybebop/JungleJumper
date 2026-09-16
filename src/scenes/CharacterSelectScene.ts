@@ -3,7 +3,7 @@ import { COLORS, GAME, CHARACTERS } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
-import { MIKO_TEXTURE } from '../graphics/AnimationRegistry';
+import { getAnimationKey } from '../graphics/AnimationRegistry';
 
 interface MenuButton {
   image: Phaser.GameObjects.Image;
@@ -16,7 +16,8 @@ export class CharacterSelectScene extends Phaser.Scene {
   private focusedCharacterIndex: number | null = null;
   private frames: Phaser.GameObjects.Image[] = [];
   private nameText!: Phaser.GameObjects.Text;
-  private characterSprites: Phaser.GameObjects.Image[] = [];
+  private characterSprites: Phaser.GameObjects.Sprite[] = [];
+  private portrait!: Phaser.GameObjects.Image;
   private menuNavigator: MenuNavigator | null = null;
 
   constructor() {
@@ -63,12 +64,10 @@ export class CharacterSelectScene extends Phaser.Scene {
       this.frames.push(frame);
 
       // Character sprite
-      const characterTexture = CHARACTERS[i].key === 'monkey' && this.textures.exists(MIKO_TEXTURE)
-        ? MIKO_TEXTURE
-        : CHARACTERS[i].key;
-      // Character-select art is shown at the documented integer 3x preview scale.
-      const frameIndex = characterTexture === MIKO_TEXTURE ? 0 : undefined;
-      const charSprite = this.add.image(x, charY, characterTexture, frameIndex).setScale(3);
+      const character = CHARACTERS[i];
+      const characterTexture = this.textures.exists(character.texture) ? character.texture : character.key;
+      const charSprite = this.add.sprite(x, charY, characterTexture, 0).setScale(3);
+      if (this.textures.exists(character.texture)) charSprite.play(getAnimationKey(character, 'idle'));
       this.characterSprites.push(charSprite);
 
       frame.on('pointerdown', () => {
@@ -92,6 +91,7 @@ export class CharacterSelectScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Preview area - larger character
+    this.portrait = this.add.image(GAME.WIDTH / 2, 400, CHARACTERS[this.selectedIndex].portrait);
     this.add.image(GAME.WIDTH / 2, 420, 'platform-normal').setScale(2);
 
     const startButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 160, 'button', 'START', '24px', () => {
@@ -203,12 +203,17 @@ export class CharacterSelectScene extends Phaser.Scene {
         frame.clearTint();
       }
 
-      // Selection and focus are communicated by the frame so pixel art remains
-      // at a crisp, non-fractional 3x scale in every interaction state.
       charSprite.setScale(3);
+      const character = CHARACTERS[i];
+      if (this.textures.exists(character.texture)) {
+        const state = isSelected ? 'celebration' : 'idle';
+        const targetAnimation = getAnimationKey(character, state);
+        if (charSprite.anims.currentAnim?.key !== targetAnimation) charSprite.play(targetAnimation);
+      }
     }
 
     this.nameText.setText(CHARACTERS[this.selectedIndex].name);
+    this.portrait.setTexture(CHARACTERS[this.selectedIndex].portrait);
   }
 
   private cleanup(): void {

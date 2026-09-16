@@ -1,12 +1,11 @@
 import Phaser from 'phaser';
-import { GAME, CHARACTERS } from '../constants';
+import { GAME, CHARACTERS, type CharacterKey } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
 import {
-  MIKO_ANIMATIONS,
-  MIKO_TEXTURE,
-  type MikoAction,
-  selectMikoAnimation,
+  type CharacterAction,
+  getAnimationKey,
+  selectAnimationState,
 } from '../graphics/AnimationRegistry';
 
 interface CharacterAbilities {
@@ -18,8 +17,6 @@ interface CharacterAbilities {
   startWithShield: boolean;
 }
 
-type CharacterKey = typeof CHARACTERS[number]['key'];
-
 const DEFAULT_CHARACTER_ABILITIES: CharacterAbilities = {
   moveSpeedMultiplier: 1,
   jumpHeightMultiplier: 1,
@@ -30,21 +27,21 @@ const DEFAULT_CHARACTER_ABILITIES: CharacterAbilities = {
 };
 
 const CHARACTER_ABILITIES: Record<CharacterKey, Partial<CharacterAbilities>> = {
-  monkey: {
+  miko: {
     jumpHeightMultiplier: 1.2,
     startWithShield: true,
   },
-  parrot: {
+  pico: {
     airJumps: GAME.AIR_JUMP_COUNT,
     airJumpCooldownMs: GAME.DOUBLE_JUMP_COOLDOWN_MS,
   },
-  frog: {
+  hoppy: {
     specialSpringHeightMultiplier: 3,
   },
-  toucan: {
+  tuki: {
     jumpHeightMultiplier: 1.5,
   },
-  gecko: {
+  zippy: {
     moveSpeedMultiplier: 1.5,
   },
 };
@@ -58,18 +55,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private airJumpsRemaining = 0;
   private lastJumpAt = -Infinity;
   private abilities: CharacterAbilities;
-  private readonly usesMikoAnimations: boolean;
-  private action: MikoAction = null;
+  private readonly animationPrefix: string | null;
+  private readonly character: typeof CHARACTERS[number];
+  private action: CharacterAction = null;
   private actionUntil = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     const charIndex = SettingsManager.selectedCharacter;
-    const charKey = CHARACTERS[charIndex]?.key ?? 'monkey';
-    const usesMikoAnimations = charKey === 'monkey' && scene.textures.exists(MIKO_TEXTURE);
-    super(scene, x, y, usesMikoAnimations ? MIKO_TEXTURE : charKey);
+    const character = CHARACTERS[charIndex] ?? CHARACTERS[0];
+    const usesCharacterAnimations = scene.textures.exists(character.texture);
+    super(scene, x, y, usesCharacterAnimations ? character.texture : character.key);
 
-    this.abilities = this.resolveAbilities(charKey as CharacterKey);
-    this.usesMikoAnimations = usesMikoAnimations;
+    this.character = character;
+    this.abilities = this.resolveAbilities(character.key);
+    this.animationPrefix = usesCharacterAnimations ? character.animationPrefix : null;
     this.airJumpsRemaining = this.abilities.airJumps;
 
     scene.add.existing(this);
@@ -85,7 +84,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     body.setSize(18, 26, false);
     body.setOffset(7, 4);
 
-    if (this.usesMikoAnimations) this.play(MIKO_ANIMATIONS.idle);
+    if (this.animationPrefix) this.play(getAnimationKey(this.character, 'idle'));
 
     if (this.abilities.startWithShield) {
       this.addShield(false);
@@ -173,7 +172,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (!this.isAlive) return;
     this.isAlive = false;
     this.action = 'defeat';
-    this.playMikoAnimation();
+    this.playCharacterAnimation();
     AudioManager.death();
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(-300);
     (this.body as Phaser.Physics.Arcade.Body).setAccelerationY(800);
@@ -241,23 +240,23 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setAction('celebration', 1000);
   }
 
-  private setAction(action: Exclude<MikoAction, null>, durationMs: number): void {
+  private setAction(action: Exclude<CharacterAction, null>, durationMs: number): void {
     this.action = action;
     this.actionUntil = this.scene.time.now + durationMs;
-    this.playMikoAnimation();
+    this.playCharacterAnimation();
   }
 
-  private playMikoAnimation(onGround?: boolean): void {
-    if (!this.usesMikoAnimations) return;
+  private playCharacterAnimation(onGround?: boolean): void {
+    if (!this.animationPrefix) return;
     const body = this.body as Phaser.Physics.Arcade.Body;
-    const animation = selectMikoAnimation({
+    const state = selectAnimationState({
       alive: this.isAlive,
       onGround: onGround ?? (body.touching.down || body.blocked.down),
       velocityX: body.velocity.x,
       velocityY: body.velocity.y,
       action: this.action,
     });
-    this.anims.play(animation, true);
+    this.anims.play(getAnimationKey(this.character, state), true);
   }
 
   update(): void {
@@ -283,7 +282,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setScale(1);
 
     if (this.action && this.scene.time.now >= this.actionUntil) this.action = null;
-    this.playMikoAnimation(onGround);
+    this.playCharacterAnimation(onGround);
 
     // Update shield position
     if (this.shieldSprite) {

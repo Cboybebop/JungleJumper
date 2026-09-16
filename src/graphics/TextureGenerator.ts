@@ -18,7 +18,7 @@ export class TextureGenerator {
       const g = scene.make.graphics({ x: 0, y: 0 });
       const s = size;
 
-      switch (char.key) {
+      switch (char.species) {
         case 'monkey':
           // Body
           g.fillStyle(char.color);

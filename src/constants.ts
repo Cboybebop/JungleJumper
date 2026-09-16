@@ -80,12 +80,15 @@ export const DIFFICULTY = {
 };
 
 export const CHARACTERS = [
-  { key: 'monkey', name: 'Miko', color: COLORS.MONKEY_BODY, accent: COLORS.MONKEY_FACE },
-  { key: 'parrot', name: 'Pico', color: COLORS.PARROT_BODY, accent: COLORS.PARROT_WING },
-  { key: 'frog', name: 'Hoppy', color: COLORS.FROG_BODY, accent: COLORS.FROG_BELLY },
-  { key: 'toucan', name: 'Tuki', color: COLORS.TOUCAN_BODY, accent: COLORS.TOUCAN_BEAK },
-  { key: 'gecko', name: 'Zippy', color: COLORS.GECKO_BODY, accent: COLORS.GECKO_SPOTS },
-];
+  { key: 'miko', species: 'monkey', name: 'Miko', color: COLORS.MONKEY_BODY, accent: COLORS.MONKEY_FACE, texture: 'miko-actions', animationPrefix: 'miko', portrait: 'miko-portrait' },
+  { key: 'pico', species: 'parrot', name: 'Pico', color: COLORS.PARROT_BODY, accent: COLORS.PARROT_WING, texture: 'pico-actions', animationPrefix: 'pico', portrait: 'pico-portrait' },
+  { key: 'hoppy', species: 'frog', name: 'Hoppy', color: COLORS.FROG_BODY, accent: COLORS.FROG_BELLY, texture: 'hoppy-actions', animationPrefix: 'hoppy', portrait: 'hoppy-portrait' },
+  { key: 'tuki', species: 'toucan', name: 'Tuki', color: COLORS.TOUCAN_BODY, accent: COLORS.TOUCAN_BEAK, texture: 'tuki-actions', animationPrefix: 'tuki', portrait: 'tuki-portrait' },
+  { key: 'zippy', species: 'gecko', name: 'Zippy', color: COLORS.GECKO_BODY, accent: COLORS.GECKO_SPOTS, texture: 'zippy-actions', animationPrefix: 'zippy', portrait: 'zippy-portrait' },
+] as const;
+
+export type Character = typeof CHARACTERS[number];
+export type CharacterKey = Character['key'];
 
 export const DEFAULT_KEYS = {
   left: 'A',
