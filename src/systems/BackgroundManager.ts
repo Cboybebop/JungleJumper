@@ -38,14 +38,14 @@ export const BACKGROUND_LAYERS: Readonly<Record<LayerName, BackgroundLayerConfig
   landmarks: { texture: 'background-landmarks', depth: -22, parallaxFactor: 0.08, tint: 0x617b83, alpha: 0.24, repeatBehavior: { mode: 'pooled-landmark', spacing: 1500, poolSize: 2 }, biomeAvailability: ['misty-heights', 'sunset-canopy', 'night-storm'] },
   mist: { texture: 'background-mist', depth: -20, parallaxFactor: 0.1, tint: 0xb8d5d5, alpha: 0.15, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ['bright-canopy', 'misty-heights', 'night-storm'] },
   midTrees: { texture: 'background-mid-trees', depth: -18, parallaxFactor: 0.14, tint: 0x557a73, alpha: 0.3, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ['bright-canopy', 'misty-heights'] },
-  trunkStructures: { texture: 'background-trunk-structures', depth: -16, parallaxFactor: 0.2, tint: 0x52655f, alpha: 0.28, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ['lower-jungle', 'night-storm'] },
+  trunkStructures: { texture: 'background-trunk-structures', depth: -16, parallaxFactor: 0.2, tint: 0x52655f, alpha: 0.22, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ['lower-jungle', 'night-storm'] },
   lightShafts: { texture: 'background-light-shafts', depth: -14, parallaxFactor: 0.24, tint: 0xffefbd, alpha: 0.1, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ['bright-canopy', 'sunset-canopy'] },
   foregroundLeaves: { texture: 'background-foreground-leaves', depth: -8, parallaxFactor: 0.34, tint: 0x66866a, alpha: 0.28, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ['sunset-canopy'] },
 };
 
 const BASE: Record<LayerName, number> = { sky: 0xffffff, distantCanopy: 0x60817f, mist: 0xb7d4d1, midTrees: 0x55766d, trunkStructures: 0x4a5e58, foregroundLeaves: 0x668064, lightShafts: 0xffefc2, landmarks: 0x5c7480 };
 const ALTITUDE_BANDS: readonly AltitudeBand[] = [
-  { biome: 'lower-jungle', startsAt: 0, skyColor: 0x2f7e86, palette: { ...BASE, sky: 0x80c7ca, mist: 0x86aaa6, lightShafts: 0xb7cba7 }, alpha: { distantCanopy: 0.55, trunkStructures: 0.75 } },
+  { biome: 'lower-jungle', startsAt: 0, skyColor: 0x2f7e86, palette: { ...BASE, sky: 0x80c7ca, mist: 0x86aaa6, lightShafts: 0xb7cba7 }, alpha: { distantCanopy: 0.55, trunkStructures: 0.7 } },
   { biome: 'bright-canopy', startsAt: 120, skyColor: 0x82d7dc, palette: { ...BASE, sky: 0xffffff, distantCanopy: 0x739b86, lightShafts: 0xfff0b5 }, alpha: { distantCanopy: 0.45, midTrees: 0.65, mist: 0.35, lightShafts: 0.8 } },
   { biome: 'misty-heights', startsAt: 320, skyColor: 0x91b8c2, palette: { ...BASE, sky: 0xc8dadd, distantCanopy: 0x708990, mist: 0xc8dcdf, midTrees: 0x637b7c }, alpha: { distantCanopy: 0.35, mist: 0.75, midTrees: 0.55, landmarks: 0.5 } },
   { biome: 'sunset-canopy', startsAt: 600, skyColor: 0xd88979, palette: { ...BASE, sky: 0xf0a58c, distantCanopy: 0x745f72, mist: 0xb58b91, midTrees: 0x564e65, lightShafts: 0xffc17c, landmarks: 0x514c68 }, alpha: { distantCanopy: 0.4, foregroundLeaves: 0.65, lightShafts: 0.75, landmarks: 0.5 } },

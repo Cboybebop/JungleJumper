@@ -39,7 +39,7 @@ export const BACKGROUND_IMAGE_ASSETS = [
   ['background-distant-canopy', 'distant-canopy.png'],
   ['background-mist', 'mist.png'],
   ['background-mid-trees', 'mid-trees.png'],
-  ['background-trunk-structures', 'trunk-structures.png'],
+  ['background-trunk-structures', 'trunk-structures-seamless.png'],
   ['background-foreground-leaves', 'foreground-leaves.png'],
   ['background-light-shafts', 'light-shafts.png'],
   ['background-landmarks', 'landmarks.png'],
