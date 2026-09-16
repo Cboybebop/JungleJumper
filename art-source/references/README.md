@@ -1,0 +1,1 @@
+The user supplied preferred-layered-style.png on 2026-09-16 to identify the intended layered forest and grass-topped platform style. It is a style reference, not a pixel-exact golden image or approval of its old attachment bugs.

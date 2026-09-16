@@ -1,6 +1,6 @@
 # Visual QA and release gate
 
-Art authority: [art-direction.md](art-direction.md). Current status: **NOT production approved**.
+Art authority: [art-direction.md](art-direction.md). Current status: **automated checks pass; device and art-owner acceptance pending**.
 Generated captures are candidate references, not approved golden images. Record reviewer, date,
 commit, browser/GPU, renderer, viewport, DPR, input device, reduced-motion setting and issue links
 when accepting a row. Never replace approved references merely to make a comparison pass.
@@ -18,7 +18,10 @@ when accepting a row. Never replace approved references merely to make a compari
    to a bundled Playwright `index.mjs` if it is not installed locally, and optionally
    `QA_CHROMIUM` to an installed Chromium executable. The runner saves PNGs, WebM recordings,
    and [report.json](visual-qa-evidence/report.json). It uses isolated browser storage.
-5. `?qa` exposes a development-only game handle for regression instrumentation. Neither this
+5. Run `npm run verify:release` for multi-touch, controller guards, moving bodies, 20 scene
+   cycles, 60-second stress profiles and 36,000 background updates per renderer. Then run
+   `npm run verify:renderer-parity` to compare five palettes and four blend midpoints.
+6. `?qa` exposes a development-only game handle for regression instrumentation. Neither this
    handle nor the gallery route is enabled in a production build.
 
 ## Complete asset checklist
@@ -110,7 +113,7 @@ Run **each scene above**, including pause/settings return paths, with each metho
   active/display objects, bodies, textures, particles, draw calls and texture switches.
 - [ ] Stress 100 overlapping feedback events: pool stays at 96 sprites and 6 labels; exhausted
   decoration is dropped; shutdown frees scene objects and baked UI textures.
-- [ ] Background pool: 9 raster-layer objects (including two landmarks), fixed trunk pool sized
+- [ ] Background pool: 18 raster-layer objects (two palette banks, including four landmarks), fixed trunk pool sized
   for logical viewport height, 18 accents. Counts stay constant through at least 10,000 updates.
 - [ ] Compare counts after 20 menu/game/pause/results cycles; no persistent growth.
 
@@ -136,53 +139,64 @@ never hand-maintain UV coordinates or trim actor cells. No unmeasured atlas opti
   registration, transparent padding, collision edge and background detail hierarchy.
 - [ ] Obtain explicit art-owner acceptance of unresolved deviations and approved golden captures.
 
-## Findings and release blockers
+## Resolved release findings - 2026-09-16
 
-- Character asset geometry/alpha and transition contract tests pass; this is not a no-sliding
-  certification. Alpha bounds vary across all character sheets. Zippy run bounds reach row 31
-  in two frames and row 30 in two; several characters touch a frame edge. Review/re-author
-  padding and contact poses against the bible before approving.
-- Runtime platform sheets are 80×24, while the bible specifies 80×16. Resolve the discrepancy
-  without moving collision contact edges.
-- Runtime display settings change logical game dimensions to browser dimensions; the bible
-  specifies a 480×800 native canvas. Desktop art review must resolve that design difference.
-- Existing menu decorations, UI focus feedback, player squash and particles use fractional
-  scaling. Approve explicit effect/UI exceptions or change them to comply with the bible.
-- Captured Canvas Night Storm remains bright while WebGL applies the intended dark tint.
-  Canvas background tint parity is a release blocker, even though both renderer smoke tests pass.
-- Background images are softer and more detailed than the bible's chunky pixel-art direction;
-  art review must explicitly reconcile this difference.
-- Physical touch/gamepad, long-duration performance, complete accessibility simulation and
-  approved golden comparisons remain release gates even when automated smoke checks pass.
+- All five character sheets have fixed 32x32 cells, a consistent transparent safety envelope,
+  stable planted contact pixels and one run contact baseline. Tight alpha bounds may vary by
+  pose; frames are never individually trimmed or recentered. Run cadence follows horizontal
+  speed. The render foot aligns to the fixed physics body's bottom, including platform carry.
+- Restored grass platforms use their original 80x24 source cells with the existing collision edge preserved. Moving platforms
+  and enemies now preserve custom body dimensions and offsets during every movement update.
+- Every viewport uses the art bible's 480x800 logical canvas. Integer sprite/UI scales replace
+  fractional feedback scaling; authored poses supply squash and stretch.
+- Original layered forest artwork is restored following the user visual review. Five baked biome palettes and
+  bounded crossfade banks work in both renderers. Colored particles also use baked textures.
+- Branches overlap visible bark and platform centers; decorations pivot inside the trunk with
+  subtle sway. Snakes/thorns follow their support, stay within its surface and disappear on collapse.
+  [Attachment regression report](visual-qa-evidence/attachments/report.json) exercises all four
+  platform types through 120 movement samples in both renderers with stable enemy bodies.
+- Touch tracks independent fingers, retains minimum 44 CSS-pixel hit targets, clears on
+  interruption and disables during pause. Gamepad pause/confirm are release guarded across
+  resume and reconnect. Connection listeners are removed on shutdown.
+- Platform/hazard symbols supplement color. Actual label plates and shape-cue contrast pass
+  numeric checks, including grayscale and three color-vision deficiency approximations.
 
-See the evidence report for actual executed checks; unchecked items above remain pending.
+## Executed evidence
 
-## Executed run — 2026-09-16
-
-- **362 browser smoke checks passed, zero page errors** in headless Chromium. Coverage includes
-  51 gallery pages per renderer, keyboard/pointer menu focus, simulated gamepad menu focus,
-  touch dispatch, pause, all actor/platform frame body and origin invariants in both facings,
-  and 36 viewport/DPR/renderer combinations with interactive bounds checked in five scene layouts.
-  Touch dispatch checks establish event delivery, not complete touch usability or multi-touch approval.
+- **362 browser smoke checks passed with zero page errors** across 36 viewport/DPR/renderer
+  combinations, 51 gallery pages per renderer, scene input/focus checks, interactive bounds,
+  and all character/enemy/platform frame body and origin invariants in both facings.
 - Build, character geometry/transitions, scene-transition contracts, feedback-pool contracts,
-  enemy/effect assets and the actual label-plate contrast audit passed. Vite still reports its
-  existing large main-bundle warning.
-- Captured native screenshots and two review recordings for the requested screens and biome
-  fixtures, plus minimum/desktop captures. [Evidence index](visual-qa-evidence/README.md).
-- Live physics verification covered all 5 characters, 4 enemy types and 4 platform types across
-  every frame and both facings. Body size, offsets and origin stayed invariant. This does not
-  clear the alpha-padding or planted-foot visual findings.
-- Short initial-gameplay samples: Canvas 242 display objects; WebGL 248 (random level content
-  differs); particle capacity 96, active particles 0 at sampled idle, label capacity 6. Both
-  samples had p95 frame intervals about 16.68ms. These 1.5-second headless samples are not
-  device performance certification or peak-load measurements.
-- Background gallery total objects stayed **68 → 68** over 10,000 recycling updates. Estimated
-  loaded source RGBA memory was **22.27 MiB**; the large background/layer sources dominate.
-- WebGL initial gameplay averaged **2.91 draw calls/frame**. No atlas was introduced: this
-  sample does not demonstrate material sprite-batching pressure. Re-evaluate during high-altitude
-  enemy/particle stress before deciding to add packing complexity.
-- Fixed a character-selection shutdown crash uncovered by scene cycling, added non-color
-  platform/hazard symbols, improved text contrast with dark label plates, and removed the
-  Scale Manager minimum that could obstruct shrinking during live browser resize.
+  asset registration, platform dimensions and actual label-plate contrast checks pass.
+  Vite retains its existing large main-bundle warning.
+- [Extended release report](visual-qa-evidence/release/report.json): **32 checks passed, zero
+  page errors**. Includes browser multi-touch dispatch, simulated controller guards,
+  moving-body/contact checks and 20 complete scene cycles for each renderer.
+- [Renderer comparison](visual-qa-evidence/release/renderer-parity.json): five endpoints remain below 2/255 mean RGB-channel
+  error. Original translucent layers accumulate more rounding during crossfades: four midpoint
+  comparisons remain below 3/255, within a documented 4/255 blend-only tolerance.
+- Current stress timings, source-memory estimates, object/texture counts and draw calls are
+  recorded in [the 60-second stress profile](visual-qa-evidence/release/stress-profile.json).
+  The final functional rerun uses a one-second profile to recheck cache warm-up without repeating
+  the completed stress workload. Original layered art
+  uses more source texture memory than the rejected flat-color replacement. Interpret headless
+  timings as regression diagnostics, not hardware certification. The background soak advances
+  36,000 updates (10 simulated minutes), not ten real-time minutes of full gameplay.
+- Refreshed screenshots and two WebM recordings are indexed in
+  [the evidence directory](visual-qa-evidence/README.md). The main browser report records
+  completed viewport/input/body checks; captures alone are not visual approval.
 
-**Release remains blocked** on the visual differences and manual/device gates listed above.
+## Remaining acceptance
+
+- Physical phone/tablet and controller checks: devices are available; results are pending.
+  Check simultaneous movement/jump and independent release, rotation, app interruption,
+  menu navigation, pause/resume, held confirmation and controller reconnection.
+- Review candidate stills and recordings against [the art bible](art-direction.md), especially
+  contact motion, minimum-viewport readability and hazard distinction. Numeric color simulations
+  do not establish usability for every viewer. Record art-owner acceptance before promoting
+  these candidates to golden references.
+- Unchecked manual matrix items above (browser zoom/fullscreen, device safe areas, GPU context
+  recovery and physical long-run performance) remain explicit release checks.
+
+The identified implementation blockers are corrected. Production approval remains pending
+manual acceptance; automated checks cannot supply it.

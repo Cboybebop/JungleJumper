@@ -1,0 +1,92 @@
+[
+  {
+    "altitude": 0,
+    "meanChannelError": [
+      0.6959401041666666,
+      0.7020729166666667,
+      0.7068125
+    ],
+    "tolerance": 2,
+    "passed": true
+  },
+  {
+    "altitude": 60,
+    "meanChannelError": [
+      2.1788151041666666,
+      2.164265625,
+      2.2568359375
+    ],
+    "tolerance": 4,
+    "passed": true
+  },
+  {
+    "altitude": 120,
+    "meanChannelError": [
+      1.5915859375,
+      1.6079010416666666,
+      1.64003125
+    ],
+    "tolerance": 2,
+    "passed": true
+  },
+  {
+    "altitude": 220,
+    "meanChannelError": [
+      2.899247395833333,
+      2.635950520833333,
+      2.7440598958333333
+    ],
+    "tolerance": 4,
+    "passed": true
+  },
+  {
+    "altitude": 320,
+    "meanChannelError": [
+      1.08575,
+      1.0780416666666666,
+      1.0371458333333334
+    ],
+    "tolerance": 2,
+    "passed": true
+  },
+  {
+    "altitude": 460,
+    "meanChannelError": [
+      2.1640755208333333,
+      2.4127369791666666,
+      2.7327161458333333
+    ],
+    "tolerance": 4,
+    "passed": true
+  },
+  {
+    "altitude": 600,
+    "meanChannelError": [
+      1.2209583333333334,
+      1.1606302083333333,
+      1.1777291666666667
+    ],
+    "tolerance": 2,
+    "passed": true
+  },
+  {
+    "altitude": 750,
+    "meanChannelError": [
+      2.5264270833333335,
+      2.7166223958333333,
+      2.8314140625
+    ],
+    "tolerance": 4,
+    "passed": true
+  },
+  {
+    "altitude": 900,
+    "meanChannelError": [
+      1.0319088541666666,
+      1.1497682291666667,
+      1.1444114583333334
+    ],
+    "tolerance": 2,
+    "passed": true
+  }
+]

@@ -112,6 +112,7 @@ export class MenuNavigator {
     this.scene.events.off(Phaser.Scenes.Events.UPDATE, this.update, this);
     this.scene.events.off(Phaser.Scenes.Events.SHUTDOWN, this.destroy, this);
     this.scene.events.off(Phaser.Scenes.Events.DESTROY, this.destroy, this);
+    this.scene.input.gamepad?.off('connected', this.connectGamepad, this);
 
     if (this.hasFocus && this.selectedIndex < this.items.length) {
       this.items[this.selectedIndex].onBlur();
@@ -144,9 +145,7 @@ export class MenuNavigator {
   private setupGamepad(): void {
     if (!this.scene.input.gamepad) return;
 
-    this.scene.input.gamepad.once('connected', (pad: Phaser.Input.Gamepad.Gamepad) => {
-      this.gamepad = pad;
-    });
+    this.scene.input.gamepad.on('connected', this.connectGamepad, this);
 
     if (this.scene.input.gamepad.total > 0) {
       this.gamepad = this.scene.input.gamepad.getPad(0);
@@ -247,6 +246,7 @@ export class MenuNavigator {
   }
 
   private resetGamepadState(): void {
+    this.padArmed = false;
     this.prevPadUp = false;
     this.prevPadDown = false;
     this.prevPadLeft = false;
@@ -272,5 +272,10 @@ export class MenuNavigator {
   private normalizeIndex(index: number): number {
     const total = this.items.length;
     return ((index % total) + total) % total;
+  }
+
+  private connectGamepad(pad: Phaser.Input.Gamepad.Gamepad): void {
+    this.gamepad = pad;
+    this.resetGamepadState();
   }
 }

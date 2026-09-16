@@ -21,6 +21,8 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number, y: number, type: PlatformType, variant = 0) {
     const textureKey = `platform-${type}`;
     super(scene, x, y, textureKey);
+    // Restored grass art retains the original collision top at y - 10.
+    this.setOrigin(0.5);
     if (this.texture.has('0')) this.setFrame(0);
 
     this.platformType = type;
@@ -116,7 +118,9 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
         Math.floor(this.scene.time.now / 120) + this.animationOffset
       ) % PLATFORM_FRAME_COUNT;
       this.setVisualFrame(indicatorFrame);
-      body.updateFromGameObject();
+      // updateFromGameObject would reset the custom body to the full sprite frame.
+      body.x = this.x - this.displayOriginX + body.offset.x;
+      body.y = this.y - this.displayOriginY + body.offset.y;
     } else {
       this.movementDeltaX = 0;
     }
@@ -136,21 +140,17 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
   }
 
   private createTreeConnector(): void {
-    const direction = this.x < GAME.WIDTH / 2 ? -1 : 1;
-    const trunkX = GAME.WIDTH / 2 + direction * GAME.TRUNK_WIDTH / 2;
-    const platformEdge = this.x - direction * this.getSurfaceWidth() / 2;
-    if (Math.abs(platformEdge - trunkX) < 6) return;
-
-    const y = this.y + 5;
+    // Start inside the visible bark, not at its transparent frame edge.
+    const trunkX = GAME.WIDTH / 2;
+    const y = this.y + 2;
+    if (Math.abs(this.x - trunkX) < 12) return;
     this.connector = this.scene.add.graphics().setDepth(3);
-    this.connector.lineStyle(7, 0x211936, 1);
-    this.connector.lineBetween(trunkX, y + 2, platformEdge, y);
-    this.connector.lineBetween(platformEdge - direction * 10, y, platformEdge - direction * 3, y - 5);
-    this.connector.lineStyle(4, 0x5B3A6B, 1);
-    this.connector.lineBetween(trunkX, y + 1, platformEdge, y - 1);
-    this.connector.lineBetween(platformEdge - direction * 10, y, platformEdge - direction * 3, y - 5);
-    this.connector.lineStyle(1, 0xFFE6A3, 0.45);
-    this.connector.lineBetween(trunkX, y - 1, platformEdge, y - 2);
+    this.connector.lineStyle(9, 0x352328, 1);
+    this.connector.lineBetween(trunkX, y + 3, this.x, y);
+    this.connector.lineStyle(5, 0x765039, 1);
+    this.connector.lineBetween(trunkX, y + 2, this.x, y - 1);
+    this.connector.lineStyle(2, 0xa57948, 1);
+    this.connector.lineBetween(trunkX, y, this.x, y - 3);
   }
 
   private setVisualFrame(frame: number): void {

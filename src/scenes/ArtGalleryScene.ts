@@ -78,7 +78,7 @@ export class ArtGalleryScene extends Phaser.Scene {
       ui.text(240, 110, 'BURST / SHARDS / RING / TRAIL / LABEL\nUses current reduced-motion setting', { fontSize: '11px', align: 'center' }).setOrigin(0.5);
       this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => feedback.destroy());
     } else if (page.title.startsWith('background-') || page.title.startsWith('Full asset:')) {
-      this.add.image(240, 400, page.samples[0].texture!).setDepth(-1);
+      this.add.image(240, 400, page.samples[0].texture!).setScale(1).setDepth(-1);
     } else {
       page.samples.forEach((sample, index) => {
         const x = 80 + index % 3 * 160;
@@ -118,7 +118,7 @@ export class ArtGalleryScene extends Phaser.Scene {
     if (this.background && biome !== undefined) {
       const y = -this.elapsed * 0.1;
       this.cameras.main.scrollY = y;
-      this.background.update(y + this.cameras.main.height / 2, RUN_BIOMES[biome].startsAt);
+      this.background.update(y + this.cameras.main.height / 2, RUN_BIOMES[biome].startsAt, RUN_BIOMES[biome].startsAt);
       // Keep controls fixed while exercising the production recycling pool.
       this.children.list.forEach(o => { if (o instanceof Phaser.GameObjects.Text || o instanceof Phaser.GameObjects.Container) o.setScrollFactor(0); });
     }

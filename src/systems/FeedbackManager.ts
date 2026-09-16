@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 import { SettingsManager } from './SettingsManager';
 
+const PARTICLE_COLORS = [0xffffff, 0xd8c49b, 0xffe6a3, 0x9ef4ff, 0x87cefa, 0x00bfff, 0xffad65, 0xf1c40f, 0xc0392b, 0x6b4a7b];
+const particleTexture = (kind: string, tint: number) => `${kind}-${PARTICLE_COLORS.includes(tint) ? tint : 0xffffff}`;
+
 /** Scene-owned, bounded pools. Exhaustion drops decoration, never gameplay. */
 export class FeedbackManager {
   private particles: Phaser.GameObjects.Sprite[] = [];
@@ -12,6 +15,19 @@ export class FeedbackManager {
   private lastTrail = -Infinity;
 
   constructor(private scene: Phaser.Scene) {
+    // Bake the bounded effect palette once: Canvas does not apply sprite tint.
+    for (const tint of PARTICLE_COLORS) for (const kind of ['feedback-dot', 'feedback-ring']) {
+      const key = particleTexture(kind, tint);
+      if (scene.textures.exists(key)) continue;
+      const g = scene.make.graphics({ x: 0, y: 0 });
+      g.fillStyle(tint);
+      if (kind === 'feedback-dot') g.fillRect(0, 0, 4, 4);
+      else {
+        // Stepped native-pixel ring, with no antialiased circle edge.
+        for (const [x, y, w, h] of [[8,2,16,2],[4,4,4,2],[24,4,4,2],[2,6,2,20],[28,6,2,20],[4,26,4,2],[24,26,4,2],[8,28,16,2]]) g.fillRect(x,y,w,h);
+      }
+      g.generateTexture(key, kind === 'feedback-dot' ? 4 : 32, kind === 'feedback-dot' ? 4 : 32); g.destroy();
+    }
     if (!scene.textures.exists('feedback-dot')) {
       const g = scene.make.graphics({ x: 0, y: 0 });
       g.fillStyle(0xffffff).fillRect(0, 0, 4, 4);
@@ -42,10 +58,10 @@ export class FeedbackManager {
     count = reduced ? Math.min(count, 4) : Math.min(count, 20);
     distance = reduced ? 8 : distance;
     for (let i = 0; i < count; i++) {
-      const p = this.acquire();
+      const p = this.acquire(particleTexture('feedback-dot', tint));
       if (!p) break;
       const angle = (Math.PI * 2 * i) / count;
-      p.setPosition(x, y).setTint(tint).setScale(shards ? 0.5 : 0.7, shards ? 1.7 : 0.7).setRotation(angle);
+      p.setPosition(x, y).setScale(1).setRotation(shards ? Math.round(angle / (Math.PI / 2)) * Math.PI / 2 : 0);
       this.scene.tweens.add({ targets: p,
         x: x + Math.cos(angle) * distance, y: y + Math.sin(angle) * distance - distance / 3,
         alpha: 0, duration: reduced ? 180 : 320, ease: 'Quad.easeOut',
@@ -55,11 +71,11 @@ export class FeedbackManager {
   }
 
   ring(x: number, y: number, tint: number): void {
-    const p = this.acquire('feedback-ring');
+    const p = this.acquire(particleTexture('feedback-ring', tint));
     if (!p) return;
     const reduced = SettingsManager.getReducedMotion();
-    p.setPosition(x, y).setTint(tint).setScale(reduced ? 0.8 : 0.4);
-    this.scene.tweens.add({ targets: p, scale: reduced ? 0.8 : 1.4, alpha: 0, duration: 260,
+    p.setPosition(x, y).setScale(1);
+    this.scene.tweens.add({ targets: p, alpha: 0, duration: reduced ? 180 : 260,
       onComplete: () => { p.setActive(false).setVisible(false); },
     });
   }
@@ -80,12 +96,10 @@ export class FeedbackManager {
     this.burst(x, y, 0xffe6a3, 1, 4);
   }
 
-  squash(sprite: Phaser.GameObjects.Sprite, x: number, y: number): void {
+  squash(sprite: Phaser.GameObjects.Sprite, _x: number, _y: number): void {
     this.scene.tweens.killTweensOf(sprite);
     sprite.setScale(1);
-    if (SettingsManager.getReducedMotion()) return;
-    sprite.setScale(Phaser.Math.Clamp(x, 0.88, 1.12), Phaser.Math.Clamp(y, 0.88, 1.12));
-    this.scene.tweens.add({ targets: sprite, scaleX: 1, scaleY: 1, duration: 150, ease: 'Quad.easeOut' });
+    // Anticipation/landing poses supply pixel-authored squash. Never resample the actor.
   }
 
   impulse(pixels: number, duration = 90): void {

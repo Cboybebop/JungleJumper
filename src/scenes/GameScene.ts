@@ -224,6 +224,11 @@ export class GameScene extends Phaser.Scene {
     }
     for (const o of data.obstacles) {
       const obstacle = new Obstacle(this, o.x, o.y, o.type as any);
+      if (o.type === 'snake' || o.type === 'thorns') {
+        const support = (this.platforms.getChildren() as Platform[]).find(p =>
+          Math.abs(p.x - o.x) < 1 && Math.abs(p.y - (o.y + (o.type === 'snake' ? 16 : 14))) < 1);
+        if (support) obstacle.attachToPlatform(support);
+      }
       this.obstacles.add(obstacle);
     }
     for (const s of data.shields) {
@@ -361,6 +366,7 @@ export class GameScene extends Phaser.Scene {
     if (this.gameOver || this.deathPending || SceneTransition.isBusy(this)) return;
     this.feedback.cancelHitStop();
     this.isPaused = !this.isPaused;
+    this.inputManager.setEnabled(!this.isPaused);
 
     if (this.isPaused) {
       this.physics.pause();

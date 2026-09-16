@@ -104,7 +104,7 @@ export class SettingsManager {
   }
 
   static getDisplayModeLabel(): string {
-    return this.displayMode === 'mobile' ? 'AUTO (MOBILE)' : 'AUTO (DESKTOP WIDE)';
+    return this.displayMode === 'mobile' ? 'FIT (TOUCH)' : 'FIT (DESKTOP)';
   }
 
   static getResolutionLabel(): string {
@@ -132,8 +132,8 @@ export class SettingsManager {
       };
     }
 
-    const width = Math.max(320, Math.floor(window.innerWidth));
-    const height = Math.max(480, Math.floor(window.innerHeight));
+    const width = 480;
+    const height = 800;
     const mode: DisplayMode = this.isMobileDevice() ? 'mobile' : 'desktop';
 
     return { mode, width, height };

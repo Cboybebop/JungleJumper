@@ -40,19 +40,19 @@ export class GameUIScene extends Phaser.Scene {
     const character = CHARACTERS[SettingsManager.selectedCharacter] ?? CHARACTERS[0];
     const width = Math.min(360, GAME.WIDTH - safe.left - safe.right);
     const panel = ui.panel(0, 0, width, 84);
-    const portrait = this.add.image(-width / 2 + 28, -17, character.portrait).setDisplaySize(36, 36);
-    const cue = ui.text(-width / 2 + 54, -32, `${character.name.toUpperCase()} · READY!`, {
+    const portrait = this.add.image(-width / 2 + 40, 0, character.portrait);
+    const cue = ui.text(-width / 2 + 78, -32, `${character.name.toUpperCase()} · READY!`, {
       fontSize: '12px', color: '#FFE6A3',
     });
-    const biome = ui.text(-width / 2 + 54, -12, 'LOWER JUNGLE', { fontSize: '9px', color: '#87CEEB', backgroundColor: '#211936' });
+    const biome = ui.text(-width / 2 + 78, -12, 'LOWER JUNGLE', { fontSize: '9px', color: '#87CEEB', backgroundColor: '#211936' });
     const keys = SettingsManager.getKeys();
     const touch = this.sys.game.device.input.touch && SettingsManager.getMobileControlsEnabled();
     const pad = (this.input.gamepad?.total ?? 0) > 0;
     const controls = touch ? 'TAP LEFT / RIGHT TO MOVE · TAP JUMP' : pad
       ? 'STICK / D-PAD MOVE · A JUMP'
       : `${keys.left}/${keys.right} MOVE · ${keys.jump} JUMP`;
-    const reminder = ui.text(0, 9, `${controls}\nJUMP AGAIN IN AIR`, {
-      fontSize: '9px', align: 'center', wordWrap: { width: width - 20 },
+    const reminder = ui.text(30, 9, `${controls}\nJUMP AGAIN IN AIR`, {
+      fontSize: '9px', align: 'center', wordWrap: { width: width - 90 },
     }).setOrigin(0.5, 0);
     this.readyCard = this.add.container(GAME.WIDTH / 2, safe.top + 90, [panel, portrait, cue, biome, reminder]).setDepth(104);
     this.time.delayedCall(1600, () => {

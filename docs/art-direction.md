@@ -10,7 +10,9 @@ with the immediate readability of a classic portable platformer, but with a broa
 color range and cleaner animation than hardware-era work. Shapes are chunky and
 graphic, corners are deliberately stepped, and important faces and poses read at
 native size. Avoid noisy single-pixel texture, photorealism, vector-smooth edges,
-high-resolution painted detail, and faux scanline or LCD filters.
+faux scanline or LCD filters. The user-selected layered forest background is an explicit
+exception to simplified actor shading: preserve its atmospheric detail. See
+[the preferred visual reference](../art-source/references/preferred-layered-style.png).
 
 The native gameplay canvas is **480 × 800 px**. Judge gameplay art at 100% and at an
 integer zoom before approving it; zoomed-in inspection alone can hide readability
@@ -127,14 +129,14 @@ dimensions). Never use fractional scale, and never scale one axis independently.
 | Standard enemies | 32 × 32 | 32 × 32 | 1× gameplay |
 | Large enemies / mini-bosses | 48 × 48 | 48 × 48 | 1× gameplay |
 | Pickups | 16 × 16 | 16 × 16 | 1× gameplay; 2× reward callout |
-| Standard platforms | 80 × 16 | 80 × 16 | 1×; tile or assemble variants rather than stretch |
-| Narrow platforms | 48 × 16 | 48 × 16 | 1×; never stretch to standard width |
+| Standard platforms | 80 × 24 | 80 × 24 | 1×; original grass-topped artwork |
+| Narrow platforms | 80 × 24 cell | 42px collision surface | 1×; preserve transparent registration |
 | Effects, small | 32 × 32 | 32 × 32 | 1× gameplay |
 | Effects, large | 64 × 64 | 64 × 64 | 1× gameplay |
 | Portraits | 64 × 64 | 64 × 64 | 1× HUD/menu; 2× only in dedicated results layout |
 | UI icons | 16 × 16 | 16 × 16 | 1× compact HUD; 2× menus |
 | Menu illustrations | 160 × 144 | 160 × 144 | 2× (320 × 288 display) |
-| Background tile | 240 × 400 | 240 × 400 | 2× to cover the 480 × 800 canvas |
+| Background layer | 480 × 800 | 480 × 800 | 1×; original atmospheric layers |
 | Full background | 480 × 800 | 480 × 800 | 1× |
 
 Camera/Scale Manager fitting may resize the entire 480 × 800 canvas to the browser.
@@ -166,8 +168,12 @@ Every runtime sprite sheet must meet all of these requirements:
   and effects, center for flying actors, pickups, icons, and radial effects. Keep feet
   or the intended origin on that point; do not auto-trim individual frames.
 - Include no spacing, margin, or padding between sheet frames. Transparent padding
-  **inside each fixed frame** is allowed and must remain identical in extent across
-  the animation. Loose standalone art may have a one-pixel transparent safety border.
+  **inside each fixed frame** uses a fixed safety envelope, never per-frame trimming or
+  recentering. For the 32×32 player sheets, column 0, column 31, row 0 and rows 30–31
+  remain transparent in every pose; the grounded contact edge is y=30. Tight alpha bounds
+  may change as limbs move within that envelope. Planted contact pixels at rows 28–29
+  must remain identical through idle, anticipation and landing. Loose standalone art
+  may have a one-pixel transparent safety border.
 - Use nearest-neighbor/no interpolation when drawing, resizing, exporting, loading,
   and displaying. Palette-indexed authoring is welcome, but export RGBA consistently.
 - Opaque pixel-art assets contain only alpha 0 or 255. Partially transparent pixels
@@ -179,3 +185,24 @@ every generated concept at native size. When useful, manually redraw/reduce it o
 the approved pixel grid, restrict it to the master palette, clean clusters and alpha,
 restore the registration point, and verify silhouette and sheet rules. Never ship an
 unedited, downscaled illustration output as gameplay pixel art.
+
+## Reproducible production sources
+
+- `scripts/generate-character-assets.mjs` is the native pixel authoring source for Pico,
+  Hoppy, Tuki and Zippy; Miko's source strip is preserved in
+  `art-source/characters/miko-actions-source.png`. One export registration pass reserves
+  the guard band and closes extreme-pose contours. Never normalize each pose by its bbox.
+- User visual correction (2026-09-16) supersedes the earlier simplified background/platform
+  experiment: retain the original layered forest PNGs and grass-topped 80×24 platform strips.
+  Do not replace these with three flat color bands or rectangular metallic-looking platforms.
+- `scripts/process-world-assets.py` extracts grass platforms from the preserved source atlas.
+  The sprite origin is centered, with an 8px-high body at local row 2; collision top stays y−10.
+- `src/graphics/PixelBackgrounds.ts` now bakes biome color multiplication into the original
+  480×800 layered images. Both renderers display the same baked textures and bounded crossfades.
+  Preserve canopy, mist, tree silhouettes, shafts and landmark depth from the reference artwork.
+- Branches overlap visible bark and the platform center behind the grass art. Grounded hazards
+  own a supporting-platform reference, patrol within its surface, and disappear with that support.
+- Vines, flowers, leaves and fruit pivot inside the visible trunk. Gentle rotational sway is an
+  intentional decoration exception; reduced motion keeps their attachment points stationary.
+- Focus and pressed UI states use texture changes and a two-pixel offset. Actor squash remains
+  authored in poses. Outer canvas FIT scales the native 480×800 view to the browser.

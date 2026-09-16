@@ -1,0 +1,16 @@
+[
+  {
+    "renderer": "canvas",
+    "supported": true,
+    "bodiesStable": true,
+    "removedWithSupport": true,
+    "errors": []
+  },
+  {
+    "renderer": "webgl",
+    "supported": true,
+    "bodiesStable": true,
+    "removedWithSupport": true,
+    "errors": []
+  }
+]

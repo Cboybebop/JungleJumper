@@ -105,7 +105,7 @@ export class UIFactory {
       if (!image.scene || !container.scene) return;
       const state = pressed ? 'pressed' : focused ? 'focused' : 'normal';
       image.setTexture(texture(state));
-      container.setScale(pressed ? 0.98 : focused ? 1.035 : 1);
+      container.setScale(1);
       container.setY(y + (pressed ? 2 : 0));
       container.setAlpha(enabled ? 1 : 0.5);
     };
@@ -181,7 +181,7 @@ export class UIFactory {
     const render = () => {
       if (!panel.scene || !container.scene) return;
       panel.setTexture(active ? panelKeys.active : focused ? panelKeys.focused : panelKeys.normal);
-      container.setScale(focused && !active ? 1.01 : 1);
+      container.setScale(1);
     };
     const activate = () => {
       if (!options.onActivate || SceneTransition.isBusy(this.scene)) return;
@@ -228,7 +228,7 @@ export class UIFactory {
     const render = () => {
       if (!image.scene || !container.scene) return;
       image.setTexture(`ui-pause-${pressed ? 'pressed' : focused ? 'focused' : 'normal'}`);
-      container.setScale(pressed ? 0.96 : focused ? 1.06 : 1);
+      container.setScale(1);
     };
     const activate = () => {
       if (!enabled || SceneTransition.isBusy(this.scene)) return;

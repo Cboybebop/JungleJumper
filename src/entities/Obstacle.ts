@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import type { Platform } from './Platform';
 import { GAME } from '../constants';
 import { stateCue } from '../graphics/StateCue';
 import type { ObstacleType } from '../systems/LevelGenerator';
@@ -26,6 +27,7 @@ const BODY_SHAPES: Record<ObstacleType, BodyShape> = {
 
 export class Obstacle extends Phaser.Physics.Arcade.Sprite {
   readonly obstacleType: ObstacleType;
+  private support?: Platform;
   private moveSpeed = 0;
   private moveRange = 0;
   private motionOriginX = 0;
@@ -72,6 +74,25 @@ export class Obstacle extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  attachToPlatform(platform: Platform): void {
+    this.support = platform;
+    this.moveRange = Math.max(0, (platform.getSurfaceWidth() - 32) / 2);
+    this.syncSupport();
+  }
+
+  private syncSupport(): boolean {
+    if (!this.support) return true;
+    if (!this.support.active || !this.support.body?.enable) { this.destroy(); return false; }
+    this.motionOriginX = this.support.x;
+    // Authored grounded enemy contact is local row 29 (center + 13).
+    this.y = this.support.body.top - 13;
+    if (this.obstacleType === 'thorns') this.x = this.support.x;
+    const body = this.body as Phaser.Physics.Arcade.StaticBody;
+    body.x = this.x - this.displayOriginX + body.offset.x;
+    body.y = this.y - this.displayOriginY + body.offset.y;
+    return true;
+  }
+
   private applyStableBody(): void {
     const shape = BODY_SHAPES[this.obstacleType];
     const body = this.body as Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody;
@@ -103,7 +124,7 @@ export class Obstacle extends Phaser.Physics.Arcade.Sprite {
   }
 
   updateObstacle(playerX: number, playerY: number): void {
-    if (this.resolved) return;
+    if (!this.syncSupport() || this.resolved) return;
 
     const now = this.scene.time.now;
     const closeToPlayer = Math.abs(playerX - this.x) < 64 && Math.abs(playerY - this.y) < 54;
@@ -118,14 +139,16 @@ export class Obstacle extends Phaser.Physics.Arcade.Sprite {
       case 'snake': {
         const body = this.body as Phaser.Physics.Arcade.StaticBody;
         this.x = this.motionOriginX + Math.sin(now * 0.002 * this.moveSpeed) * this.moveRange;
-        body.updateFromGameObject();
+        body.x = this.x - this.displayOriginX + body.offset.x;
+        body.y = this.y - this.displayOriginY + body.offset.y;
         break;
       }
       case 'bat': {
         const body = this.body as Phaser.Physics.Arcade.StaticBody;
         this.x = this.motionOriginX + Math.sin(now * 0.001 * this.moveSpeed) * this.moveRange;
         this.y = this.motionOriginY + Math.sin(now * 0.003) * 4;
-        body.updateFromGameObject();
+        body.x = this.x - this.displayOriginX + body.offset.x;
+        body.y = this.y - this.displayOriginY + body.offset.y;
         break;
       }
     }

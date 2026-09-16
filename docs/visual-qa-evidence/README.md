@@ -34,16 +34,25 @@ Production button/row labels now have dark backing plates because white-on-green
 2.1:1. Raw panel palette diagnostics are retained, so future changes cannot silently reintroduce
 those low-contrast pairings.
 
-Unresolved differences:
+The previous implementation differences are corrected: fixed 480x800 logical canvas,
+original grass-topped 80x24 platforms, registered character contacts/guard bands, integer sprite scales, and restored layered
+forest backgrounds with baked palettes shared by Canvas and WebGL. Colored feedback also uses
+baked textures. Palette comparisons cover five endpoints and four blend midpoints.
 
-- Canvas Night Storm remains bright while WebGL applies the dark tint. Cross-renderer visual
-  parity is not approved. Compare the two Night Storm images directly.
-- Background art has much finer, softer detail than the bible's chunky three-band pixel-art
-  direction. It needs an art-owner decision or replacement; image existence is not compliance.
-- Character bounds/padding vary by pose and some touch sheet-cell edges. Zippy's run bottom
-  changes by one pixel. The live body/origin checks pass independently of these visual findings.
-- Platform sheet size and dynamic logical canvas dimensions differ from the bible. Existing
-  fractional decorative/UI scaling also requires reconciliation.
+Additional evidence:
 
-Physical controller/mobile testing, planted-foot motion review, full color-vision simulation,
-long-run profiling and art-owner approval are still pending. See [the checklist](../visual-qa.md).
+- [Release report](release/report.json): multi-touch, controller guards, moving bodies,
+  scene-cycle counts and ten simulated minutes of background recycling.
+- [60-second stress profiles](release/stress-profile.json): preserved full-duration measurements;
+  the final cache-warm-up regression rerun uses a one-second sample.
+- [Renderer comparison](release/renderer-parity.json): five endpoints below 2/255; layered blend
+  midpoints below 3/255 (4/255 tolerance for accumulated alpha rounding).
+- `release/*-palette-*.png`: isolated palettes and blends for direct comparison.
+- [Asset bounds](asset-bounds.json): fixed safety envelopes, planted contacts and run baselines.
+- [Contrast](contrast.json): label plates and simulated color-vision shape-cue contrast.
+
+[Attachment checks](attachments/report.json) verify enemies on every platform type.
+Branches and decorations now attach to visible bark. Physical controller/mobile results and
+final visual acceptance remain pending; verify target hardware performance using the current
+release profile. These remain candidate references.
+See [the checklist](../visual-qa.md) for remaining manual gates.

@@ -95,7 +95,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setBounce(0);
     this.setDepth(10);
     this.setAlpha(0);
-    this.visual = scene.add.sprite(x, y, this.texture.key, this.frame.name).setDepth(10);
+    this.visual = scene.add.sprite(x, y + 14, this.texture.key, this.frame.name).setOrigin(0.5, 30 / 32).setDepth(10);
     scene.events.on(Phaser.Scenes.Events.POST_UPDATE, this.syncVisual, this);
 
     // This fixed body is intentionally independent of each frame's transparent
@@ -288,6 +288,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       action: this.action,
     });
     this.anims.play(getAnimationKey(this.character, state), true);
+    // Gait cadence follows relative locomotion, not platform carry or wall contact.
+    this.anims.timeScale = state === 'run' ? Math.abs(body.velocity.x) / GAME.PLAYER_SPEED : 1;
   }
 
   update(): void {
@@ -326,7 +328,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private syncVisual(): void {
     // Only the render proxy is transformed. The Arcade sprite stays at scale 1.
     this.visual.setTexture(this.texture.key, this.frame.name).setFlipX(this.flipX);
-    this.visual.setPosition(this.x, this.y + (1 - this.visual.scaleY) * 14);
+    this.visual.setPosition(this.x, this.y + 14);
     this.shieldSprite?.setPosition(this.x, this.y);
   }
 

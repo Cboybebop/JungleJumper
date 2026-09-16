@@ -36,7 +36,7 @@ export class SettingsScene extends Phaser.Scene {
     const rowHeight = compact ? 26 : 36;
     const visualHeight = compact ? 24 : 32;
     const startY = compact ? 76 : 120;
-    const fontSize = compact ? 10 : 13;
+    const fontSize = compact ? 14 : 20;
 
     this.rows = [];
     this.listeningRow = null;

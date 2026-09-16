@@ -37,8 +37,8 @@ export class CharacterSelectScene extends Phaser.Scene {
 
     // Background decoration
     this.add.tileSprite(GAME.WIDTH / 2, GAME.HEIGHT / 2, GAME.TRUNK_WIDTH, GAME.HEIGHT, 'world-trunk-0');
-    this.add.image(60, 100, 'world-cloud').setScale(0.5).setAlpha(0.6);
-    this.add.image(400, 150, 'world-cloud').setScale(0.7).setAlpha(0.5);
+    this.add.image(60, 100, 'world-cloud').setScale(1).setAlpha(0.6);
+    this.add.image(400, 150, 'world-cloud').setScale(1).setAlpha(0.5);
 
     // Title
     ui.text(GAME.WIDTH / 2, compact ? 42 : 60, 'CHOOSE YOUR\nCLIMBER', {
@@ -96,8 +96,8 @@ export class CharacterSelectScene extends Phaser.Scene {
     // Preview area - larger character
     const portraitY = compact ? 325 : 400;
     this.portrait = this.add.image(GAME.WIDTH / 2, portraitY, CHARACTERS[this.selectedIndex].portrait)
-      .setScale(compact ? 0.75 : 1);
-    if (!compact) this.add.image(GAME.WIDTH / 2, 420, 'platform-normal', 1).setScale(2);
+      .setScale(1);
+    if (!compact) this.add.image(GAME.WIDTH / 2, 440, 'platform-normal', 1).setScale(2);
 
     const startButton = ui.button(GAME.WIDTH / 2, GAME.HEIGHT - (compact ? 110 : 160), 'START', {
       fontSize: compact ? 16 : 18,
@@ -184,7 +184,7 @@ export class CharacterSelectScene extends Phaser.Scene {
         ? 'ui-selection-frame-focused'
         : isSelected ? 'ui-selection-frame-selected' : 'ui-selection-frame-normal');
 
-      charSprite.setScale(GAME.HEIGHT < 620 || GAME.WIDTH < 440 ? 2 : 3);
+      charSprite.setScale(2);
       const character = CHARACTERS[i];
       if (this.textures.exists(character.texture)) {
         const state = isSelected ? 'celebration' : 'idle';

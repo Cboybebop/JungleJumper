@@ -295,5 +295,29 @@
     "asset": "HUD biome plate",
     "ratio": 9.59,
     "actualUsagePass": true
+  },
+  {
+    "asset": "platform/hazard shape cues",
+    "simulation": "protanopia",
+    "ratio": 13.04,
+    "actualUsagePass": true
+  },
+  {
+    "asset": "platform/hazard shape cues",
+    "simulation": "deuteranopia",
+    "ratio": 14.01,
+    "actualUsagePass": true
+  },
+  {
+    "asset": "platform/hazard shape cues",
+    "simulation": "tritanopia",
+    "ratio": 13.05,
+    "actualUsagePass": true
+  },
+  {
+    "asset": "platform/hazard shape cues",
+    "simulation": "grayscale",
+    "ratio": 13.61,
+    "actualUsagePass": true
   }
 ]

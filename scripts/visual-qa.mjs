@@ -98,7 +98,11 @@ try {
       return objects.map(o => {
         const shape = () => JSON.stringify([o.body.width,o.body.height,o.body.offset.x,o.body.offset.y,o.originX,o.originY]);
         const baseline = shape();
-        const stable = [false,true].every(flip => { o.setFlipX(flip); return o.texture.getFrameNames().every(frame => { o.setFrame(frame); return shape() === baseline; }); });
+        const stable = [false,true].every(flip => { o.setFlipX(flip); return o.texture.getFrameNames().every(frame => {
+          o.setFrame(frame);
+          o.updatePlatform?.(); o.updateObstacle?.(-1000, -1000);
+          return shape() === baseline;
+        }); });
         const result = { texture: o.texture.key, stable, body: baseline }; o.destroy(); return result;
       });
     });
@@ -111,6 +115,9 @@ try {
     await page.keyboard.down('d'); await page.waitForTimeout(180); await page.keyboard.up('d');
     await page.keyboard.press('Space');
     await capture(page, `${renderer}-gameplay`);
+    // Isolate pause from the preceding random gameplay: a lethal collision there
+    // legitimately prevents pause and must not invalidate this menu fixture.
+    await start(page, 'Game');
     await page.evaluate(() => window.__visualQA.scene.getScene('Game').togglePause());
     await capture(page, `${renderer}-pause`);
     check(`${renderer}/pause`, await page.evaluate(() => window.__visualQA.scene.getScene('Game').isPaused));

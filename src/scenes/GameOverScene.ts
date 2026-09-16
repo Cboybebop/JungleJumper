@@ -71,7 +71,7 @@ export class GameOverScene extends Phaser.Scene {
     const character = CHARACTERS[SettingsManager.selectedCharacter] ?? CHARACTERS[0];
     const resultY = compact ? 284 : 435;
     const result = this.add.sprite(GAME.WIDTH / 2, resultY,
-      this.textures.exists(character.texture) ? character.texture : character.key).setScale(compact ? 1.75 : 3);
+      this.textures.exists(character.texture) ? character.texture : character.key).setScale(compact ? 2 : 3);
     const animation = getAnimationKey(character, isNewBest ? 'celebration' : 'defeat');
     if (this.anims.exists(animation)) {
       result.play(animation);
@@ -129,8 +129,8 @@ export class GameOverScene extends Phaser.Scene {
     });
 
     // Decorative elements
-    this.add.image(80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(0.6).setAlpha(0.3);
-    this.add.image(GAME.WIDTH - 80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(0.6).setAlpha(0.3).setFlipX(true);
+    this.add.image(80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(1).setAlpha(0.3);
+    this.add.image(GAME.WIDTH - 80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(1).setAlpha(0.3).setFlipX(true);
   }
 
   private transitionTo(sceneKey: string): void {

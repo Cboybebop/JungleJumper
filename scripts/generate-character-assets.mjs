@@ -27,6 +27,10 @@ class Canvas {
   }
   pixel(x, y, color) {
     x = Math.round(x); y = Math.round(y);
+    // Native actor canvas reserves a constant guard band and a contact row at 29.
+    if (this.width === FRAME && this.height === FRAME) {
+      x = Math.max(1, Math.min(30, x)); y = Math.max(1, Math.min(29, y));
+    }
     if (x < 0 || y < 0 || x >= this.width || y >= this.height) return;
     this.data.set(color, (y * this.width + x) * 4);
   }
@@ -168,8 +172,8 @@ function zippy(p) {
   const squash = p.squash ?? 0; const stretch = p.stretch ?? 0; const run = p.run ?? 0;
   ellipse(body, 16, 15 + y, 5 + squash, 7 - Math.min(2, squash) + stretch); ellipse(body, 17, 8 + y, 6, 5);
   line(body, 12, 13 + y, 5 - run, 10 + tail, 2); line(body, 20, 13 + y, 27 + run, 10 - tail, 2);
-  line(body, 12, 19 + y, 6 + run, 25 - tail, 2); line(body, 20, 19 + y, 26 - run, 25 + tail, 2);
-  ellipse(body, 4 - run, 10 + tail, 2, 1); ellipse(body, 28 + run, 10 - tail, 2, 1); ellipse(body, 5 + run, 26 - tail, 2, 1); ellipse(body, 27 - run, 26 + tail, 2, 1);
+  line(body, 12, 19 + y, 6 + run, 26, 2); line(body, 20, 19 + y, 26 - run, 26, 2);
+  ellipse(body, 4 - run, 10 + tail, 2, 1); ellipse(body, 28 + run, 10 - tail, 2, 1); ellipse(body, 5 + run, 27, 2, 1); ellipse(body, 27 - run, 27, 2, 1);
   line(body, 15, 21 + y, 11 - tail, 26, 3); line(body, 11 - tail, 26, 6 + tail, 27 - Math.abs(tail), 2); line(body, 6 + tail, 27 - Math.abs(tail), 4 + tail, 23, 2);
   if (p.celebrate) { line(body, 12, 13 + y, 5, 5, 2); line(body, 21, 13 + y, 28, 5, 2); }
   silhouette(c, body, C.teal);
@@ -202,17 +206,55 @@ function decodePng(path) {
 }
 function write(path, canvas) { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, encodePng(canvas)); }
 
+function registerFrame(source) {
+  const frame = new Canvas(32, 32);
+  frame.blit(source, 0, 0);
+  // Close silhouettes where an extreme pose reaches the safety envelope.
+  for (let y = 1; y <= 29; y++) for (let x = 1; x <= 30; x++) {
+    const p = (y * 32 + x) * 4;
+    if ((x === 1 || x === 30 || y === 1 || y === 29) && frame.data[p + 3] === 255) frame.pixel(x, y, rgba(C.outline));
+  }
+  return frame;
+}
+
 const renderers = { pico, hoppy, tuki, zippy };
 for (const [character, renderer] of Object.entries(renderers)) {
   const sheet = new Canvas(FRAME * FRAME_COUNT, FRAME);
-  POSES.forEach((pose, index) => sheet.blit(renderer(pose), index * FRAME, 0));
+  const rest = registerFrame(renderer(POSES[0]));
+  POSES.forEach((pose, index) => {
+    const frame = registerFrame(renderer(pose));
+    // Breathing/anticipation/landing change the torso, never the planted contact pixels.
+    if ([1, 2, 8, 9].includes(index)) {
+      for (let y = 28; y <= 29; y++) for (let x = 0; x < 32; x++) {
+        const p = (y * 32 + x) * 4; frame.data.set(rest.data.slice(p, p + 4), p);
+      }
+    }
+    sheet.blit(frame, index * FRAME, 0);
+  });
   const directory = join(ROOT, 'public', 'assets', 'characters', character);
   write(join(directory, `${character}-actions.png`), sheet);
-  const portrait = new Canvas(64, 64); portrait.blit(renderer(POSES[22]), 0, 0, 2);
+  const portrait = new Canvas(64, 64); portrait.blit(registerFrame(renderer(POSES[22])), 0, 0, 2);
   write(join(directory, `${character}-portrait.png`), portrait);
 }
 
-const mikoSheet = decodePng(join(ROOT, 'public', 'assets', 'characters', 'miko', 'miko-actions.png'));
+const mikoSource = decodePng(join(ROOT, 'art-source', 'characters', 'miko-actions-source.png'));
+const mikoSheet = new Canvas(24 * 32, 32);
+for (let index = 0; index < 24; index++) {
+  const frame = new Canvas(32, 32);
+  for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) {
+    const p = (y * mikoSource.width + index * 32 + x) * 4;
+    if (mikoSource.data[p + 3]) frame.pixel(x, y, mikoSource.data.slice(p, p + 4));
+  }
+  const registered = registerFrame(frame);
+  if ([1, 2, 8, 9].includes(index)) {
+    for (let y = 28; y <= 29; y++) for (let x = 0; x < 32; x++) {
+      const p = (y * mikoSheet.width + x) * 4;
+      registered.data.set(mikoSheet.data.slice(p, p + 4), (y * 32 + x) * 4);
+    }
+  }
+  mikoSheet.blit(registered, index * 32, 0);
+}
+write(join(ROOT, 'public', 'assets', 'characters', 'miko', 'miko-actions.png'), mikoSheet);
 const mikoFrame = new Canvas(32, 32);
 for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) {
   const source = (y * mikoSheet.width + 22 * 32 + x) * 4; mikoFrame.data.set(mikoSheet.data.slice(source, source + 4), (y * 32 + x) * 4);

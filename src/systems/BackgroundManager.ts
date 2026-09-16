@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { RUN_BIOMES } from '../ui/RunProgress';
 import { SettingsManager } from './SettingsManager';
 import { COLORS, GAME } from '../constants';
+import { backgroundKey } from '../graphics/PixelBackgrounds';
 
 export type BackgroundBiome = 'lower-jungle' | 'bright-canopy' | 'misty-heights' | 'sunset-canopy' | 'night-storm';
 export type BackgroundRepeatBehavior =
@@ -46,7 +47,7 @@ export const BACKGROUND_LAYERS: Readonly<Record<LayerName, BackgroundLayerConfig
 };
 
 const BASE: Record<LayerName, number> = { sky: 0xffffff, distantCanopy: 0x60817f, mist: 0xb7d4d1, midTrees: 0x55766d, trunkStructures: 0x4a5e58, foregroundLeaves: 0x668064, lightShafts: 0xffefc2, landmarks: 0x5c7480 };
-const ALTITUDE_BANDS: readonly AltitudeBand[] = [
+export const ALTITUDE_BANDS: readonly AltitudeBand[] = [
   { biome: 'lower-jungle', startsAt: RUN_BIOMES[0].startsAt, skyColor: 0x2f7e86, palette: { ...BASE, sky: 0x80c7ca, mist: 0x86aaa6, lightShafts: 0xb7cba7 }, alpha: { distantCanopy: 0.55, trunkStructures: 0.7 } },
   { biome: 'bright-canopy', startsAt: RUN_BIOMES[1].startsAt, skyColor: 0x82d7dc, palette: { ...BASE, sky: 0xffffff, distantCanopy: 0x739b86, lightShafts: 0xfff0b5 }, alpha: { distantCanopy: 0.45, midTrees: 0.65, mist: 0.35, lightShafts: 0.8 } },
   { biome: 'misty-heights', startsAt: RUN_BIOMES[2].startsAt, skyColor: 0x91b8c2, palette: { ...BASE, sky: 0xc8dadd, distantCanopy: 0x708990, mist: 0xc8dcdf, midTrees: 0x637b7c }, alpha: { distantCanopy: 0.35, mist: 0.75, midTrees: 0.55, landmarks: 0.5 } },
@@ -63,6 +64,7 @@ export class BackgroundManager {
   private trunkSegments: Phaser.GameObjects.Image[] = [];
   private treeAccents: Phaser.GameObjects.Image[] = [];
   private trunkVariant = 0;
+  private appliedTextures = new WeakMap<Phaser.GameObjects.GameObject, string>();
 
   constructor(private scene: Phaser.Scene) {
     scene.cameras.main.setBackgroundColor(COLORS.SKY);
@@ -82,16 +84,19 @@ export class BackgroundManager {
   private createRasterLayers(): void {
     for (const [name, config] of Object.entries(BACKGROUND_LAYERS) as [LayerName, BackgroundLayerConfig][]) {
       const objects: (Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite)[] = [];
-      if (config.repeatBehavior.mode === 'fixed') {
-        objects.push(this.scene.add.image(0, 0, config.texture).setOrigin(0).setDisplaySize(GAME.WIDTH, GAME.HEIGHT));
-      } else if (config.repeatBehavior.mode === 'vertical-tile') {
-        objects.push(this.scene.add.tileSprite(0, 0, GAME.WIDTH, GAME.HEIGHT, config.texture).setOrigin(0));
-      } else {
-        for (let i = 0; i < config.repeatBehavior.poolSize; i++) {
-          objects.push(this.scene.add.image(0, 0, config.texture).setOrigin(0).setDisplaySize(GAME.WIDTH, GAME.HEIGHT));
+      // Two fixed banks crossfade baked biome palettes without renderer-specific tinting.
+      for (let bank = 0; bank < 2; bank++) {
+        if (config.repeatBehavior.mode === 'vertical-tile') {
+          objects.push(this.scene.add.tileSprite(0, 0, GAME.WIDTH, GAME.HEIGHT, config.texture).setOrigin(0));
+        } else {
+          const count = config.repeatBehavior.mode === 'fixed' ? 1 : config.repeatBehavior.poolSize;
+          for (let i = 0; i < count; i++) objects.push(this.scene.add.image(0, 0, config.texture).setOrigin(0));
         }
       }
-      for (const object of objects) object.setScrollFactor(0).setDepth(config.depth).setTint(config.tint).setAlpha(config.alpha);
+      for (const object of objects) {
+        object.setScrollFactor(0).setDepth(config.depth).setAlpha(config.alpha);
+        this.appliedTextures.set(object, config.texture);
+      }
       this.managedLayers.push({ name, config, objects });
     }
   }
@@ -113,35 +118,44 @@ export class BackgroundManager {
   private createTreeAccentPool(): void {
     for (let i = 0; i < 18; i++) {
       const left = i % 2 === 0;
-      const x = GAME.WIDTH / 2 + (left ? -GAME.TRUNK_WIDTH / 2 + 2 : GAME.TRUNK_WIDTH / 2 - 2);
+      const x = GAME.WIDTH / 2 + (left ? -7 : 7);
       const sprite = this.scene.add.image(x, -i * 92 + Phaser.Math.Between(-20, 20), this.chooseAccent());
-      sprite.setOrigin(left ? 1 : 0, 0.5).setFlipX(!left).setAlpha(0.82).setDepth(2);
+      sprite.setOrigin(0.5, 0.15).setFlipX(!left).setDepth(2);
+      sprite.setData('swayPhase', i * 1.7);
       this.treeAccents.push(sprite);
     }
   }
 
-  update(cameraY: number, score = 0): void {
-    const altitude = Math.max(score, Math.max(0, -cameraY / 10));
+  update(cameraY: number, score = 0, previewAltitude?: number): void {
+    const altitude = previewAltitude ?? Math.max(score, Math.max(0, -cameraY / 10));
     const { from, to, mix } = this.getBandBlend(altitude);
     this.scene.cameras.main.setBackgroundColor(this.mixColor(from.skyColor, to.skyColor, mix));
     const decorativeY = SettingsManager.getReducedMotion() ? 0 : cameraY;
     for (const layer of this.managedLayers) {
-      const tint = this.mixColor(from.palette[layer.name], to.palette[layer.name], mix);
-      const alpha = Phaser.Math.Linear(this.bandAlpha(layer, from), this.bandAlpha(layer, to), mix);
-      for (const object of layer.objects) object.setTint(tint).setAlpha(alpha);
-      if (layer.config.repeatBehavior.mode === 'vertical-tile') {
-        (layer.objects[0] as Phaser.GameObjects.TileSprite).tilePositionY = decorativeY * layer.config.parallaxFactor;
-      } else if (layer.config.repeatBehavior.mode === 'pooled-landmark') {
-        const { spacing, poolSize } = layer.config.repeatBehavior;
-        const cycle = spacing * poolSize;
-        layer.objects.forEach((object, index) => {
-          object.y = Phaser.Math.Wrap((-decorativeY * layer.config.parallaxFactor) + index * spacing, -GAME.HEIGHT, cycle - GAME.HEIGHT);
-        });
-      }
+      const bankSize = layer.objects.length / 2;
+      layer.objects.forEach((object, index) => {
+        const bank = index < bankSize ? 0 : 1;
+        const band = bank === 0 ? from : to;
+        const key = backgroundKey(layer.config.texture, ALTITUDE_BANDS.indexOf(band));
+        if (this.appliedTextures.get(object) !== key) {
+          object.setTexture(key);
+          this.appliedTextures.set(object, key);
+        }
+        const weight = bank === 0 ? (layer.name === 'sky' ? 1 : 1 - mix) : mix;
+        object.setAlpha(this.bandAlpha(layer, band) * weight);
+        if (object instanceof Phaser.GameObjects.TileSprite) object.tilePositionY = Math.round(decorativeY * layer.config.parallaxFactor);
+        else if (layer.config.repeatBehavior.mode === 'pooled-landmark') {
+          const { spacing, poolSize } = layer.config.repeatBehavior;
+          object.y = Math.round(Phaser.Math.Wrap(-decorativeY * layer.config.parallaxFactor + (index % bankSize) * spacing, -GAME.HEIGHT, spacing * poolSize - GAME.HEIGHT));
+        }
+      });
     }
     if (this.fallback) {
       this.fallback.tilePositionY = decorativeY * 0.06;
       this.fallback.setTint(this.mixColor(from.palette.distantCanopy, to.palette.distantCanopy, mix));
+    }
+    for (const accent of this.treeAccents) {
+      accent.rotation = SettingsManager.getReducedMotion() ? 0 : Math.sin(this.scene.time.now * 0.0014 + accent.getData('swayPhase')) * 0.06;
     }
     this.recycleLivingTree(cameraY);
   }

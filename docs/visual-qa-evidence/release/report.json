@@ -1,0 +1,382 @@
+{
+  "checks": [
+    {
+      "name": "canvas/stable",
+      "pass": true
+    },
+    {
+      "name": "canvas/contact",
+      "pass": true
+    },
+    {
+      "name": "canvas/carriedContact",
+      "pass": true
+    },
+    {
+      "name": "canvas/simultaneous touch move+jump",
+      "pass": true
+    },
+    {
+      "name": "canvas/independent touch release",
+      "pass": true
+    },
+    {
+      "name": "canvas/pauseEdge",
+      "pass": true
+    },
+    {
+      "name": "canvas/paused",
+      "pass": true
+    },
+    {
+      "name": "canvas/noResumeJump",
+      "pass": true
+    },
+    {
+      "name": "canvas/freshJump",
+      "pass": true
+    },
+    {
+      "name": "canvas/disconnected",
+      "pass": true
+    },
+    {
+      "name": "canvas/reconnectGuard",
+      "pass": true
+    },
+    {
+      "name": "canvas/interruptedTouch",
+      "pass": true
+    },
+    {
+      "name": "canvas/20 scene cycles bounded",
+      "pass": true,
+      "details": [
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        }
+      ]
+    },
+    {
+      "name": "canvas/particle cap",
+      "pass": true
+    },
+    {
+      "name": "canvas/10 simulated minutes background recycling",
+      "pass": true
+    },
+    {
+      "name": "canvas/climb resource bound",
+      "pass": true,
+      "details": [
+        {
+          "objects": 246,
+          "textures": 201,
+          "particles": 40,
+          "score": 22
+        }
+      ]
+    },
+    {
+      "name": "webgl/stable",
+      "pass": true
+    },
+    {
+      "name": "webgl/contact",
+      "pass": true
+    },
+    {
+      "name": "webgl/carriedContact",
+      "pass": true
+    },
+    {
+      "name": "webgl/simultaneous touch move+jump",
+      "pass": true
+    },
+    {
+      "name": "webgl/independent touch release",
+      "pass": true
+    },
+    {
+      "name": "webgl/pauseEdge",
+      "pass": true
+    },
+    {
+      "name": "webgl/paused",
+      "pass": true
+    },
+    {
+      "name": "webgl/noResumeJump",
+      "pass": true
+    },
+    {
+      "name": "webgl/freshJump",
+      "pass": true
+    },
+    {
+      "name": "webgl/disconnected",
+      "pass": true
+    },
+    {
+      "name": "webgl/reconnectGuard",
+      "pass": true
+    },
+    {
+      "name": "webgl/interruptedTouch",
+      "pass": true
+    },
+    {
+      "name": "webgl/20 scene cycles bounded",
+      "pass": true,
+      "details": [
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        },
+        {
+          "textures": 182,
+          "objects": 20,
+          "blurListeners": 2
+        }
+      ]
+    },
+    {
+      "name": "webgl/particle cap",
+      "pass": true
+    },
+    {
+      "name": "webgl/10 simulated minutes background recycling",
+      "pass": true
+    },
+    {
+      "name": "webgl/climb resource bound",
+      "pass": true,
+      "details": []
+    }
+  ],
+  "profiles": [
+    {
+      "renderer": "canvas",
+      "duration": 1000,
+      "frames": 61,
+      "drawsPerFrame": null,
+      "p95Ms": 25,
+      "samples": [
+        {
+          "objects": 246,
+          "textures": 201,
+          "particles": 40,
+          "score": 22
+        }
+      ],
+      "backgroundBefore": 70,
+      "backgroundAfter": 70,
+      "particleCapacity": 96,
+      "labelCapacity": 6,
+      "sourceBytes": 94166096
+    },
+    {
+      "renderer": "webgl",
+      "duration": 1000,
+      "frames": 25,
+      "drawsPerFrame": 3,
+      "p95Ms": 44.990000000000144,
+      "samples": [],
+      "backgroundBefore": 70,
+      "backgroundAfter": 70,
+      "particleCapacity": 96,
+      "labelCapacity": 6,
+      "sourceBytes": 94166096
+    }
+  ],
+  "errors": [],
+  "browser": "147.0.7727.15"
+}

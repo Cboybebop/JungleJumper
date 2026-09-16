@@ -1,0 +1,754 @@
+{
+  "description": "60-second profiles of the restored artwork build. Subsequent rerun changes only test cache warm-up, not runtime code.",
+  "browser": "147.0.7727.15",
+  "profiles": [
+    {
+      "renderer": "canvas",
+      "duration": 60000,
+      "frames": 2672,
+      "drawsPerFrame": null,
+      "p95Ms": 34.990000000000144,
+      "samples": [
+        {
+          "objects": 244,
+          "textures": 200,
+          "particles": 40,
+          "score": 22
+        },
+        {
+          "objects": 244,
+          "textures": 196,
+          "particles": 40,
+          "score": 42
+        },
+        {
+          "objects": 240,
+          "textures": 196,
+          "particles": 40,
+          "score": 62
+        },
+        {
+          "objects": 240,
+          "textures": 196,
+          "particles": 40,
+          "score": 82
+        },
+        {
+          "objects": 239,
+          "textures": 196,
+          "particles": 40,
+          "score": 102
+        },
+        {
+          "objects": 235,
+          "textures": 196,
+          "particles": 40,
+          "score": 122
+        },
+        {
+          "objects": 233,
+          "textures": 196,
+          "particles": 40,
+          "score": 142
+        },
+        {
+          "objects": 232,
+          "textures": 196,
+          "particles": 40,
+          "score": 162
+        },
+        {
+          "objects": 236,
+          "textures": 196,
+          "particles": 40,
+          "score": 182
+        },
+        {
+          "objects": 235,
+          "textures": 197,
+          "particles": 40,
+          "score": 202
+        },
+        {
+          "objects": 242,
+          "textures": 197,
+          "particles": 40,
+          "score": 223
+        },
+        {
+          "objects": 239,
+          "textures": 197,
+          "particles": 40,
+          "score": 243
+        },
+        {
+          "objects": 241,
+          "textures": 197,
+          "particles": 40,
+          "score": 262
+        },
+        {
+          "objects": 238,
+          "textures": 197,
+          "particles": 40,
+          "score": 282
+        },
+        {
+          "objects": 240,
+          "textures": 197,
+          "particles": 40,
+          "score": 302
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 322
+        },
+        {
+          "objects": 243,
+          "textures": 197,
+          "particles": 40,
+          "score": 342
+        },
+        {
+          "objects": 248,
+          "textures": 197,
+          "particles": 40,
+          "score": 362
+        },
+        {
+          "objects": 248,
+          "textures": 197,
+          "particles": 40,
+          "score": 382
+        },
+        {
+          "objects": 248,
+          "textures": 197,
+          "particles": 40,
+          "score": 402
+        },
+        {
+          "objects": 247,
+          "textures": 197,
+          "particles": 40,
+          "score": 422
+        },
+        {
+          "objects": 249,
+          "textures": 197,
+          "particles": 40,
+          "score": 442
+        },
+        {
+          "objects": 249,
+          "textures": 197,
+          "particles": 40,
+          "score": 462
+        },
+        {
+          "objects": 254,
+          "textures": 197,
+          "particles": 40,
+          "score": 483
+        },
+        {
+          "objects": 249,
+          "textures": 197,
+          "particles": 40,
+          "score": 502
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 522
+        },
+        {
+          "objects": 243,
+          "textures": 197,
+          "particles": 40,
+          "score": 542
+        },
+        {
+          "objects": 241,
+          "textures": 197,
+          "particles": 40,
+          "score": 563
+        },
+        {
+          "objects": 238,
+          "textures": 197,
+          "particles": 40,
+          "score": 582
+        },
+        {
+          "objects": 243,
+          "textures": 197,
+          "particles": 40,
+          "score": 603
+        },
+        {
+          "objects": 240,
+          "textures": 197,
+          "particles": 40,
+          "score": 623
+        },
+        {
+          "objects": 240,
+          "textures": 197,
+          "particles": 40,
+          "score": 642
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 662
+        },
+        {
+          "objects": 243,
+          "textures": 197,
+          "particles": 40,
+          "score": 682
+        },
+        {
+          "objects": 243,
+          "textures": 197,
+          "particles": 40,
+          "score": 701
+        },
+        {
+          "objects": 244,
+          "textures": 197,
+          "particles": 40,
+          "score": 721
+        },
+        {
+          "objects": 245,
+          "textures": 197,
+          "particles": 40,
+          "score": 742
+        },
+        {
+          "objects": 248,
+          "textures": 197,
+          "particles": 40,
+          "score": 762
+        },
+        {
+          "objects": 247,
+          "textures": 197,
+          "particles": 40,
+          "score": 782
+        },
+        {
+          "objects": 244,
+          "textures": 197,
+          "particles": 40,
+          "score": 802
+        },
+        {
+          "objects": 243,
+          "textures": 197,
+          "particles": 40,
+          "score": 823
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 842
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 863
+        },
+        {
+          "objects": 249,
+          "textures": 197,
+          "particles": 40,
+          "score": 882
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 902
+        },
+        {
+          "objects": 251,
+          "textures": 197,
+          "particles": 40,
+          "score": 922
+        },
+        {
+          "objects": 253,
+          "textures": 197,
+          "particles": 40,
+          "score": 942
+        },
+        {
+          "objects": 254,
+          "textures": 197,
+          "particles": 40,
+          "score": 962
+        },
+        {
+          "objects": 254,
+          "textures": 197,
+          "particles": 40,
+          "score": 982
+        },
+        {
+          "objects": 252,
+          "textures": 197,
+          "particles": 40,
+          "score": 1002
+        },
+        {
+          "objects": 254,
+          "textures": 197,
+          "particles": 40,
+          "score": 1022
+        },
+        {
+          "objects": 257,
+          "textures": 197,
+          "particles": 40,
+          "score": 1042
+        },
+        {
+          "objects": 256,
+          "textures": 197,
+          "particles": 40,
+          "score": 1062
+        },
+        {
+          "objects": 253,
+          "textures": 197,
+          "particles": 40,
+          "score": 1082
+        },
+        {
+          "objects": 249,
+          "textures": 197,
+          "particles": 40,
+          "score": 1102
+        },
+        {
+          "objects": 252,
+          "textures": 197,
+          "particles": 40,
+          "score": 1122
+        },
+        {
+          "objects": 250,
+          "textures": 197,
+          "particles": 40,
+          "score": 1142
+        },
+        {
+          "objects": 249,
+          "textures": 197,
+          "particles": 40,
+          "score": 1162
+        },
+        {
+          "objects": 245,
+          "textures": 197,
+          "particles": 40,
+          "score": 1182
+        },
+        {
+          "objects": 244,
+          "textures": 197,
+          "particles": 40,
+          "score": 1203
+        }
+      ],
+      "backgroundBefore": 70,
+      "backgroundAfter": 70,
+      "particleCapacity": 96,
+      "labelCapacity": 6,
+      "sourceBytes": 94045124
+    },
+    {
+      "renderer": "webgl",
+      "duration": 60000,
+      "frames": 1385,
+      "drawsPerFrame": 3.059927797833935,
+      "p95Ms": 56.670000000000435,
+      "samples": [
+        {
+          "objects": 244,
+          "textures": 200,
+          "particles": 40,
+          "score": 22
+        },
+        {
+          "objects": 244,
+          "textures": 196,
+          "particles": 40,
+          "score": 43
+        },
+        {
+          "objects": 244,
+          "textures": 196,
+          "particles": 40,
+          "score": 62
+        },
+        {
+          "objects": 240,
+          "textures": 196,
+          "particles": 40,
+          "score": 83
+        },
+        {
+          "objects": 239,
+          "textures": 196,
+          "particles": 40,
+          "score": 102
+        },
+        {
+          "objects": 235,
+          "textures": 196,
+          "particles": 20,
+          "score": 122
+        },
+        {
+          "objects": 231,
+          "textures": 196,
+          "particles": 40,
+          "score": 142
+        },
+        {
+          "objects": 229,
+          "textures": 196,
+          "particles": 40,
+          "score": 162
+        },
+        {
+          "objects": 234,
+          "textures": 196,
+          "particles": 40,
+          "score": 183
+        },
+        {
+          "objects": 235,
+          "textures": 196,
+          "particles": 40,
+          "score": 202
+        },
+        {
+          "objects": 239,
+          "textures": 196,
+          "particles": 40,
+          "score": 222
+        },
+        {
+          "objects": 235,
+          "textures": 196,
+          "particles": 40,
+          "score": 242
+        },
+        {
+          "objects": 237,
+          "textures": 196,
+          "particles": 40,
+          "score": 261
+        },
+        {
+          "objects": 232,
+          "textures": 197,
+          "particles": 40,
+          "score": 281
+        },
+        {
+          "objects": 232,
+          "textures": 197,
+          "particles": 40,
+          "score": 302
+        },
+        {
+          "objects": 233,
+          "textures": 197,
+          "particles": 40,
+          "score": 321
+        },
+        {
+          "objects": 235,
+          "textures": 197,
+          "particles": 40,
+          "score": 342
+        },
+        {
+          "objects": 233,
+          "textures": 197,
+          "particles": 40,
+          "score": 363
+        },
+        {
+          "objects": 233,
+          "textures": 197,
+          "particles": 40,
+          "score": 382
+        },
+        {
+          "objects": 241,
+          "textures": 197,
+          "particles": 40,
+          "score": 402
+        },
+        {
+          "objects": 241,
+          "textures": 197,
+          "particles": 40,
+          "score": 422
+        },
+        {
+          "objects": 241,
+          "textures": 197,
+          "particles": 40,
+          "score": 443
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 462
+        },
+        {
+          "objects": 242,
+          "textures": 197,
+          "particles": 40,
+          "score": 482
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 502
+        },
+        {
+          "objects": 242,
+          "textures": 197,
+          "particles": 40,
+          "score": 523
+        },
+        {
+          "objects": 241,
+          "textures": 197,
+          "particles": 40,
+          "score": 543
+        },
+        {
+          "objects": 242,
+          "textures": 197,
+          "particles": 40,
+          "score": 562
+        },
+        {
+          "objects": 249,
+          "textures": 197,
+          "particles": 40,
+          "score": 582
+        },
+        {
+          "objects": 251,
+          "textures": 197,
+          "particles": 40,
+          "score": 601
+        },
+        {
+          "objects": 245,
+          "textures": 197,
+          "particles": 40,
+          "score": 622
+        },
+        {
+          "objects": 248,
+          "textures": 197,
+          "particles": 40,
+          "score": 642
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 662
+        },
+        {
+          "objects": 245,
+          "textures": 197,
+          "particles": 40,
+          "score": 682
+        },
+        {
+          "objects": 244,
+          "textures": 197,
+          "particles": 40,
+          "score": 703
+        },
+        {
+          "objects": 242,
+          "textures": 197,
+          "particles": 40,
+          "score": 722
+        },
+        {
+          "objects": 248,
+          "textures": 197,
+          "particles": 40,
+          "score": 742
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 762
+        },
+        {
+          "objects": 246,
+          "textures": 197,
+          "particles": 40,
+          "score": 782
+        },
+        {
+          "objects": 243,
+          "textures": 197,
+          "particles": 40,
+          "score": 803
+        },
+        {
+          "objects": 245,
+          "textures": 197,
+          "particles": 40,
+          "score": 822
+        },
+        {
+          "objects": 244,
+          "textures": 197,
+          "particles": 40,
+          "score": 842
+        },
+        {
+          "objects": 245,
+          "textures": 197,
+          "particles": 40,
+          "score": 862
+        },
+        {
+          "objects": 244,
+          "textures": 197,
+          "particles": 40,
+          "score": 882
+        },
+        {
+          "objects": 242,
+          "textures": 197,
+          "particles": 40,
+          "score": 902
+        },
+        {
+          "objects": 247,
+          "textures": 197,
+          "particles": 40,
+          "score": 923
+        },
+        {
+          "objects": 242,
+          "textures": 197,
+          "particles": 40,
+          "score": 943
+        },
+        {
+          "objects": 239,
+          "textures": 197,
+          "particles": 40,
+          "score": 963
+        },
+        {
+          "objects": 238,
+          "textures": 197,
+          "particles": 40,
+          "score": 983
+        },
+        {
+          "objects": 239,
+          "textures": 197,
+          "particles": 40,
+          "score": 1003
+        },
+        {
+          "objects": 237,
+          "textures": 197,
+          "particles": 40,
+          "score": 1022
+        },
+        {
+          "objects": 237,
+          "textures": 197,
+          "particles": 40,
+          "score": 1043
+        },
+        {
+          "objects": 238,
+          "textures": 197,
+          "particles": 40,
+          "score": 1063
+        },
+        {
+          "objects": 241,
+          "textures": 197,
+          "particles": 40,
+          "score": 1083
+        },
+        {
+          "objects": 245,
+          "textures": 197,
+          "particles": 40,
+          "score": 1103
+        },
+        {
+          "objects": 244,
+          "textures": 197,
+          "particles": 40,
+          "score": 1123
+        },
+        {
+          "objects": 245,
+          "textures": 197,
+          "particles": 40,
+          "score": 1143
+        },
+        {
+          "objects": 247,
+          "textures": 197,
+          "particles": 40,
+          "score": 1163
+        },
+        {
+          "objects": 248,
+          "textures": 197,
+          "particles": 40,
+          "score": 1183
+        },
+        {
+          "objects": 249,
+          "textures": 197,
+          "particles": 40,
+          "score": 1203
+        }
+      ],
+      "backgroundBefore": 70,
+      "backgroundAfter": 70,
+      "particleCapacity": 96,
+      "labelCapacity": 6,
+      "sourceBytes": 94045124
+    }
+  ]
+}

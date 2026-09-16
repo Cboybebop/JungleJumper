@@ -11,7 +11,10 @@
     "verify:transitions": "node scripts/verify-scene-transitions.mjs",
     "verify:feedback": "node scripts/verify-feedback.mjs",
     "verify:miko": "npm run verify:characters",
-    "verify:visual": "node scripts/visual-qa.mjs"
+    "verify:visual": "node scripts/visual-qa.mjs",
+    "verify:release": "node scripts/release-qa.mjs",
+    "verify:visual-assets": "python scripts/verify-visual-assets.py",
+    "verify:renderer-parity": "python scripts/verify-renderer-parity.py"
   },
   "keywords": [],
   "author": "",

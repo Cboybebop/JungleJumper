@@ -9,13 +9,15 @@ import {
   registerAnimations,
 } from '../graphics/AnimationRegistry';
 import {
-  BACKGROUND_IMAGE_ASSETS,
   PLATFORM_FRAME_HEIGHT,
   PLATFORM_FRAME_WIDTH,
   PLATFORM_TEXTURES,
   WORLD_IMAGE_ASSETS,
+  BACKGROUND_IMAGE_ASSETS,
 } from '../graphics/WorldAssets';
 import { UIFactory, UI_FONT } from '../ui/UIFactory';
+import { ALTITUDE_BANDS } from '../systems/BackgroundManager';
+import { generatePixelBackgrounds } from '../graphics/PixelBackgrounds';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -44,9 +46,8 @@ export class BootScene extends Phaser.Scene {
       this.load.image(textureKey, `assets/world/${filename}`);
     }
 
-    for (const [textureKey, filename] of BACKGROUND_IMAGE_ASSETS) {
-      this.load.image(textureKey, `assets/backgrounds/${filename}`);
-    }
+
+    for (const [key, filename] of BACKGROUND_IMAGE_ASSETS) this.load.image(key, `assets/backgrounds/${filename}`);
 
     for (const [type, textureKey] of Object.entries(ENEMY_TEXTURES)) {
       const filename = type === 'thorns' ? 'thorn-vine-actions.png' : `${type}-actions.png`;
@@ -85,6 +86,7 @@ export class BootScene extends Phaser.Scene {
 
     // Generate UI, obstacle, character, and development/loading fallbacks.
     TextureGenerator.generate(this);
+    generatePixelBackgrounds(this, ALTITUDE_BANDS.map(band => band.palette));
     registerAnimations(this);
 
     const begin = () => {
