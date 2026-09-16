@@ -1,5 +1,13 @@
-// Colors matching the reference art style
+// Runtime mirror of the master palette in docs/art-direction.md. Keep hex values
+// synchronized with the art bible when adding or changing an art token.
 export const COLORS = {
+  // Global contrast and outline colors
+  OUTLINE_DEEP: 0x211936,
+  OUTLINE_WARM: 0x3D2440,
+  SHADOW_COOL: 0x334B68,
+  HIGHLIGHT_WARM: 0xFFE6A3,
+
+  // World colors
   SKY: 0x87CEEB,
   SKY_HEX: '#87CEEB',
   TRUNK: 0x5B3A6B,
@@ -88,4 +96,3 @@ export const DEFAULT_KEYS = {
   altRight: 'RIGHT',
   altJump: 'UP',
 };
-
