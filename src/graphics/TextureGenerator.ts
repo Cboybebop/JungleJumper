@@ -372,6 +372,21 @@ export class TextureGenerator {
   }
 
   private static generateBackground(scene: Phaser.Scene): void {
+    // Kept as a lightweight safety net while the raster background set loads.
+    // BackgroundManager only displays it if any required raster layer is invalid.
+    if (!scene.textures.exists('canopy-far')) {
+      const fallback = scene.make.graphics({ x: 0, y: 0 });
+      fallback.fillStyle(0x183f46, 0.9);
+      fallback.fillCircle(10, 28, 28);
+      fallback.fillCircle(48, 18, 34);
+      fallback.fillCircle(92, 30, 30);
+      fallback.fillStyle(0x275d5c, 0.75);
+      fallback.fillCircle(28, 70, 30);
+      fallback.fillCircle(78, 66, 36);
+      fallback.generateTexture('canopy-far', 120, 96);
+      fallback.destroy();
+    }
+
     const requiredTextures = [
       'world-cloud', 'world-jungle-silhouette', 'world-flower-pink', 'world-fruit-berries',
     ];

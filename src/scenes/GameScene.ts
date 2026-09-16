@@ -192,7 +192,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Update background (use updated camera position)
-    this.bgManager.update(this.cameras.main.scrollY + GAME.HEIGHT / 2);
+    this.bgManager.update(this.cameras.main.scrollY + GAME.HEIGHT / 2, this.score);
 
     // Death: fell below camera
     if (this.player.alive && this.player.y > cameraTop + GAME.HEIGHT + 50) {

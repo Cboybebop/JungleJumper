@@ -1,115 +1,186 @@
 import Phaser from 'phaser';
 import { COLORS, GAME } from '../constants';
 
-type Anchor = 'free' | 'edge-left' | 'edge-right' | 'trunk-left' | 'trunk-right';
+export type BackgroundBiome = 'lower-jungle' | 'bright-canopy' | 'misty-heights' | 'sunset-canopy' | 'night-storm';
+export type BackgroundRepeatBehavior =
+  | { mode: 'fixed' }
+  | { mode: 'vertical-tile' }
+  | { mode: 'pooled-landmark'; spacing: number; poolSize: number };
 
-interface BgElement {
-  sprite: Phaser.GameObjects.Image;
-  speed: number;
-  anchor: Anchor;
-  drift?: number;
+export interface BackgroundLayerConfig {
+  texture: string;
+  depth: number;
+  parallaxFactor: number;
+  tint: number;
+  alpha: number;
+  repeatBehavior: BackgroundRepeatBehavior;
+  biomeAvailability: readonly BackgroundBiome[];
 }
 
-const TRUNK_KEYS = ['world-trunk-0', 'world-trunk-1', 'world-trunk-2', 'world-trunk-3'] as const;
-const TREE_ACCENT_KEYS = [
-  'world-vine-curled', 'world-vine-twisting', 'world-leaves-small', 'world-leaves-large',
-  'world-flower-pink', 'world-flower-gold', 'world-fruit-berries', 'world-fruit-orange',
-  'world-moss',
-] as const;
+type LayerName = 'sky' | 'distantCanopy' | 'mist' | 'midTrees' | 'trunkStructures' | 'foregroundLeaves' | 'lightShafts' | 'landmarks';
+interface AltitudeBand {
+  biome: BackgroundBiome;
+  startsAt: number;
+  skyColor: number;
+  palette: Record<LayerName, number>;
+  alpha: Partial<Record<LayerName, number>>;
+}
+interface ManagedLayer {
+  name: LayerName;
+  config: BackgroundLayerConfig;
+  objects: (Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite)[];
+}
 
-const EDGE_VISIBLE_PADDING: Record<string, number> = {
-  'world-canopy-left': 23,
-  'world-canopy-right': 25,
-  'world-canopy-distant-left': 55,
-  'world-canopy-distant-right': 53,
+const ALL_BIOMES: readonly BackgroundBiome[] = ['lower-jungle', 'bright-canopy', 'misty-heights', 'sunset-canopy', 'night-storm'];
+export const BACKGROUND_LAYERS: Readonly<Record<LayerName, BackgroundLayerConfig>> = {
+  sky: { texture: 'background-sky-gradient', depth: -30, parallaxFactor: 0, tint: 0xffffff, alpha: 1, repeatBehavior: { mode: 'fixed' }, biomeAvailability: ALL_BIOMES },
+  distantCanopy: { texture: 'background-distant-canopy', depth: -24, parallaxFactor: 0.05, tint: 0x6f8f91, alpha: 0.5, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ALL_BIOMES },
+  landmarks: { texture: 'background-landmarks', depth: -22, parallaxFactor: 0.08, tint: 0x617b83, alpha: 0.34, repeatBehavior: { mode: 'pooled-landmark', spacing: 1500, poolSize: 2 }, biomeAvailability: ['misty-heights', 'sunset-canopy', 'night-storm'] },
+  mist: { texture: 'background-mist', depth: -20, parallaxFactor: 0.1, tint: 0xb8d5d5, alpha: 0.2, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ['bright-canopy', 'misty-heights', 'night-storm'] },
+  midTrees: { texture: 'background-mid-trees', depth: -18, parallaxFactor: 0.14, tint: 0x557a73, alpha: 0.42, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ALL_BIOMES },
+  trunkStructures: { texture: 'background-trunk-structures', depth: -16, parallaxFactor: 0.2, tint: 0x52655f, alpha: 0.38, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ['lower-jungle', 'misty-heights', 'night-storm'] },
+  lightShafts: { texture: 'background-light-shafts', depth: -14, parallaxFactor: 0.24, tint: 0xffefbd, alpha: 0.13, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ['bright-canopy', 'sunset-canopy'] },
+  foregroundLeaves: { texture: 'background-foreground-leaves', depth: -8, parallaxFactor: 0.34, tint: 0x66866a, alpha: 0.48, repeatBehavior: { mode: 'vertical-tile' }, biomeAvailability: ALL_BIOMES },
 };
 
+const BASE: Record<LayerName, number> = { sky: 0xffffff, distantCanopy: 0x60817f, mist: 0xb7d4d1, midTrees: 0x55766d, trunkStructures: 0x4a5e58, foregroundLeaves: 0x668064, lightShafts: 0xffefc2, landmarks: 0x5c7480 };
+const ALTITUDE_BANDS: readonly AltitudeBand[] = [
+  { biome: 'lower-jungle', startsAt: 0, skyColor: 0x2f7e86, palette: { ...BASE, sky: 0x80c7ca, mist: 0x86aaa6, lightShafts: 0xb7cba7 }, alpha: { mist: 0, lightShafts: 0, landmarks: 0 } },
+  { biome: 'bright-canopy', startsAt: 120, skyColor: 0x82d7dc, palette: { ...BASE, sky: 0xffffff, distantCanopy: 0x739b86, lightShafts: 0xfff0b5 }, alpha: { trunkStructures: 0, mist: 0.45, lightShafts: 1, landmarks: 0 } },
+  { biome: 'misty-heights', startsAt: 320, skyColor: 0x91b8c2, palette: { ...BASE, sky: 0xc8dadd, distantCanopy: 0x708990, mist: 0xc8dcdf, midTrees: 0x637b7c }, alpha: { mist: 1.25, trunkStructures: 0.65, lightShafts: 0, landmarks: 0.65 } },
+  { biome: 'sunset-canopy', startsAt: 600, skyColor: 0xd88979, palette: { ...BASE, sky: 0xf0a58c, distantCanopy: 0x745f72, mist: 0xb58b91, midTrees: 0x564e65, lightShafts: 0xffc17c, landmarks: 0x514c68 }, alpha: { mist: 0, trunkStructures: 0, lightShafts: 1.15, landmarks: 0.8 } },
+  { biome: 'night-storm', startsAt: 900, skyColor: 0x182945, palette: { ...BASE, sky: 0x33486b, distantCanopy: 0x37495d, mist: 0x7085a0, midTrees: 0x334657, trunkStructures: 0x293946, foregroundLeaves: 0x354b4c, lightShafts: 0x6d87a1, landmarks: 0x29374d }, alpha: { mist: 0.7, trunkStructures: 0.75, lightShafts: 0, landmarks: 0.9 } },
+];
+
+const TRUNK_KEYS = ['world-trunk-0', 'world-trunk-1', 'world-trunk-2', 'world-trunk-3'] as const;
+const ACCENT_KEYS = ['world-vine-curled', 'world-vine-twisting', 'world-leaves-small', 'world-leaves-large', 'world-flower-pink', 'world-flower-gold', 'world-fruit-berries', 'world-fruit-orange', 'world-moss'] as const;
+
 export class BackgroundManager {
-  private clouds: BgElement[] = [];
-  private edgeFoliage: BgElement[] = [];
-  private treeAccents: BgElement[] = [];
+  private managedLayers: ManagedLayer[] = [];
+  private fallback: Phaser.GameObjects.TileSprite | null = null;
   private trunkSegments: Phaser.GameObjects.Image[] = [];
+  private treeAccents: Phaser.GameObjects.Image[] = [];
   private trunkVariant = 0;
-  private lastCameraY = 0;
 
   constructor(private scene: Phaser.Scene) {
     scene.cameras.main.setBackgroundColor(COLORS.SKY);
+    if (this.rasterSetIsValid()) this.createRasterLayers(); else this.createProceduralFallback();
     this.createContinuousTrunk();
-    this.spawnInitialDecorations();
+    this.createTreeAccentPool();
+  }
+
+  private rasterSetIsValid(): boolean {
+    return Object.values(BACKGROUND_LAYERS).every(({ texture }) => {
+      if (!this.scene.textures.exists(texture)) return false;
+      const loaded = this.scene.textures.get(texture);
+      return loaded.key !== '__MISSING' && Boolean(loaded.getSourceImage());
+    });
+  }
+
+  private createRasterLayers(): void {
+    for (const [name, config] of Object.entries(BACKGROUND_LAYERS) as [LayerName, BackgroundLayerConfig][]) {
+      const objects: (Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite)[] = [];
+      if (config.repeatBehavior.mode === 'fixed') {
+        objects.push(this.scene.add.image(0, 0, config.texture).setOrigin(0).setDisplaySize(GAME.WIDTH, GAME.HEIGHT));
+      } else if (config.repeatBehavior.mode === 'vertical-tile') {
+        objects.push(this.scene.add.tileSprite(0, 0, GAME.WIDTH, GAME.HEIGHT, config.texture).setOrigin(0));
+      } else {
+        for (let i = 0; i < config.repeatBehavior.poolSize; i++) {
+          objects.push(this.scene.add.image(0, 0, config.texture).setOrigin(0).setDisplaySize(GAME.WIDTH, GAME.HEIGHT));
+        }
+      }
+      for (const object of objects) object.setScrollFactor(0).setDepth(config.depth).setTint(config.tint).setAlpha(config.alpha);
+      this.managedLayers.push({ name, config, objects });
+    }
+  }
+
+  private createProceduralFallback(): void {
+    if (!this.scene.textures.exists('canopy-far')) return;
+    this.fallback = this.scene.add.tileSprite(0, 0, GAME.WIDTH, GAME.HEIGHT, 'canopy-far');
+    this.fallback.setOrigin(0).setScrollFactor(0).setDepth(-20).setTint(0x456f70).setAlpha(0.55);
   }
 
   private createContinuousTrunk(): void {
-    const segmentHeight = 96;
-    for (let y = -GAME.HEIGHT * 2; y <= GAME.HEIGHT * 2; y += segmentHeight) {
-      const key = this.nextTrunkKey();
-      const segment = this.scene.add.image(GAME.WIDTH / 2, y, key);
+    for (let y = -GAME.HEIGHT * 2; y <= GAME.HEIGHT * 2; y += 96) {
+      const segment = this.scene.add.image(GAME.WIDTH / 2, y, this.nextTrunkKey());
       segment.setOrigin(0.5, 0).setDepth(1);
       this.trunkSegments.push(segment);
     }
   }
 
-  private spawnInitialDecorations(): void {
-    for (let i = 0; i < 6; i++) {
-      this.addCloud(
-        Phaser.Math.Between(42, GAME.WIDTH - 42),
-        -i * 220 + Phaser.Math.Between(-80, 80)
-      );
-    }
-
-    // Large canopy pieces are locked to the screen edges and deliberately cropped,
-    // so they read as a continuous jungle border instead of floating stickers.
-    for (let i = 0; i < 7; i++) {
-      const y = -i * 190 + Phaser.Math.Between(-35, 35);
-      this.addEdgeFoliage(true, y, i % 2 === 0);
-      this.addEdgeFoliage(false, y - 80, i % 2 !== 0);
-    }
-
-    // Small vegetation belongs to the climbable tree. Anchoring it to the trunk
-    // restores the sense that platforms and decoration share one living structure.
+  private createTreeAccentPool(): void {
     for (let i = 0; i < 18; i++) {
-      this.addTreeAccent(i % 2 === 0, -i * 92 + Phaser.Math.Between(-20, 20));
+      const left = i % 2 === 0;
+      const x = GAME.WIDTH / 2 + (left ? -GAME.TRUNK_WIDTH / 2 + 2 : GAME.TRUNK_WIDTH / 2 - 2);
+      const sprite = this.scene.add.image(x, -i * 92 + Phaser.Math.Between(-20, 20), this.chooseAccent());
+      sprite.setOrigin(left ? 1 : 0, 0.5).setFlipX(!left).setAlpha(0.82).setDepth(2);
+      this.treeAccents.push(sprite);
     }
   }
 
-  private addCloud(x: number, y: number): void {
-    const sprite = this.scene.add.image(x, y, 'world-cloud');
-    sprite.setAlpha(0.35 + Math.random() * 0.2);
-    sprite.setScale(1).setDepth(0);
-    this.clouds.push({
-      sprite,
-      speed: 0.12 + Math.random() * 0.08,
-      drift: 0.04 + Math.random() * 0.06,
-      anchor: 'free',
-    });
+  update(cameraY: number, score = 0): void {
+    const altitude = Math.max(score, Math.max(0, -cameraY / 10));
+    const { from, to, mix } = this.getBandBlend(altitude);
+    this.scene.cameras.main.setBackgroundColor(this.mixColor(from.skyColor, to.skyColor, mix));
+    for (const layer of this.managedLayers) {
+      const tint = this.mixColor(from.palette[layer.name], to.palette[layer.name], mix);
+      const alpha = Phaser.Math.Linear(this.bandAlpha(layer, from), this.bandAlpha(layer, to), mix);
+      for (const object of layer.objects) object.setTint(tint).setAlpha(alpha);
+      if (layer.config.repeatBehavior.mode === 'vertical-tile') {
+        (layer.objects[0] as Phaser.GameObjects.TileSprite).tilePositionY = cameraY * layer.config.parallaxFactor;
+      } else if (layer.config.repeatBehavior.mode === 'pooled-landmark') {
+        const { spacing, poolSize } = layer.config.repeatBehavior;
+        const cycle = spacing * poolSize;
+        layer.objects.forEach((object, index) => {
+          object.y = Phaser.Math.Wrap((-cameraY * layer.config.parallaxFactor) + index * spacing, -GAME.HEIGHT, cycle - GAME.HEIGHT);
+        });
+      }
+    }
+    if (this.fallback) {
+      this.fallback.tilePositionY = cameraY * 0.06;
+      this.fallback.setTint(this.mixColor(from.palette.distantCanopy, to.palette.distantCanopy, mix));
+    }
+    this.recycleLivingTree(cameraY);
   }
 
-  private addEdgeFoliage(left: boolean, y: number, distant: boolean): void {
-    const key = distant
-      ? (left ? 'world-canopy-distant-left' : 'world-canopy-distant-right')
-      : (left ? 'world-canopy-left' : 'world-canopy-right');
-    const padding = EDGE_VISIBLE_PADDING[key] ?? 0;
-    const sprite = this.scene.add.image(left ? -padding : GAME.WIDTH + padding, y, key);
-    sprite.setOrigin(left ? 0 : 1, 0.5);
-    sprite.setAlpha(distant ? 0.55 : 0.88).setDepth(distant ? 0 : 2);
-    this.edgeFoliage.push({
-      sprite,
-      speed: distant ? 0.18 : 0.34,
-      anchor: left ? 'edge-left' : 'edge-right',
-    });
+  private bandAlpha(layer: ManagedLayer, band: AltitudeBand): number {
+    return layer.config.biomeAvailability.includes(band.biome)
+      ? layer.config.alpha * (band.alpha[layer.name] ?? 1)
+      : 0;
   }
 
-  private addTreeAccent(left: boolean, y: number): void {
-    const key = this.chooseAvailable(TREE_ACCENT_KEYS, 'world-leaves-small');
-    const trunkEdge = GAME.WIDTH / 2 + (left ? -GAME.TRUNK_WIDTH / 2 + 2 : GAME.TRUNK_WIDTH / 2 - 2);
-    const sprite = this.scene.add.image(trunkEdge, y, key);
-    sprite.setOrigin(left ? 1 : 0, 0.5);
-    sprite.setFlipX(!left);
-    sprite.setAlpha(0.82).setDepth(2);
-    this.treeAccents.push({
-      sprite,
-      speed: 1,
-      anchor: left ? 'trunk-left' : 'trunk-right',
-    });
+  private getBandBlend(altitude: number): { from: AltitudeBand; to: AltitudeBand; mix: number } {
+    let index = ALTITUDE_BANDS.length - 1;
+    for (let i = 0; i < ALTITUDE_BANDS.length - 1; i++) {
+      if (altitude < ALTITUDE_BANDS[i + 1].startsAt) { index = i; break; }
+    }
+    const from = ALTITUDE_BANDS[index];
+    const to = ALTITUDE_BANDS[Math.min(index + 1, ALTITUDE_BANDS.length - 1)];
+    const span = Math.max(1, to.startsAt - from.startsAt);
+    const linear = Phaser.Math.Clamp((altitude - from.startsAt) / span, 0, 1);
+    return { from, to, mix: linear * linear * (3 - 2 * linear) };
+  }
+
+  private mixColor(from: number, to: number, amount: number): number {
+    const a = Phaser.Display.Color.IntegerToRGB(from);
+    const b = Phaser.Display.Color.IntegerToRGB(to);
+    return Phaser.Display.Color.GetColor(Math.round(Phaser.Math.Linear(a.r, b.r, amount)), Math.round(Phaser.Math.Linear(a.g, b.g, amount)), Math.round(Phaser.Math.Linear(a.b, b.b, amount)));
+  }
+
+  private recycleLivingTree(cameraY: number): void {
+    const cameraBottom = cameraY + GAME.HEIGHT / 2;
+    for (const segment of this.trunkSegments) {
+      if (segment.y > cameraBottom + 96) {
+        segment.y = Math.min(...this.trunkSegments.map((item) => item.y)) - 96;
+        segment.setTexture(this.nextTrunkKey());
+      }
+    }
+    for (const accent of this.treeAccents) {
+      if (accent.y > cameraBottom + 70) {
+        accent.y = Math.min(...this.treeAccents.map((item) => item.y)) - Phaser.Math.Between(72, 112);
+        accent.setTexture(this.chooseAccent());
+      }
+    }
   }
 
   private nextTrunkKey(): string {
@@ -120,63 +191,15 @@ export class BackgroundManager {
     return key;
   }
 
-  private chooseAvailable(keys: readonly string[], fallback: string): string {
-    const available = keys.filter((key) => this.scene.textures.exists(key));
-    return available.length > 0 ? Phaser.Utils.Array.GetRandom(available) : fallback;
-  }
-
-  update(cameraY: number): void {
-    const deltaY = cameraY - this.lastCameraY;
-    this.lastCameraY = cameraY;
-
-    for (const cloud of this.clouds) {
-      cloud.sprite.y += deltaY * (1 - cloud.speed);
-      cloud.sprite.x += cloud.drift ?? 0;
-      if (cloud.sprite.x > GAME.WIDTH + 50) cloud.sprite.x = -50;
-    }
-
-    for (const foliage of this.edgeFoliage) {
-      foliage.sprite.y += deltaY * (1 - foliage.speed);
-    }
-
-    const cameraBottom = cameraY + GAME.HEIGHT / 2;
-    const spawnY = cameraY - GAME.HEIGHT / 2 - 110;
-    for (const segment of this.trunkSegments) {
-      if (segment.y > cameraBottom + 96) {
-        const highestY = Math.min(...this.trunkSegments.map((item) => item.y));
-        segment.y = highestY - 96;
-        segment.setTexture(this.nextTrunkKey());
-      }
-    }
-
-    for (const cloud of this.clouds) {
-      if (cloud.sprite.y > cameraBottom + 80) {
-        cloud.sprite.y = spawnY - Phaser.Math.Between(0, 180);
-        cloud.sprite.x = Phaser.Math.Between(42, GAME.WIDTH - 42);
-      }
-    }
-
-    for (const foliage of this.edgeFoliage) {
-      if (foliage.sprite.y > cameraBottom + 80) {
-        foliage.sprite.y = spawnY - Phaser.Math.Between(0, 160);
-        const padding = EDGE_VISIBLE_PADDING[foliage.sprite.texture.key] ?? 0;
-        foliage.sprite.x = foliage.anchor === 'edge-left' ? -padding : GAME.WIDTH + padding;
-      }
-    }
-
-    for (const accent of this.treeAccents) {
-      if (accent.sprite.y > cameraBottom + 70) {
-        const highestY = Math.min(...this.treeAccents.map((item) => item.sprite.y));
-        accent.sprite.y = highestY - Phaser.Math.Between(72, 112);
-        accent.sprite.setTexture(this.chooseAvailable(TREE_ACCENT_KEYS, 'world-leaves-small'));
-      }
-    }
+  private chooseAccent(): string {
+    const available = ACCENT_KEYS.filter((key) => this.scene.textures.exists(key));
+    return available.length > 0 ? Phaser.Utils.Array.GetRandom(available) : 'world-leaves-small';
   }
 
   destroy(): void {
-    for (const cloud of this.clouds) cloud.sprite.destroy();
-    for (const foliage of this.edgeFoliage) foliage.sprite.destroy();
-    for (const accent of this.treeAccents) accent.sprite.destroy();
-    for (const segment of this.trunkSegments) segment.destroy();
+    for (const layer of this.managedLayers) layer.objects.forEach((object) => object.destroy());
+    this.fallback?.destroy();
+    this.trunkSegments.forEach((segment) => segment.destroy());
+    this.treeAccents.forEach((accent) => accent.destroy());
   }
 }

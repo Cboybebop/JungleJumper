@@ -34,3 +34,15 @@ export const WORLD_IMAGE_ASSETS = [
 
 export type WorldImageKey = typeof WORLD_IMAGE_ASSETS[number][0];
 
+export const BACKGROUND_IMAGE_ASSETS = [
+  ['background-sky-gradient', 'sky-gradient.png'],
+  ['background-distant-canopy', 'distant-canopy.png'],
+  ['background-mist', 'mist.png'],
+  ['background-mid-trees', 'mid-trees.png'],
+  ['background-trunk-structures', 'trunk-structures.png'],
+  ['background-foreground-leaves', 'foreground-leaves.png'],
+  ['background-light-shafts', 'light-shafts.png'],
+  ['background-landmarks', 'landmarks.png'],
+] as const;
+
+export type BackgroundImageKey = typeof BACKGROUND_IMAGE_ASSETS[number][0];
