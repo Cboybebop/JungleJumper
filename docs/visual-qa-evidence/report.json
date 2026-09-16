@@ -1,0 +1,3507 @@
+{
+  "capturedAt": "2026-09-16T18:29:29.961Z",
+  "checks": [
+    {
+      "name": "canvas/MainMenu/keyboard focus",
+      "pass": true,
+      "details": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    {
+      "name": "canvas/MainMenu/simulated gamepad focus",
+      "pass": true
+    },
+    {
+      "name": "canvas/MainMenu/pointer focus",
+      "pass": true
+    },
+    {
+      "name": "canvas/MainMenu/touch dispatch",
+      "pass": true,
+      "details": "Tap delivered; recorded for visual review."
+    },
+    {
+      "name": "canvas/CharacterSelect/keyboard focus",
+      "pass": true,
+      "details": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    {
+      "name": "canvas/CharacterSelect/simulated gamepad focus",
+      "pass": true
+    },
+    {
+      "name": "canvas/CharacterSelect/pointer focus",
+      "pass": true
+    },
+    {
+      "name": "canvas/CharacterSelect/touch dispatch",
+      "pass": true,
+      "details": "Tap delivered; recorded for visual review."
+    },
+    {
+      "name": "canvas/Settings/keyboard focus",
+      "pass": true,
+      "details": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    {
+      "name": "canvas/Settings/simulated gamepad focus",
+      "pass": true
+    },
+    {
+      "name": "canvas/Settings/pointer focus",
+      "pass": true
+    },
+    {
+      "name": "canvas/Settings/touch dispatch",
+      "pass": true,
+      "details": "Tap delivered; recorded for visual review."
+    },
+    {
+      "name": "canvas/GameOver/keyboard focus",
+      "pass": true,
+      "details": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    {
+      "name": "canvas/GameOver/simulated gamepad focus",
+      "pass": true
+    },
+    {
+      "name": "canvas/GameOver/pointer focus",
+      "pass": true
+    },
+    {
+      "name": "canvas/GameOver/touch dispatch",
+      "pass": true,
+      "details": "Tap delivered; recorded for visual review."
+    },
+    {
+      "name": "canvas/live frame body and origin invariance",
+      "pass": true,
+      "details": [
+        {
+          "texture": "miko-actions",
+          "frames": 24,
+          "stable": true,
+          "shape": [
+            18,
+            26,
+            7,
+            4,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-moving",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            80,
+            24,
+            19,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-moving",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            80,
+            24,
+            19,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-moving",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            80,
+            24,
+            19,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-spring",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            60,
+            8,
+            10,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "coconut-actions",
+          "frames": 8,
+          "stable": true,
+          "shape": [
+            18,
+            18,
+            7,
+            7,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "snake-actions",
+          "frames": 8,
+          "stable": true,
+          "shape": [
+            32,
+            32,
+            3,
+            19,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "snake-actions",
+          "frames": 8,
+          "stable": true,
+          "shape": [
+            32,
+            32,
+            3,
+            19,
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    },
+    {
+      "name": "canvas/all characters enemies platforms both facings",
+      "pass": true,
+      "details": [
+        {
+          "texture": "miko-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "pico-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "hoppy-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "tuki-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "zippy-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "snake-actions",
+          "stable": true,
+          "body": "[26,10,3,19,0.5,0.5]"
+        },
+        {
+          "texture": "coconut-actions",
+          "stable": true,
+          "body": "[18,18,7,7,0.5,0.5]"
+        },
+        {
+          "texture": "thorn-vine-actions",
+          "stable": true,
+          "body": "[30,12,1,16,0.5,0.5]"
+        },
+        {
+          "texture": "bat-actions",
+          "stable": true,
+          "body": "[24,13,4,10,0.5,0.5]"
+        },
+        {
+          "texture": "platform-normal",
+          "stable": true,
+          "body": "[68,8,6,2,0.5,0.5]"
+        },
+        {
+          "texture": "platform-moving",
+          "stable": true,
+          "body": "[42,8,19,2,0.5,0.5]"
+        },
+        {
+          "texture": "platform-crumbling",
+          "stable": true,
+          "body": "[64,8,8,2,0.5,0.5]"
+        },
+        {
+          "texture": "platform-spring",
+          "stable": true,
+          "body": "[60,8,10,2,0.5,0.5]"
+        }
+      ]
+    },
+    {
+      "name": "canvas/game/touch controls",
+      "pass": true,
+      "details": {
+        "x": 116,
+        "y": 754
+      }
+    },
+    {
+      "name": "canvas/pause",
+      "pass": true
+    },
+    {
+      "name": "canvas/pause/keyboard focus",
+      "pass": true
+    },
+    {
+      "name": "canvas/gallery/0",
+      "pass": true,
+      "details": "Miko 1"
+    },
+    {
+      "name": "canvas/gallery/1",
+      "pass": true,
+      "details": "Miko 2"
+    },
+    {
+      "name": "canvas/gallery/2",
+      "pass": true,
+      "details": "Pico 1"
+    },
+    {
+      "name": "canvas/gallery/3",
+      "pass": true,
+      "details": "Pico 2"
+    },
+    {
+      "name": "canvas/gallery/4",
+      "pass": true,
+      "details": "Hoppy 1"
+    },
+    {
+      "name": "canvas/gallery/5",
+      "pass": true,
+      "details": "Hoppy 2"
+    },
+    {
+      "name": "canvas/gallery/6",
+      "pass": true,
+      "details": "Tuki 1"
+    },
+    {
+      "name": "canvas/gallery/7",
+      "pass": true,
+      "details": "Tuki 2"
+    },
+    {
+      "name": "canvas/gallery/8",
+      "pass": true,
+      "details": "Zippy 1"
+    },
+    {
+      "name": "canvas/gallery/9",
+      "pass": true,
+      "details": "Zippy 2"
+    },
+    {
+      "name": "canvas/gallery/10",
+      "pass": true,
+      "details": "Enemies / effects / pickup 1"
+    },
+    {
+      "name": "canvas/gallery/11",
+      "pass": true,
+      "details": "Enemies / effects / pickup 2"
+    },
+    {
+      "name": "canvas/gallery/12",
+      "pass": true,
+      "details": "Enemies / effects / pickup 3"
+    },
+    {
+      "name": "canvas/gallery/13",
+      "pass": true,
+      "details": "Platforms: all states 1"
+    },
+    {
+      "name": "canvas/gallery/14",
+      "pass": true,
+      "details": "Platforms: all states 2"
+    },
+    {
+      "name": "canvas/gallery/15",
+      "pass": true,
+      "details": "UI states 1"
+    },
+    {
+      "name": "canvas/gallery/16",
+      "pass": true,
+      "details": "UI states 2"
+    },
+    {
+      "name": "canvas/gallery/17",
+      "pass": true,
+      "details": "UI states 3"
+    },
+    {
+      "name": "canvas/gallery/18",
+      "pass": true,
+      "details": "UI states 4"
+    },
+    {
+      "name": "canvas/gallery/19",
+      "pass": true,
+      "details": "Full asset: button-large-focused"
+    },
+    {
+      "name": "canvas/gallery/20",
+      "pass": true,
+      "details": "Full asset: button-large-normal"
+    },
+    {
+      "name": "canvas/gallery/21",
+      "pass": true,
+      "details": "Full asset: button-large-pressed"
+    },
+    {
+      "name": "canvas/gallery/22",
+      "pass": true,
+      "details": "Non-color cues 1"
+    },
+    {
+      "name": "canvas/gallery/23",
+      "pass": true,
+      "details": "Portraits / world 1"
+    },
+    {
+      "name": "canvas/gallery/24",
+      "pass": true,
+      "details": "Portraits / world 2"
+    },
+    {
+      "name": "canvas/gallery/25",
+      "pass": true,
+      "details": "Full asset: world-trunk-0"
+    },
+    {
+      "name": "canvas/gallery/26",
+      "pass": true,
+      "details": "Full asset: world-trunk-1"
+    },
+    {
+      "name": "canvas/gallery/27",
+      "pass": true,
+      "details": "Full asset: world-trunk-2"
+    },
+    {
+      "name": "canvas/gallery/28",
+      "pass": true,
+      "details": "Full asset: world-trunk-3"
+    },
+    {
+      "name": "canvas/gallery/29",
+      "pass": true,
+      "details": "Full asset: world-canopy-distant-left"
+    },
+    {
+      "name": "canvas/gallery/30",
+      "pass": true,
+      "details": "Full asset: world-canopy-distant-right"
+    },
+    {
+      "name": "canvas/gallery/31",
+      "pass": true,
+      "details": "Full asset: world-jungle-silhouette"
+    },
+    {
+      "name": "canvas/gallery/32",
+      "pass": true,
+      "details": "Palette 1"
+    },
+    {
+      "name": "canvas/gallery/33",
+      "pass": true,
+      "details": "Palette 2"
+    },
+    {
+      "name": "canvas/gallery/34",
+      "pass": true,
+      "details": "Palette 3"
+    },
+    {
+      "name": "canvas/gallery/35",
+      "pass": true,
+      "details": "Palette 4"
+    },
+    {
+      "name": "canvas/gallery/36",
+      "pass": true,
+      "details": "Live UI states"
+    },
+    {
+      "name": "canvas/gallery/37",
+      "pass": true,
+      "details": "Feedback pool effects"
+    },
+    {
+      "name": "canvas/gallery/38",
+      "pass": true,
+      "details": "background-sky-gradient"
+    },
+    {
+      "name": "canvas/gallery/39",
+      "pass": true,
+      "details": "background-distant-canopy"
+    },
+    {
+      "name": "canvas/gallery/40",
+      "pass": true,
+      "details": "background-mist"
+    },
+    {
+      "name": "canvas/gallery/41",
+      "pass": true,
+      "details": "background-mid-trees"
+    },
+    {
+      "name": "canvas/gallery/42",
+      "pass": true,
+      "details": "background-trunk-structures"
+    },
+    {
+      "name": "canvas/gallery/43",
+      "pass": true,
+      "details": "background-foreground-leaves"
+    },
+    {
+      "name": "canvas/gallery/44",
+      "pass": true,
+      "details": "background-light-shafts"
+    },
+    {
+      "name": "canvas/gallery/45",
+      "pass": true,
+      "details": "background-landmarks"
+    },
+    {
+      "name": "canvas/gallery/46",
+      "pass": true,
+      "details": "Lower Jungle"
+    },
+    {
+      "name": "canvas/gallery/47",
+      "pass": true,
+      "details": "Bright Canopy"
+    },
+    {
+      "name": "canvas/gallery/48",
+      "pass": true,
+      "details": "Misty Heights"
+    },
+    {
+      "name": "canvas/gallery/49",
+      "pass": true,
+      "details": "Sunset Canopy"
+    },
+    {
+      "name": "canvas/gallery/50",
+      "pass": true,
+      "details": "Night Storm"
+    },
+    {
+      "name": "canvas/background recycling stable object count",
+      "pass": true,
+      "details": {
+        "before": 68,
+        "after": 68,
+        "sourceBytesEstimate": 23347516,
+        "largestSources": [
+          {
+            "key": "background-sky-gradient",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-distant-canopy",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-mist",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-mid-trees",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-foreground-leaves",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-landmarks",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-trunk-structures",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-light-shafts",
+            "bytes": 1536000
+          },
+          {
+            "key": "7efbfab1-ff50-4dc9-9245-d10608ec7dcd",
+            "bytes": 1536000
+          },
+          {
+            "key": "66983ac8-43d4-494f-b7df-27af6ae2bf54",
+            "bytes": 1536000
+          }
+        ],
+        "fps": 60.14938263290448
+      }
+    },
+    {
+      "name": "webgl/MainMenu/keyboard focus",
+      "pass": true,
+      "details": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    {
+      "name": "webgl/MainMenu/simulated gamepad focus",
+      "pass": true
+    },
+    {
+      "name": "webgl/MainMenu/pointer focus",
+      "pass": true
+    },
+    {
+      "name": "webgl/MainMenu/touch dispatch",
+      "pass": true,
+      "details": "Tap delivered; recorded for visual review."
+    },
+    {
+      "name": "webgl/CharacterSelect/keyboard focus",
+      "pass": true,
+      "details": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    {
+      "name": "webgl/CharacterSelect/simulated gamepad focus",
+      "pass": true
+    },
+    {
+      "name": "webgl/CharacterSelect/pointer focus",
+      "pass": true
+    },
+    {
+      "name": "webgl/CharacterSelect/touch dispatch",
+      "pass": true,
+      "details": "Tap delivered; recorded for visual review."
+    },
+    {
+      "name": "webgl/Settings/keyboard focus",
+      "pass": true,
+      "details": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    {
+      "name": "webgl/Settings/simulated gamepad focus",
+      "pass": true
+    },
+    {
+      "name": "webgl/Settings/pointer focus",
+      "pass": true
+    },
+    {
+      "name": "webgl/Settings/touch dispatch",
+      "pass": true,
+      "details": "Tap delivered; recorded for visual review."
+    },
+    {
+      "name": "webgl/GameOver/keyboard focus",
+      "pass": true,
+      "details": {
+        "before": 0,
+        "after": 1
+      }
+    },
+    {
+      "name": "webgl/GameOver/simulated gamepad focus",
+      "pass": true
+    },
+    {
+      "name": "webgl/GameOver/pointer focus",
+      "pass": true
+    },
+    {
+      "name": "webgl/GameOver/touch dispatch",
+      "pass": true,
+      "details": "Tap delivered; recorded for visual review."
+    },
+    {
+      "name": "webgl/live frame body and origin invariance",
+      "pass": true,
+      "details": [
+        {
+          "texture": "miko-actions",
+          "frames": 24,
+          "stable": true,
+          "shape": [
+            18,
+            26,
+            7,
+            4,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-moving",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            80,
+            24,
+            19,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-moving",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            80,
+            24,
+            19,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-moving",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            80,
+            24,
+            19,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-moving",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            80,
+            24,
+            19,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "platform-normal",
+          "frames": 4,
+          "stable": true,
+          "shape": [
+            68,
+            8,
+            6,
+            2,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "snake-actions",
+          "frames": 8,
+          "stable": true,
+          "shape": [
+            32,
+            32,
+            3,
+            19,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "texture": "snake-actions",
+          "frames": 8,
+          "stable": true,
+          "shape": [
+            32,
+            32,
+            3,
+            19,
+            0.5,
+            0.5
+          ]
+        }
+      ]
+    },
+    {
+      "name": "webgl/all characters enemies platforms both facings",
+      "pass": true,
+      "details": [
+        {
+          "texture": "miko-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "pico-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "hoppy-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "tuki-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "zippy-actions",
+          "stable": true,
+          "body": "[18,26,7,4,0.5,0.5]"
+        },
+        {
+          "texture": "snake-actions",
+          "stable": true,
+          "body": "[26,10,3,19,0.5,0.5]"
+        },
+        {
+          "texture": "coconut-actions",
+          "stable": true,
+          "body": "[18,18,7,7,0.5,0.5]"
+        },
+        {
+          "texture": "thorn-vine-actions",
+          "stable": true,
+          "body": "[30,12,1,16,0.5,0.5]"
+        },
+        {
+          "texture": "bat-actions",
+          "stable": true,
+          "body": "[24,13,4,10,0.5,0.5]"
+        },
+        {
+          "texture": "platform-normal",
+          "stable": true,
+          "body": "[68,8,6,2,0.5,0.5]"
+        },
+        {
+          "texture": "platform-moving",
+          "stable": true,
+          "body": "[42,8,19,2,0.5,0.5]"
+        },
+        {
+          "texture": "platform-crumbling",
+          "stable": true,
+          "body": "[64,8,8,2,0.5,0.5]"
+        },
+        {
+          "texture": "platform-spring",
+          "stable": true,
+          "body": "[60,8,10,2,0.5,0.5]"
+        }
+      ]
+    },
+    {
+      "name": "webgl/game/touch controls",
+      "pass": true,
+      "details": {
+        "x": 116,
+        "y": 754
+      }
+    },
+    {
+      "name": "webgl/pause",
+      "pass": true
+    },
+    {
+      "name": "webgl/pause/keyboard focus",
+      "pass": true
+    },
+    {
+      "name": "webgl/gallery/0",
+      "pass": true,
+      "details": "Miko 1"
+    },
+    {
+      "name": "webgl/gallery/1",
+      "pass": true,
+      "details": "Miko 2"
+    },
+    {
+      "name": "webgl/gallery/2",
+      "pass": true,
+      "details": "Pico 1"
+    },
+    {
+      "name": "webgl/gallery/3",
+      "pass": true,
+      "details": "Pico 2"
+    },
+    {
+      "name": "webgl/gallery/4",
+      "pass": true,
+      "details": "Hoppy 1"
+    },
+    {
+      "name": "webgl/gallery/5",
+      "pass": true,
+      "details": "Hoppy 2"
+    },
+    {
+      "name": "webgl/gallery/6",
+      "pass": true,
+      "details": "Tuki 1"
+    },
+    {
+      "name": "webgl/gallery/7",
+      "pass": true,
+      "details": "Tuki 2"
+    },
+    {
+      "name": "webgl/gallery/8",
+      "pass": true,
+      "details": "Zippy 1"
+    },
+    {
+      "name": "webgl/gallery/9",
+      "pass": true,
+      "details": "Zippy 2"
+    },
+    {
+      "name": "webgl/gallery/10",
+      "pass": true,
+      "details": "Enemies / effects / pickup 1"
+    },
+    {
+      "name": "webgl/gallery/11",
+      "pass": true,
+      "details": "Enemies / effects / pickup 2"
+    },
+    {
+      "name": "webgl/gallery/12",
+      "pass": true,
+      "details": "Enemies / effects / pickup 3"
+    },
+    {
+      "name": "webgl/gallery/13",
+      "pass": true,
+      "details": "Platforms: all states 1"
+    },
+    {
+      "name": "webgl/gallery/14",
+      "pass": true,
+      "details": "Platforms: all states 2"
+    },
+    {
+      "name": "webgl/gallery/15",
+      "pass": true,
+      "details": "UI states 1"
+    },
+    {
+      "name": "webgl/gallery/16",
+      "pass": true,
+      "details": "UI states 2"
+    },
+    {
+      "name": "webgl/gallery/17",
+      "pass": true,
+      "details": "UI states 3"
+    },
+    {
+      "name": "webgl/gallery/18",
+      "pass": true,
+      "details": "UI states 4"
+    },
+    {
+      "name": "webgl/gallery/19",
+      "pass": true,
+      "details": "Full asset: button-large-focused"
+    },
+    {
+      "name": "webgl/gallery/20",
+      "pass": true,
+      "details": "Full asset: button-large-normal"
+    },
+    {
+      "name": "webgl/gallery/21",
+      "pass": true,
+      "details": "Full asset: button-large-pressed"
+    },
+    {
+      "name": "webgl/gallery/22",
+      "pass": true,
+      "details": "Non-color cues 1"
+    },
+    {
+      "name": "webgl/gallery/23",
+      "pass": true,
+      "details": "Portraits / world 1"
+    },
+    {
+      "name": "webgl/gallery/24",
+      "pass": true,
+      "details": "Portraits / world 2"
+    },
+    {
+      "name": "webgl/gallery/25",
+      "pass": true,
+      "details": "Full asset: world-trunk-0"
+    },
+    {
+      "name": "webgl/gallery/26",
+      "pass": true,
+      "details": "Full asset: world-trunk-1"
+    },
+    {
+      "name": "webgl/gallery/27",
+      "pass": true,
+      "details": "Full asset: world-trunk-2"
+    },
+    {
+      "name": "webgl/gallery/28",
+      "pass": true,
+      "details": "Full asset: world-trunk-3"
+    },
+    {
+      "name": "webgl/gallery/29",
+      "pass": true,
+      "details": "Full asset: world-canopy-distant-left"
+    },
+    {
+      "name": "webgl/gallery/30",
+      "pass": true,
+      "details": "Full asset: world-canopy-distant-right"
+    },
+    {
+      "name": "webgl/gallery/31",
+      "pass": true,
+      "details": "Full asset: world-jungle-silhouette"
+    },
+    {
+      "name": "webgl/gallery/32",
+      "pass": true,
+      "details": "Palette 1"
+    },
+    {
+      "name": "webgl/gallery/33",
+      "pass": true,
+      "details": "Palette 2"
+    },
+    {
+      "name": "webgl/gallery/34",
+      "pass": true,
+      "details": "Palette 3"
+    },
+    {
+      "name": "webgl/gallery/35",
+      "pass": true,
+      "details": "Palette 4"
+    },
+    {
+      "name": "webgl/gallery/36",
+      "pass": true,
+      "details": "Live UI states"
+    },
+    {
+      "name": "webgl/gallery/37",
+      "pass": true,
+      "details": "Feedback pool effects"
+    },
+    {
+      "name": "webgl/gallery/38",
+      "pass": true,
+      "details": "background-sky-gradient"
+    },
+    {
+      "name": "webgl/gallery/39",
+      "pass": true,
+      "details": "background-distant-canopy"
+    },
+    {
+      "name": "webgl/gallery/40",
+      "pass": true,
+      "details": "background-mist"
+    },
+    {
+      "name": "webgl/gallery/41",
+      "pass": true,
+      "details": "background-mid-trees"
+    },
+    {
+      "name": "webgl/gallery/42",
+      "pass": true,
+      "details": "background-trunk-structures"
+    },
+    {
+      "name": "webgl/gallery/43",
+      "pass": true,
+      "details": "background-foreground-leaves"
+    },
+    {
+      "name": "webgl/gallery/44",
+      "pass": true,
+      "details": "background-light-shafts"
+    },
+    {
+      "name": "webgl/gallery/45",
+      "pass": true,
+      "details": "background-landmarks"
+    },
+    {
+      "name": "webgl/gallery/46",
+      "pass": true,
+      "details": "Lower Jungle"
+    },
+    {
+      "name": "webgl/gallery/47",
+      "pass": true,
+      "details": "Bright Canopy"
+    },
+    {
+      "name": "webgl/gallery/48",
+      "pass": true,
+      "details": "Misty Heights"
+    },
+    {
+      "name": "webgl/gallery/49",
+      "pass": true,
+      "details": "Sunset Canopy"
+    },
+    {
+      "name": "webgl/gallery/50",
+      "pass": true,
+      "details": "Night Storm"
+    },
+    {
+      "name": "webgl/background recycling stable object count",
+      "pass": true,
+      "details": {
+        "before": 68,
+        "after": 68,
+        "sourceBytesEstimate": 23347516,
+        "largestSources": [
+          {
+            "key": "background-mist",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-distant-canopy",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-sky-gradient",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-foreground-leaves",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-mid-trees",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-trunk-structures",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-light-shafts",
+            "bytes": 1536000
+          },
+          {
+            "key": "background-landmarks",
+            "bytes": 1536000
+          },
+          {
+            "key": "9ad09760-d351-477b-adef-c334e6d4293e",
+            "bytes": 1536000
+          },
+          {
+            "key": "534ad21a-726d-4465-9873-12e2a374ba2c",
+            "bytes": 1536000
+          }
+        ],
+        "fps": 33.92572867180584
+      }
+    },
+    {
+      "name": "canvas/320x480/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/320x480/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/320x480/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/320x480/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/320x480/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/375x667/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/375x667/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/375x667/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/375x667/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/480x800/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/480x800/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/480x800/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/480x800/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/800x480/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/800x480/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/800x480/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/800x480/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/1280x720/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/1280x720/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/1280x720/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1280x720/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/1920x1080/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/1920x1080/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "canvas/1920x1080/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "canvas/1920x1080/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/320x480/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/320x480/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/320x480/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/320x480/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/375x667/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/375x667/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/375x667/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/375x667/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/480x800/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/480x800/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/480x800/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/480x800/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/800x480/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/800x480/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/800x480/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/800x480/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/1280x720/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/1280x720/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/1280x720/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1280x720/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR1/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/1920x1080/DPR1/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR1/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR1/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR1/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR1/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR2/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/1920x1080/DPR2/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR2/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR2/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR2/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR2/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR3/canvas fit",
+      "pass": true
+    },
+    {
+      "name": "webgl/1920x1080/DPR3/MainMenu/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR3/CharacterSelect/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR3/Settings/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR3/GameOver/interactive bounds",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "webgl/1920x1080/DPR3/Game/interactive bounds",
+      "pass": true,
+      "details": []
+    }
+  ],
+  "errors": [],
+  "profiles": [
+    {
+      "kind": "gameplay sample",
+      "renderer": "canvas",
+      "frames": 90,
+      "drawsPerFrame": null,
+      "p95FrameMs": 16.67999999999993,
+      "objects": 242,
+      "particlePool": 96,
+      "activeParticles": 0,
+      "labelPool": 6
+    },
+    {
+      "renderer": "canvas",
+      "before": 68,
+      "after": 68,
+      "sourceBytesEstimate": 23347516,
+      "largestSources": [
+        {
+          "key": "background-sky-gradient",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-distant-canopy",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-mist",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-mid-trees",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-foreground-leaves",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-landmarks",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-trunk-structures",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-light-shafts",
+          "bytes": 1536000
+        },
+        {
+          "key": "7efbfab1-ff50-4dc9-9245-d10608ec7dcd",
+          "bytes": 1536000
+        },
+        {
+          "key": "66983ac8-43d4-494f-b7df-27af6ae2bf54",
+          "bytes": 1536000
+        }
+      ],
+      "fps": 60.14938263290448
+    },
+    {
+      "kind": "gameplay sample",
+      "renderer": "webgl",
+      "frames": 91,
+      "drawsPerFrame": 2.912087912087912,
+      "p95FrameMs": 16.67999999999993,
+      "objects": 248,
+      "particlePool": 96,
+      "activeParticles": 0,
+      "labelPool": 6
+    },
+    {
+      "renderer": "webgl",
+      "before": 68,
+      "after": 68,
+      "sourceBytesEstimate": 23347516,
+      "largestSources": [
+        {
+          "key": "background-mist",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-distant-canopy",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-sky-gradient",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-foreground-leaves",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-mid-trees",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-trunk-structures",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-light-shafts",
+          "bytes": 1536000
+        },
+        {
+          "key": "background-landmarks",
+          "bytes": 1536000
+        },
+        {
+          "key": "9ad09760-d351-477b-adef-c334e6d4293e",
+          "bytes": 1536000
+        },
+        {
+          "key": "534ad21a-726d-4465-9873-12e2a374ba2c",
+          "bytes": 1536000
+        }
+      ],
+      "fps": 33.92572867180584
+    }
+  ],
+  "viewports": [
+    {
+      "renderer": "canvas",
+      "width": 320,
+      "height": 480,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 320,
+      "height": 480,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 320,
+      "height": 480,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 375,
+      "height": 667,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 375,
+        "height": 667
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 375,
+      "height": 667,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 375,
+        "height": 667
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 375,
+      "height": 667,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 375,
+        "height": 667
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 480,
+      "height": 800,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 480,
+        "height": 800
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 480,
+      "height": 800,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 480,
+        "height": 800
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 480,
+      "height": 800,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 480,
+        "height": 800
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 800,
+      "height": 480,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 800,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 800,
+      "height": 480,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 800,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 800,
+      "height": 480,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 800,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 1280,
+      "height": 720,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 720
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 1280,
+      "height": 720,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 720
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 1280,
+      "height": 720,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 720
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 1920,
+      "height": 1080,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 1920,
+      "height": 1080,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "fits": true
+    },
+    {
+      "renderer": "canvas",
+      "width": 1920,
+      "height": 1080,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 320,
+      "height": 480,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 320,
+      "height": 480,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 320,
+      "height": 480,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 375,
+      "height": 667,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 375,
+        "height": 667
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 375,
+      "height": 667,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 375,
+        "height": 667
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 375,
+      "height": 667,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 375,
+        "height": 667
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 480,
+      "height": 800,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 480,
+        "height": 800
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 480,
+      "height": 800,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 480,
+        "height": 800
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 480,
+      "height": 800,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 480,
+        "height": 800
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 800,
+      "height": 480,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 800,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 800,
+      "height": 480,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 800,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 800,
+      "height": 480,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 800,
+        "height": 480
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 1280,
+      "height": 720,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 720
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 1280,
+      "height": 720,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 720
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 1280,
+      "height": 720,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 720
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 1920,
+      "height": 1080,
+      "dpr": 1,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 1920,
+      "height": 1080,
+      "dpr": 2,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "fits": true
+    },
+    {
+      "renderer": "webgl",
+      "width": 1920,
+      "height": 1080,
+      "dpr": 3,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080
+      },
+      "fits": true
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GAME } from '../constants';
+import { stateCue } from '../graphics/StateCue';
 import type { ObstacleType } from '../systems/LevelGenerator';
 import {
   EFFECT_ANIMATIONS,
@@ -34,6 +35,7 @@ export class Obstacle extends Phaser.Physics.Arcade.Sprite {
   private resolved = false;
   private attackUntil = 0;
   private currentState: EnemyAnimationState | null = null;
+  private cue?: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene, x: number, y: number, type: ObstacleType) {
     super(scene, x, y, ENEMY_TEXTURES[type]);
@@ -44,6 +46,9 @@ export class Obstacle extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this, type !== 'coconut');
     this.setDepth(6);
+    this.cue = stateCue(scene, 'hazard').setDepth(7);
+    this.syncCue();
+    scene.events.on(Phaser.Scenes.Events.POST_UPDATE, this.syncCue, this);
     this.applyStableBody();
 
     switch (type) {
@@ -142,8 +147,14 @@ export class Obstacle extends Phaser.Physics.Arcade.Sprite {
   }
 
   destroy(fromScene?: boolean): void {
+    this.scene?.events.off(Phaser.Scenes.Events.POST_UPDATE, this.syncCue, this);
+    this.cue?.destroy();
     this.warningSprite?.destroy();
     this.warningSprite = null;
     super.destroy(fromScene);
+  }
+
+  private syncCue(): void {
+    this.cue?.setPosition(this.x, this.y - 19).setVisible(this.visible && !this.resolved);
   }
 }

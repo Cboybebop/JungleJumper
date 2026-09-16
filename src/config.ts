@@ -7,6 +7,7 @@ import { SettingsScene } from './scenes/SettingsScene';
 import { GameScene } from './scenes/GameScene';
 import { GameUIScene } from './scenes/GameUIScene';
 import { GameOverScene } from './scenes/GameOverScene';
+import { ArtGalleryScene } from './scenes/ArtGalleryScene';
 
 function getRendererType(): number {
   if (typeof window === 'undefined') {
@@ -49,10 +50,7 @@ export function createGameConfig(): Phaser.Types.Core.GameConfig {
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
-      min: {
-        width: 320,
-        height: 480,
-      },
+      // Allow FIT to shrink below the logical minimum during live browser resize.
       max: {
         width: Math.max(720, GAME.WIDTH),
         height: Math.max(1280, GAME.HEIGHT),
@@ -69,6 +67,7 @@ export function createGameConfig(): Phaser.Types.Core.GameConfig {
       GameScene,
       GameUIScene,
       GameOverScene,
+      ...(import.meta.env.DEV ? [ArtGalleryScene] : []),
     ],
   };
 }

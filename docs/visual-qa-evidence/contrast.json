@@ -1,0 +1,299 @@
+[
+  {
+    "asset": "button-large-normal",
+    "foreground": "white",
+    "background": [
+      46,
+      204,
+      113
+    ],
+    "ratio": 2.1,
+    "normalTextPass": false
+  },
+  {
+    "asset": "button-large-normal",
+    "foreground": "warm",
+    "background": [
+      46,
+      204,
+      113
+    ],
+    "ratio": 1.71,
+    "normalTextPass": false
+  },
+  {
+    "asset": "button-large-normal",
+    "foreground": "sky",
+    "background": [
+      46,
+      204,
+      113
+    ],
+    "ratio": 1.21,
+    "normalTextPass": false
+  },
+  {
+    "asset": "button-large-focused",
+    "foreground": "white",
+    "background": [
+      46,
+      204,
+      113
+    ],
+    "ratio": 2.1,
+    "normalTextPass": false
+  },
+  {
+    "asset": "button-large-focused",
+    "foreground": "warm",
+    "background": [
+      46,
+      204,
+      113
+    ],
+    "ratio": 1.71,
+    "normalTextPass": false
+  },
+  {
+    "asset": "button-large-focused",
+    "foreground": "sky",
+    "background": [
+      46,
+      204,
+      113
+    ],
+    "ratio": 1.21,
+    "normalTextPass": false
+  },
+  {
+    "asset": "button-large-pressed",
+    "foreground": "white",
+    "background": [
+      30,
+      132,
+      73
+    ],
+    "ratio": 4.72,
+    "normalTextPass": true
+  },
+  {
+    "asset": "button-large-pressed",
+    "foreground": "warm",
+    "background": [
+      30,
+      132,
+      73
+    ],
+    "ratio": 3.84,
+    "normalTextPass": false
+  },
+  {
+    "asset": "button-large-pressed",
+    "foreground": "sky",
+    "background": [
+      30,
+      132,
+      73
+    ],
+    "ratio": 2.71,
+    "normalTextPass": false
+  },
+  {
+    "asset": "panel-nine-slice",
+    "foreground": "white",
+    "background": [
+      139,
+      90,
+      114
+    ],
+    "ratio": 5.52,
+    "normalTextPass": true
+  },
+  {
+    "asset": "panel-nine-slice",
+    "foreground": "warm",
+    "background": [
+      139,
+      90,
+      114
+    ],
+    "ratio": 4.5,
+    "normalTextPass": true
+  },
+  {
+    "asset": "panel-nine-slice",
+    "foreground": "sky",
+    "background": [
+      139,
+      90,
+      114
+    ],
+    "ratio": 3.17,
+    "normalTextPass": false
+  },
+  {
+    "asset": "modal-nine-slice",
+    "foreground": "white",
+    "background": [
+      23,
+      20,
+      42
+    ],
+    "ratio": 17.95,
+    "normalTextPass": true
+  },
+  {
+    "asset": "modal-nine-slice",
+    "foreground": "warm",
+    "background": [
+      23,
+      20,
+      42
+    ],
+    "ratio": 14.62,
+    "normalTextPass": true
+  },
+  {
+    "asset": "modal-nine-slice",
+    "foreground": "sky",
+    "background": [
+      23,
+      20,
+      42
+    ],
+    "ratio": 10.31,
+    "normalTextPass": true
+  },
+  {
+    "asset": "tab-focused",
+    "foreground": "white",
+    "background": [
+      46,
+      139,
+      122
+    ],
+    "ratio": 4.13,
+    "normalTextPass": false
+  },
+  {
+    "asset": "tab-focused",
+    "foreground": "warm",
+    "background": [
+      46,
+      139,
+      122
+    ],
+    "ratio": 3.36,
+    "normalTextPass": false
+  },
+  {
+    "asset": "tab-focused",
+    "foreground": "sky",
+    "background": [
+      46,
+      139,
+      122
+    ],
+    "ratio": 2.37,
+    "normalTextPass": false
+  },
+  {
+    "asset": "tab-pressed",
+    "foreground": "white",
+    "background": [
+      30,
+      132,
+      73
+    ],
+    "ratio": 4.72,
+    "normalTextPass": true
+  },
+  {
+    "asset": "tab-pressed",
+    "foreground": "warm",
+    "background": [
+      30,
+      132,
+      73
+    ],
+    "ratio": 3.84,
+    "normalTextPass": false
+  },
+  {
+    "asset": "tab-pressed",
+    "foreground": "sky",
+    "background": [
+      30,
+      132,
+      73
+    ],
+    "ratio": 2.71,
+    "normalTextPass": false
+  },
+  {
+    "asset": "score-plaque",
+    "foreground": "white",
+    "background": [
+      23,
+      20,
+      42
+    ],
+    "ratio": 17.95,
+    "normalTextPass": true
+  },
+  {
+    "asset": "score-plaque",
+    "foreground": "warm",
+    "background": [
+      23,
+      20,
+      42
+    ],
+    "ratio": 14.62,
+    "normalTextPass": true
+  },
+  {
+    "asset": "score-plaque",
+    "foreground": "sky",
+    "background": [
+      23,
+      20,
+      42
+    ],
+    "ratio": 10.31,
+    "normalTextPass": true
+  },
+  {
+    "asset": "game-over title",
+    "ratio": 4.46,
+    "target": 3,
+    "actualUsagePass": true
+  },
+  {
+    "asset": "state cue",
+    "ratio": 13.6,
+    "target": 4.5,
+    "actualUsagePass": true
+  },
+  {
+    "asset": "HUD biome",
+    "ratio": 9.59,
+    "target": 4.5,
+    "actualUsagePass": true
+  },
+  {
+    "asset": "button label plate",
+    "ratio": 16.71,
+    "actualUsagePass": true
+  },
+  {
+    "asset": "row value plate",
+    "ratio": 13.6,
+    "actualUsagePass": true
+  },
+  {
+    "asset": "HUD biome plate",
+    "ratio": 9.59,
+    "actualUsagePass": true
+  }
+]

@@ -193,8 +193,8 @@ export class CharacterSelectScene extends Phaser.Scene {
       }
     }
 
-    this.nameText.setText(CHARACTERS[this.selectedIndex].name);
-    this.portrait.setTexture(CHARACTERS[this.selectedIndex].portrait);
+    if (this.nameText?.scene) this.nameText.setText(CHARACTERS[this.selectedIndex].name);
+    if (this.portrait?.scene) this.portrait.setTexture(CHARACTERS[this.selectedIndex].portrait);
   }
 
   private cleanup(): void {

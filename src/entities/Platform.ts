@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME } from '../constants';
 import type { PlatformType } from '../systems/LevelGenerator';
 import { PLATFORM_FRAME_COUNT } from '../graphics/WorldAssets';
+import { stateCue } from '../graphics/StateCue';
 
 export class Platform extends Phaser.Physics.Arcade.Sprite {
   platformType: PlatformType;
@@ -15,6 +16,7 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
   private stateTimers: Phaser.Time.TimerEvent[] = [];
   private isCrumbling = false;
   private isSpringAnimating = false;
+  private cue?: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene, x: number, y: number, type: PlatformType, variant = 0) {
     const textureKey = `platform-${type}`;
@@ -26,6 +28,11 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this, true); // Static body
 
     this.setDepth(5);
+    if (type !== 'normal') {
+      this.cue = stateCue(scene, type).setDepth(6);
+      this.syncCue();
+      scene.events.on(Phaser.Scenes.Events.POST_UPDATE, this.syncCue, this);
+    }
 
     const body = this.body as Phaser.Physics.Arcade.StaticBody;
     const surfaceWidth = this.getSurfaceWidth();
@@ -153,6 +160,8 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
   }
 
   destroy(fromScene?: boolean): void {
+    this.scene?.events.off(Phaser.Scenes.Events.POST_UPDATE, this.syncCue, this);
+    this.cue?.destroy();
     for (const timer of this.stateTimers) {
       timer.destroy();
     }
@@ -160,5 +169,9 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
     this.connector?.destroy();
     this.connector = null;
     super.destroy(fromScene);
+  }
+
+  private syncCue(): void {
+    this.cue?.setPosition(this.x, this.y + 6).setAlpha(this.alpha).setVisible(this.visible);
   }
 }

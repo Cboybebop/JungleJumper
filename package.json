@@ -10,7 +10,8 @@
     "verify:characters": "node scripts/verify-miko-assets.mjs && esbuild scripts/verify-miko-transitions.ts --bundle --platform=node --format=esm --outfile=node_modules/character-transition-check.mjs && node node_modules/character-transition-check.mjs",
     "verify:transitions": "node scripts/verify-scene-transitions.mjs",
     "verify:feedback": "node scripts/verify-feedback.mjs",
-    "verify:miko": "npm run verify:characters"
+    "verify:miko": "npm run verify:characters",
+    "verify:visual": "node scripts/visual-qa.mjs"
   },
   "keywords": [],
   "author": "",

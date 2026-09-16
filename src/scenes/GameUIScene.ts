@@ -44,7 +44,7 @@ export class GameUIScene extends Phaser.Scene {
     const cue = ui.text(-width / 2 + 54, -32, `${character.name.toUpperCase()} · READY!`, {
       fontSize: '12px', color: '#FFE6A3',
     });
-    const biome = ui.text(-width / 2 + 54, -12, 'LOWER JUNGLE', { fontSize: '9px', color: '#87CEEB' });
+    const biome = ui.text(-width / 2 + 54, -12, 'LOWER JUNGLE', { fontSize: '9px', color: '#87CEEB', backgroundColor: '#211936' });
     const keys = SettingsManager.getKeys();
     const touch = this.sys.game.device.input.touch && SettingsManager.getMobileControlsEnabled();
     const pad = (this.input.gamepad?.total ?? 0) > 0;

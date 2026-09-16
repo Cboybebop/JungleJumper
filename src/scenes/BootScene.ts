@@ -90,7 +90,7 @@ export class BootScene extends Phaser.Scene {
     const begin = () => {
       if (!this.sys.isActive()) return;
       text.destroy();
-      this.scene.start('MainMenu');
+      this.scene.start(import.meta.env.DEV && new URLSearchParams(location.search).has('gallery') ? 'ArtGallery' : 'MainMenu');
     };
 
     if (typeof document !== 'undefined' && document.fonts) {

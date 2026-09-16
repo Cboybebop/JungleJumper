@@ -91,6 +91,8 @@ export class UIFactory {
     const text = this.text(0, 0, label, {
       fontSize: `${options.fontSize ?? (size === 'large' ? 18 : 14)}px`,
       align: 'center',
+      backgroundColor: '#211936',
+      padding: { x: 4, y: 2 },
     }).setOrigin(0.5);
     const container = this.scene.add.container(x, y, [image, text]);
     if (options.depth !== undefined) container.setDepth(options.depth);
@@ -163,9 +165,10 @@ export class UIFactory {
     };
     const panel = this.scene.add.image(0, 0, panelKeys.normal);
     const fontSize = options.fontSize ?? 13;
-    const label = this.text(-options.width / 2 + 16, 0, labelValue, { fontSize: `${fontSize}px` }).setOrigin(0, 0.5);
+    const label = this.text(-options.width / 2 + 16, 0, labelValue, { fontSize: `${fontSize}px`, backgroundColor: '#211936', padding: { x: 2, y: 2 } }).setOrigin(0, 0.5);
     const valueText = this.text(options.width / 2 - 16, 0, options.value, {
       fontSize: `${fontSize}px`, color: '#FFE6A3', align: 'right',
+      backgroundColor: '#211936', padding: { x: 2, y: 2 },
     }).setOrigin(1, 0.5);
     const container = this.scene.add.container(x, y, [panel, label, valueText]);
     let focused = false;
