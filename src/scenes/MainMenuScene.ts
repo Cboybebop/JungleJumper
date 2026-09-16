@@ -21,21 +21,21 @@ export class MainMenuScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(COLORS.SKY);
 
     // Decorative clouds
-    this.add.image(80, 120, 'cloud').setScale(0.6).setAlpha(0.7);
-    this.add.image(380, 80, 'cloud').setScale(0.8).setAlpha(0.6);
-    this.add.image(200, 200, 'cloud').setScale(0.5).setAlpha(0.8);
+    this.add.image(80, 120, 'world-cloud').setScale(0.6).setAlpha(0.7);
+    this.add.image(380, 80, 'world-cloud').setScale(0.8).setAlpha(0.6);
+    this.add.image(200, 200, 'world-cloud').setScale(0.5).setAlpha(0.8);
 
     // Jungle trees on sides
-    this.add.image(-5, GAME.HEIGHT - 60, 'jungle-tree').setOrigin(0, 1).setScale(1.2);
-    this.add.image(GAME.WIDTH + 5, GAME.HEIGHT - 60, 'jungle-tree').setOrigin(1, 1).setScale(1.2).setFlipX(true);
+    this.add.image(-5, GAME.HEIGHT - 60, 'world-jungle-silhouette').setOrigin(0, 1).setScale(1.2);
+    this.add.image(GAME.WIDTH + 5, GAME.HEIGHT - 60, 'world-jungle-silhouette').setOrigin(1, 1).setScale(1.2).setFlipX(true);
 
     // Trunk in center
-    this.add.tileSprite(GAME.WIDTH / 2, GAME.HEIGHT / 2, GAME.TRUNK_WIDTH, GAME.HEIGHT, 'trunk');
+    this.add.tileSprite(GAME.WIDTH / 2, GAME.HEIGHT / 2, GAME.TRUNK_WIDTH, GAME.HEIGHT, 'world-trunk-0');
 
     // Some decorative platforms
-    this.add.image(120, 350, 'platform-normal').setScale(1.2);
-    this.add.image(360, 280, 'platform-normal').setScale(1.2);
-    this.add.image(200, 500, 'platform-normal').setScale(1);
+    this.add.image(120, 350, 'platform-normal', 0).setScale(1.2);
+    this.add.image(360, 280, 'platform-normal', 2).setScale(1.2);
+    this.add.image(200, 500, 'platform-normal', 3).setScale(1);
 
     // Characters on platforms
     const charKeys = CHARACTERS.map(c => c.key);
@@ -65,9 +65,9 @@ export class MainMenuScene extends Phaser.Scene {
     });
 
     // Flowers
-    this.add.image(60, 160, 'flower').setScale(1.2);
-    this.add.image(420, 140, 'flower').setScale(1.0);
-    this.add.image(240, 60, 'strawberry').setScale(1.5);
+    this.add.image(60, 160, 'world-flower-pink').setScale(1.2);
+    this.add.image(420, 140, 'world-flower-gold').setScale(1.0);
+    this.add.image(240, 60, 'world-fruit-berries').setScale(1.5);
 
     // High score
     const highScore = SettingsManager.getHighScore();

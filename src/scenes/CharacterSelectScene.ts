@@ -37,9 +37,9 @@ export class CharacterSelectScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.DESTROY, this.cleanup, this);
 
     // Background decoration
-    this.add.tileSprite(GAME.WIDTH / 2, GAME.HEIGHT / 2, GAME.TRUNK_WIDTH, GAME.HEIGHT, 'trunk');
-    this.add.image(60, 100, 'cloud').setScale(0.5).setAlpha(0.6);
-    this.add.image(400, 150, 'cloud').setScale(0.7).setAlpha(0.5);
+    this.add.tileSprite(GAME.WIDTH / 2, GAME.HEIGHT / 2, GAME.TRUNK_WIDTH, GAME.HEIGHT, 'world-trunk-0');
+    this.add.image(60, 100, 'world-cloud').setScale(0.5).setAlpha(0.6);
+    this.add.image(400, 150, 'world-cloud').setScale(0.7).setAlpha(0.5);
 
     // Title
     this.add.text(GAME.WIDTH / 2, 60, 'CHOOSE YOUR\nCLIMBER', {
@@ -92,7 +92,7 @@ export class CharacterSelectScene extends Phaser.Scene {
 
     // Preview area - larger character
     this.portrait = this.add.image(GAME.WIDTH / 2, 400, CHARACTERS[this.selectedIndex].portrait);
-    this.add.image(GAME.WIDTH / 2, 420, 'platform-normal').setScale(2);
+    this.add.image(GAME.WIDTH / 2, 420, 'platform-normal', 1).setScale(2);
 
     const startButton = this.createButton(GAME.WIDTH / 2, GAME.HEIGHT - 160, 'button', 'START', '24px', () => {
       AudioManager.buttonClick();

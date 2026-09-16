@@ -115,8 +115,8 @@ export class GameOverScene extends Phaser.Scene {
     });
 
     // Decorative elements
-    this.add.image(80, GAME.HEIGHT - 50, 'jungle-tree').setScale(0.6).setAlpha(0.3);
-    this.add.image(GAME.WIDTH - 80, GAME.HEIGHT - 50, 'jungle-tree').setScale(0.6).setAlpha(0.3).setFlipX(true);
+    this.add.image(80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(0.6).setAlpha(0.3);
+    this.add.image(GAME.WIDTH - 80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(0.6).setAlpha(0.3).setFlipX(true);
   }
 
   private createButton(x: number, y: number, label: string, callback: () => void): MenuButton {

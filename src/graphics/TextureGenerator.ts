@@ -194,6 +194,11 @@ export class TextureGenerator {
   }
 
   private static generatePlatforms(scene: Phaser.Scene): void {
+    const requiredTextures = [
+      'platform-normal', 'platform-moving', 'platform-crumbling', 'platform-spring', 'world-trunk-0',
+    ];
+    if (requiredTextures.every((key) => scene.textures.exists(key))) return;
+
     const w = GAME.PLATFORM_WIDTH;
     const h = GAME.PLATFORM_HEIGHT;
 
@@ -270,7 +275,7 @@ export class TextureGenerator {
     g.fillCircle(tw * 0.4, 15, 2);
     g.fillCircle(tw * 0.7, 40, 1.5);
     g.fillCircle(tw * 0.3, 55, 2);
-    g.generateTexture('trunk', tw, 64);
+    g.generateTexture('world-trunk-0', tw, 64);
     g.destroy();
   }
 
@@ -367,6 +372,11 @@ export class TextureGenerator {
   }
 
   private static generateBackground(scene: Phaser.Scene): void {
+    const requiredTextures = [
+      'world-cloud', 'world-jungle-silhouette', 'world-flower-pink', 'world-fruit-berries',
+    ];
+    if (requiredTextures.every((key) => scene.textures.exists(key))) return;
+
     // Cloud
     let g = scene.make.graphics({ x: 0, y: 0 });
     g.fillStyle(COLORS.CLOUD, 0.9);
@@ -375,7 +385,7 @@ export class TextureGenerator {
     g.fillCircle(70, 25, 18);
     g.fillCircle(45, 30, 16);
     g.fillCircle(55, 30, 16);
-    g.generateTexture('cloud', 100, 50);
+    g.generateTexture('world-cloud', 100, 50);
     g.destroy();
 
     // Jungle tree (side decoration)
@@ -392,7 +402,7 @@ export class TextureGenerator {
     for (const [dx, dy] of dotPositions) {
       g.fillCircle(dx, dy, 4);
     }
-    g.generateTexture('jungle-tree', 60, 105);
+    g.generateTexture('world-jungle-silhouette', 60, 105);
     g.destroy();
 
     // Flower
@@ -404,7 +414,7 @@ export class TextureGenerator {
     }
     g.fillStyle(0xF1C40F);
     g.fillCircle(8, 8, 3);
-    g.generateTexture('flower', 16, 16);
+    g.generateTexture('world-flower-pink', 16, 16);
     g.destroy();
 
     // Strawberry (like in reference image)
@@ -418,7 +428,7 @@ export class TextureGenerator {
     g.fillCircle(6, 10, 1);
     g.fillCircle(10, 10, 1);
     g.fillCircle(8, 14, 1);
-    g.generateTexture('strawberry', 16, 18);
+    g.generateTexture('world-fruit-berries', 16, 18);
     g.destroy();
   }
 

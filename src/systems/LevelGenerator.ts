@@ -8,6 +8,7 @@ export interface PlatformData {
   x: number;
   y: number;
   type: PlatformType;
+  variant: number;
 }
 
 export interface ObstacleData {
@@ -130,7 +131,9 @@ export class LevelGenerator {
       }
     }
 
-    return { x, y, type };
+    // Variants are visual only; the platform width and collision geometry stay fixed.
+    const variant = Math.floor(this.rng() * 4);
+    return { x, y, type, variant };
   }
 
   private getReachableX(verticalGap: number): number {

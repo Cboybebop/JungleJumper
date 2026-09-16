@@ -4,6 +4,12 @@ import { TextureGenerator } from '../graphics/TextureGenerator';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
 import { registerAnimations } from '../graphics/AnimationRegistry';
+import {
+  PLATFORM_FRAME_HEIGHT,
+  PLATFORM_FRAME_WIDTH,
+  PLATFORM_TEXTURES,
+  WORLD_IMAGE_ASSETS,
+} from '../graphics/WorldAssets';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -18,6 +24,17 @@ export class BootScene extends Phaser.Scene {
       });
       this.load.image(character.portrait, `assets/characters/${character.key}/${character.key}-portrait.png`);
     }
+
+    for (const textureKey of PLATFORM_TEXTURES) {
+      this.load.spritesheet(textureKey, `assets/world/${textureKey}.png`, {
+        frameWidth: PLATFORM_FRAME_WIDTH,
+        frameHeight: PLATFORM_FRAME_HEIGHT,
+      });
+    }
+
+    for (const [textureKey, filename] of WORLD_IMAGE_ASSETS) {
+      this.load.image(textureKey, `assets/world/${filename}`);
+    }
   }
 
   create(): void {
@@ -31,7 +48,7 @@ export class BootScene extends Phaser.Scene {
       fontFamily: 'Arial',
     }).setOrigin(0.5);
 
-    // Generate all textures programmatically
+    // Generate UI, obstacle, character, and development/loading fallbacks.
     TextureGenerator.generate(this);
     registerAnimations(this);
 

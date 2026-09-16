@@ -190,12 +190,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   private spawnFromData(data: {
-    platforms: { x: number; y: number; type: string }[];
+    platforms: { x: number; y: number; type: string; variant: number }[];
     obstacles: { x: number; y: number; type: string }[];
     shields: { x: number; y: number }[];
   }): void {
     for (const p of data.platforms) {
-      const platform = new Platform(this, p.x, p.y, p.type as any);
+      const platform = new Platform(this, p.x, p.y, p.type as any, p.variant);
       this.platforms.add(platform);
     }
     for (const o of data.obstacles) {
@@ -223,6 +223,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (platform.platformType === 'spring') {
+      platform.activateSpring();
       player.springJump();
     } else if (platform.platformType === 'crumbling') {
       platform.startCrumble();
