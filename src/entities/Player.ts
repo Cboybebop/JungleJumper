@@ -3,10 +3,19 @@ import { GAME, CHARACTERS, type CharacterKey } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
 import {
+  EFFECT_ANIMATIONS,
+  EFFECT_TEXTURES,
   type CharacterAction,
   getAnimationKey,
   selectAnimationState,
 } from '../graphics/AnimationRegistry';
+
+export type PlayerFeedbackEvent =
+  | 'shield-pickup'
+  | 'shield-break'
+  | 'obstacle-damage'
+  | 'spring-launch'
+  | 'death';
 
 interface CharacterAbilities {
   moveSpeedMultiplier: number;
@@ -48,7 +57,7 @@ const CHARACTER_ABILITIES: Record<CharacterKey, Partial<CharacterAbilities>> = {
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   private hasShield = false;
-  private shieldSprite: Phaser.GameObjects.Image | null = null;
+  private shieldSprite: Phaser.GameObjects.Sprite | null = null;
   private isAlive = true;
   private wasOnGround = true;
   private facingRight = true;
@@ -150,6 +159,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(springVelocity);
     this.setAction('springLaunch', 140);
     AudioManager.spring();
+    this.emitFeedback('spring-launch');
   }
 
   hitObstacle(): boolean {
@@ -161,9 +171,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       (this.body as Phaser.Physics.Arcade.Body).setVelocityY(-200);
       this.setAction('hit', 180);
       AudioManager.shieldBreak();
+      this.emitFeedback('shield-break');
       return false;
     }
 
+    this.emitFeedback('obstacle-damage');
     this.die();
     return true;
   }
@@ -174,6 +186,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.action = 'defeat';
     this.playCharacterAnimation();
     AudioManager.death();
+    this.emitFeedback('death');
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(-300);
     (this.body as Phaser.Physics.Arcade.Body).setAccelerationY(800);
     if (this.shieldSprite) {
@@ -197,10 +210,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setAction('shielded', 320);
     if (playSound) {
       AudioManager.shieldPickup();
+      this.emitFeedback('shield-pickup');
     }
 
-    this.shieldSprite = this.scene.add.image(this.x, this.y, 'shield-effect');
-    this.shieldSprite.setDepth(11);
+    this.shieldSprite = this.scene.add.sprite(this.x, this.y, EFFECT_TEXTURES.shieldShell);
+    this.shieldSprite.setDepth(11).play(EFFECT_ANIMATIONS.shieldShell);
   }
 
   private resolveAbilities(charKey: CharacterKey): CharacterAbilities {
@@ -221,18 +235,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private removeShield(): void {
     this.hasShield = false;
     if (this.shieldSprite) {
-      // Flash effect
-      this.scene.tweens.add({
-        targets: this.shieldSprite,
-        alpha: 0,
-        scale: 2,
-        duration: 300,
-        onComplete: () => {
-          this.shieldSprite?.destroy();
-          this.shieldSprite = null;
-        },
-      });
+      this.shieldSprite.destroy();
+      this.shieldSprite = null;
     }
+  }
+
+  private emitFeedback(kind: PlayerFeedbackEvent): void {
+    this.emit('feedback', kind, this.x, this.y);
   }
 
   celebrate(): void {
@@ -288,9 +297,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.shieldSprite) {
       this.shieldSprite.x = this.x;
       this.shieldSprite.y = this.y;
-      // Pulse effect
-      const pulse = 1 + Math.sin(this.scene.time.now * 0.005) * 0.1;
-      this.shieldSprite.setScale(pulse);
     }
   }
 }

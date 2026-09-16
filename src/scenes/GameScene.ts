@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { GAME } from '../constants';
-import { Player } from '../entities/Player';
+import { Player, type PlayerFeedbackEvent } from '../entities/Player';
 import { Platform } from '../entities/Platform';
 import { Obstacle } from '../entities/Obstacle';
 import { InputManager } from '../systems/InputManager';
@@ -8,6 +8,10 @@ import { LevelGenerator } from '../systems/LevelGenerator';
 import { BackgroundManager } from '../systems/BackgroundManager';
 import { AudioManager } from '../systems/AudioManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
+import {
+  EFFECT_ANIMATIONS,
+  EFFECT_TEXTURES,
+} from '../graphics/AnimationRegistry';
 
 interface PauseMenuButton {
   image: Phaser.GameObjects.Image;
@@ -27,6 +31,7 @@ export class GameScene extends Phaser.Scene {
   private highestY = 0;
   private startY = 0;
   private gameOver = false;
+  private deathPending = false;
   private isPaused = false;
   private pauseOverlay: Phaser.GameObjects.Container | null = null;
   private pauseMenuNavigator: MenuNavigator | null = null;
@@ -38,6 +43,7 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     this.score = 0;
     this.gameOver = false;
+    this.deathPending = false;
     this.isPaused = false;
 
     // Set up world bounds (wide enough, infinite vertical)
@@ -64,6 +70,7 @@ export class GameScene extends Phaser.Scene {
 
     // Player
     this.player = new Player(this, GAME.WIDTH / 2, this.startY - 40);
+    this.player.on('feedback', this.onPlayerFeedback, this);
     this.highestY = this.player.y;
 
     // Camera - manually controlled to only scroll upward
@@ -155,7 +162,7 @@ export class GameScene extends Phaser.Scene {
     const obstacleChildren = this.obstacles.getChildren() as Obstacle[];
     for (const obstacle of obstacleChildren) {
       if (obstacle.active) {
-        obstacle.updateObstacle();
+        obstacle.updateObstacle(this.player.x, this.player.y);
         if (obstacle.y > cameraTop + GAME.HEIGHT + GAME.CLEANUP_BEHIND) {
           obstacle.destroy();
         }
@@ -163,14 +170,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     // Update shields
-    const shieldChildren = this.shields.getChildren() as Phaser.GameObjects.Image[];
+    const shieldChildren = this.shields.getChildren() as Phaser.GameObjects.Sprite[];
     for (const shield of shieldChildren) {
       if (shield.active) {
         if (shield.y > cameraTop + GAME.HEIGHT + GAME.CLEANUP_BEHIND) {
           shield.destroy();
         }
-        // Bobbing animation
-        shield.y += Math.sin(this.time.now * 0.005 + shield.x) * 0.3;
+        const baseY = shield.getData('baseY') as number;
+        shield.y = baseY + Math.sin(this.time.now * 0.005 + shield.x) * 3;
       }
     }
 
@@ -184,8 +191,9 @@ export class GameScene extends Phaser.Scene {
     this.bgManager.update(this.cameras.main.scrollY + GAME.HEIGHT / 2);
 
     // Death: fell below camera
-    if (this.player.y > cameraTop + GAME.HEIGHT + 50) {
-      this.playerDied();
+    if (this.player.alive && this.player.y > cameraTop + GAME.HEIGHT + 50) {
+      this.player.die();
+      this.scheduleGameOver(650);
     }
   }
 
@@ -203,7 +211,9 @@ export class GameScene extends Phaser.Scene {
       this.obstacles.add(obstacle);
     }
     for (const s of data.shields) {
-      const shield = this.add.image(s.x, s.y, 'shield-pickup');
+      const shield = this.add.sprite(s.x, s.y, EFFECT_TEXTURES.shieldIdle);
+      shield.play(EFFECT_ANIMATIONS.shieldIdle);
+      shield.setData('baseY', s.y);
       this.physics.add.existing(shield, true);
       shield.setDepth(6);
       this.shields.add(shield);
@@ -230,19 +240,102 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private onObstacleHit(playerObj: any, _obstacleObj: any): void {
+  private onObstacleHit(playerObj: any, obstacleObj: any): void {
     const player = playerObj as Player;
+    const obstacle = obstacleObj as Obstacle;
+    if (!player.alive) return;
+    AudioManager.impact();
     const died = player.hitObstacle();
+    obstacle.reactToHit(!died);
     if (died) {
-      this.time.delayedCall(800, () => this.playerDied());
+      this.scheduleGameOver(800);
     }
   }
 
   private onShieldPickup(playerObj: any, shieldObj: any): void {
     const player = playerObj as Player;
-    const shield = shieldObj as Phaser.GameObjects.Image;
+    const shield = shieldObj as Phaser.GameObjects.Sprite;
     player.pickupShield();
     shield.destroy();
+  }
+
+  private onPlayerFeedback(kind: PlayerFeedbackEvent, x: number, y: number): void {
+    switch (kind) {
+      case 'shield-pickup':
+        this.playEffect(EFFECT_TEXTURES.shieldPickupBurst, EFFECT_ANIMATIONS.shieldPickupBurst, x, y, 12);
+        this.spawnParticles(x, y, 0x87CEFA, 8, 34);
+        this.cameras.main.flash(80, 135, 206, 250, false);
+        break;
+      case 'shield-break':
+        this.playEffect(EFFECT_TEXTURES.shieldPickupBurst, EFFECT_ANIMATIONS.shieldPickupBurst, x, y, 12);
+        this.playEffect(EFFECT_TEXTURES.damageFlash, EFFECT_ANIMATIONS.damageFlash, x, y, 13);
+        this.spawnParticles(x, y, 0x00BFFF, 10, 48);
+        this.cameras.main.shake(120, 0.004);
+        this.cameras.main.flash(90, 0, 191, 255, false);
+        break;
+      case 'obstacle-damage':
+        this.playEffect(EFFECT_TEXTURES.impact, EFFECT_ANIMATIONS.impact, x, y, 12);
+        this.playEffect(EFFECT_TEXTURES.damageFlash, EFFECT_ANIMATIONS.damageFlash, x, y, 13);
+        this.spawnParticles(x, y, 0xC0392B, 9, 42);
+        this.cameras.main.shake(180, 0.009);
+        this.cameras.main.flash(110, 192, 57, 43, false);
+        break;
+      case 'spring-launch':
+        this.playEffect(EFFECT_TEXTURES.impact, EFFECT_ANIMATIONS.impact, x, y + 14, 8, 0xF1C40F);
+        this.spawnParticles(x, y + 16, 0xF1C40F, 7, 28);
+        this.cameras.main.shake(80, 0.0025);
+        break;
+      case 'death':
+        this.playEffect(EFFECT_TEXTURES.damageFlash, EFFECT_ANIMATIONS.damageFlash, x, y, 14);
+        this.spawnParticles(x, y, 0xC0392B, 12, 60);
+        this.cameras.main.shake(280, 0.012);
+        this.cameras.main.flash(150, 192, 57, 43, false);
+        break;
+    }
+  }
+
+  private playEffect(
+    texture: string,
+    animation: string,
+    x: number,
+    y: number,
+    depth: number,
+    tint?: number
+  ): void {
+    const effect = this.add.sprite(x, y, texture).setDepth(depth);
+    if (tint !== undefined) effect.setTint(tint);
+    effect.play(animation);
+    effect.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => effect.destroy());
+  }
+
+  private spawnParticles(
+    x: number,
+    y: number,
+    tint: number,
+    count: number,
+    distance: number
+  ): void {
+    for (let index = 0; index < count; index++) {
+      const angle = (Math.PI * 2 * index) / count + Math.random() * 0.3;
+      const size = index % 3 === 0 ? 3 : 2;
+      const particle = this.add.rectangle(x, y, size, size, tint).setDepth(13);
+      this.tweens.add({
+        targets: particle,
+        x: x + Math.cos(angle) * distance * (0.65 + Math.random() * 0.35),
+        y: y + Math.sin(angle) * distance * (0.65 + Math.random() * 0.35),
+        alpha: 0,
+        scale: 0,
+        duration: 260 + Math.random() * 180,
+        ease: 'Quad.easeOut',
+        onComplete: () => particle.destroy(),
+      });
+    }
+  }
+
+  private scheduleGameOver(delayMs: number): void {
+    if (this.deathPending) return;
+    this.deathPending = true;
+    this.time.delayedCall(delayMs, () => this.playerDied());
   }
 
   private playerDied(): void {
@@ -379,6 +472,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   shutdown(): void {
+    this.player?.off('feedback', this.onPlayerFeedback, this);
     this.pauseMenuNavigator?.destroy();
     this.pauseMenuNavigator = null;
     this.inputManager?.destroy();

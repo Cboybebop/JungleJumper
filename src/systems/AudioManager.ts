@@ -119,6 +119,10 @@ export class AudioManager {
     }
   }
 
+  static impact(): void {
+    this.playTone(110, 0.08, 'square', 70, 0.09);
+  }
+
   static death(): void {
     this.playTone(400, 0.15, 'sawtooth', 200, 0.12);
     setTimeout(() => this.playTone(200, 0.3, 'sawtooth', 80, 0.12), 150);

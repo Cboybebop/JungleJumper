@@ -3,7 +3,11 @@ import { GAME, CHARACTERS } from '../constants';
 import { TextureGenerator } from '../graphics/TextureGenerator';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
-import { registerAnimations } from '../graphics/AnimationRegistry';
+import {
+  EFFECT_TEXTURES,
+  ENEMY_TEXTURES,
+  registerAnimations,
+} from '../graphics/AnimationRegistry';
 import {
   PLATFORM_FRAME_HEIGHT,
   PLATFORM_FRAME_WIDTH,
@@ -34,6 +38,29 @@ export class BootScene extends Phaser.Scene {
 
     for (const [textureKey, filename] of WORLD_IMAGE_ASSETS) {
       this.load.image(textureKey, `assets/world/${filename}`);
+    }
+
+    for (const [type, textureKey] of Object.entries(ENEMY_TEXTURES)) {
+      const filename = type === 'thorns' ? 'thorn-vine-actions.png' : `${type}-actions.png`;
+      this.load.spritesheet(textureKey, `assets/enemies/${filename}`, {
+        frameWidth: 32,
+        frameHeight: 32,
+      });
+    }
+
+    const effectSheets = [
+      [EFFECT_TEXTURES.shieldIdle, 'shield-idle.png', 16],
+      [EFFECT_TEXTURES.shieldPickupBurst, 'shield-pickup-burst.png', 32],
+      [EFFECT_TEXTURES.shieldShell, 'shield-shell.png', 64],
+      [EFFECT_TEXTURES.warning, 'warning-indicator.png', 16],
+      [EFFECT_TEXTURES.impact, 'impact-burst.png', 32],
+      [EFFECT_TEXTURES.damageFlash, 'damage-flash.png', 32],
+    ] as const;
+    for (const [textureKey, filename, frameSize] of effectSheets) {
+      this.load.spritesheet(textureKey, `assets/effects/${filename}`, {
+        frameWidth: frameSize,
+        frameHeight: frameSize,
+      });
     }
   }
 
