@@ -122,6 +122,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     (this.body as Phaser.Physics.Arcade.Body).setVelocityX(0);
   }
 
+  carryWithPlatform(deltaX: number): void {
+    if (!this.isAlive || deltaX === 0) return;
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    body.x += deltaX;
+    this.x += deltaX;
+  }
+
   jump(): void {
     if (!this.isAlive) return;
 

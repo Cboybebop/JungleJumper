@@ -35,6 +35,8 @@ export class GameScene extends Phaser.Scene {
   private isPaused = false;
   private pauseOverlay: Phaser.GameObjects.Container | null = null;
   private pauseMenuNavigator: MenuNavigator | null = null;
+  private supportingPlatform: Platform | null = null;
+  private supportContactAt = -Infinity;
 
   constructor() {
     super({ key: 'Game' });
@@ -158,6 +160,8 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
+    this.carryPlayerWithMovingPlatform();
+
     // Update obstacles
     const obstacleChildren = this.obstacles.getChildren() as Obstacle[];
     for (const obstacle of obstacleChildren) {
@@ -228,6 +232,9 @@ export class GameScene extends Phaser.Scene {
     // Only land if player is falling down
     if (playerBody.velocity.y < 0) return;
 
+    this.supportingPlatform = platform;
+    this.supportContactAt = this.time.now;
+
     if (platform.platformType === 'normal') {
       player.rechargeAirJump();
     }
@@ -250,6 +257,19 @@ export class GameScene extends Phaser.Scene {
     if (died) {
       this.scheduleGameOver(800);
     }
+  }
+
+  private carryPlayerWithMovingPlatform(): void {
+    const platform = this.supportingPlatform;
+    if (!platform?.active || this.time.now - this.supportContactAt > 50) {
+      this.supportingPlatform = null;
+      return;
+    }
+
+    const body = this.player.body as Phaser.Physics.Arcade.Body;
+    const withinSurface = Math.abs(this.player.x - platform.x) <= platform.getSurfaceWidth() / 2 + body.width / 2;
+    if (body.velocity.y < 0 || !withinSurface) return;
+    this.player.carryWithPlatform(platform.getMovementDeltaX());
   }
 
   private onShieldPickup(playerObj: any, shieldObj: any): void {
