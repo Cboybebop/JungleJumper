@@ -3,6 +3,7 @@ import { COLORS, GAME, CHARACTERS } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
+import { MIKO_TEXTURE } from '../graphics/AnimationRegistry';
 
 interface MenuButton {
   image: Phaser.GameObjects.Image;
@@ -62,7 +63,12 @@ export class CharacterSelectScene extends Phaser.Scene {
       this.frames.push(frame);
 
       // Character sprite
-      const charSprite = this.add.image(x, charY, CHARACTERS[i].key).setScale(2);
+      const characterTexture = CHARACTERS[i].key === 'monkey' && this.textures.exists(MIKO_TEXTURE)
+        ? MIKO_TEXTURE
+        : CHARACTERS[i].key;
+      // Character-select art is shown at the documented integer 3x preview scale.
+      const frameIndex = characterTexture === MIKO_TEXTURE ? 0 : undefined;
+      const charSprite = this.add.image(x, charY, characterTexture, frameIndex).setScale(3);
       this.characterSprites.push(charSprite);
 
       frame.on('pointerdown', () => {
@@ -197,8 +203,9 @@ export class CharacterSelectScene extends Phaser.Scene {
         frame.clearTint();
       }
 
-      const baseScale = isSelected ? 2.3 : 2;
-      charSprite.setScale(isFocused ? baseScale + 0.1 : baseScale);
+      // Selection and focus are communicated by the frame so pixel art remains
+      // at a crisp, non-fractional 3x scale in every interaction state.
+      charSprite.setScale(3);
     }
 
     this.nameText.setText(CHARACTERS[this.selectedIndex].name);
@@ -222,4 +229,3 @@ export class CharacterSelectScene extends Phaser.Scene {
     }
   }
 }
-

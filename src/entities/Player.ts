@@ -2,6 +2,12 @@ import Phaser from 'phaser';
 import { GAME, CHARACTERS } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { AudioManager } from '../systems/AudioManager';
+import {
+  MIKO_ANIMATIONS,
+  MIKO_TEXTURE,
+  type MikoAction,
+  selectMikoAnimation,
+} from '../graphics/AnimationRegistry';
 
 interface CharacterAbilities {
   moveSpeedMultiplier: number;
@@ -52,13 +58,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private airJumpsRemaining = 0;
   private lastJumpAt = -Infinity;
   private abilities: CharacterAbilities;
+  private readonly usesMikoAnimations: boolean;
+  private action: MikoAction = null;
+  private actionUntil = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     const charIndex = SettingsManager.selectedCharacter;
     const charKey = CHARACTERS[charIndex]?.key ?? 'monkey';
-    super(scene, x, y, charKey);
+    const usesMikoAnimations = charKey === 'monkey' && scene.textures.exists(MIKO_TEXTURE);
+    super(scene, x, y, usesMikoAnimations ? MIKO_TEXTURE : charKey);
 
     this.abilities = this.resolveAbilities(charKey as CharacterKey);
+    this.usesMikoAnimations = usesMikoAnimations;
     this.airJumpsRemaining = this.abilities.airJumps;
 
     scene.add.existing(this);
@@ -66,9 +77,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.setCollideWorldBounds(false);
     this.setBounce(0);
-    this.setSize(GAME.PLAYER_SIZE * 0.6, GAME.PLAYER_SIZE * 0.8);
-    this.setOffset(GAME.PLAYER_SIZE * 0.2, GAME.PLAYER_SIZE * 0.1);
     this.setDepth(10);
+
+    // This fixed body is intentionally independent of each frame's transparent
+    // pixels, so pose changes can never resize or shift collision geometry.
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    body.setSize(18, 26, false);
+    body.setOffset(7, 4);
+
+    if (this.usesMikoAnimations) this.play(MIKO_ANIMATIONS.idle);
 
     if (this.abilities.startWithShield) {
       this.addShield(false);
@@ -108,6 +125,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       if (this.airJumpsRemaining <= 0) return;
       if (now - this.lastJumpAt < this.abilities.airJumpCooldownMs) return;
       this.airJumpsRemaining -= 1;
+      this.setAction('doubleJump', 150);
+    } else {
+      this.setAction('anticipation', 80);
     }
 
     body.setVelocityY(this.getJumpVelocity());
@@ -129,6 +149,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(springVelocity);
+    this.setAction('springLaunch', 140);
     AudioManager.spring();
   }
 
@@ -139,6 +160,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.removeShield();
       // Knockback
       (this.body as Phaser.Physics.Arcade.Body).setVelocityY(-200);
+      this.setAction('hit', 180);
       AudioManager.shieldBreak();
       return false;
     }
@@ -150,8 +172,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   die(): void {
     if (!this.isAlive) return;
     this.isAlive = false;
+    this.action = 'defeat';
+    this.playMikoAnimation();
     AudioManager.death();
-    this.setTint(0xFF0000);
     (this.body as Phaser.Physics.Arcade.Body).setVelocityY(-300);
     (this.body as Phaser.Physics.Arcade.Body).setAccelerationY(800);
     if (this.shieldSprite) {
@@ -172,6 +195,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.hasShield) return;
 
     this.hasShield = true;
+    this.setAction('shielded', 320);
     if (playSound) {
       AudioManager.shieldPickup();
     }
@@ -212,6 +236,30 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  celebrate(): void {
+    if (!this.isAlive) return;
+    this.setAction('celebration', 1000);
+  }
+
+  private setAction(action: Exclude<MikoAction, null>, durationMs: number): void {
+    this.action = action;
+    this.actionUntil = this.scene.time.now + durationMs;
+    this.playMikoAnimation();
+  }
+
+  private playMikoAnimation(onGround?: boolean): void {
+    if (!this.usesMikoAnimations) return;
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    const animation = selectMikoAnimation({
+      alive: this.isAlive,
+      onGround: onGround ?? (body.touching.down || body.blocked.down),
+      velocityX: body.velocity.x,
+      velocityY: body.velocity.y,
+      action: this.action,
+    });
+    this.anims.play(animation, true);
+  }
+
   update(): void {
     if (!this.isAlive) return;
 
@@ -227,17 +275,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const onGround = body.touching.down || body.blocked.down;
     if (onGround && !this.wasOnGround) {
       AudioManager.land();
+      this.setAction('landing', 145);
     }
     this.wasOnGround = onGround;
 
-    // Squash and stretch
-    if (body.velocity.y < -100) {
-      this.setScale(0.9, 1.1);
-    } else if (body.velocity.y > 100) {
-      this.setScale(1.1, 0.9);
-    } else {
-      this.setScale(1, 1);
-    }
+    // Sprite art carries squash/stretch while preserving integer 1x rendering.
+    this.setScale(1);
+
+    if (this.action && this.scene.time.now >= this.actionUntil) this.action = null;
+    this.playMikoAnimation(onGround);
 
     // Update shield position
     if (this.shieldSprite) {
