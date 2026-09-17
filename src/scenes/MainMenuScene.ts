@@ -1,12 +1,14 @@
 import Phaser from 'phaser';
 import { SceneTransition } from '../ui/SceneTransition';
-import { COLORS, GAME, CHARACTERS } from '../constants';
+import { COLORS, GAME } from '../constants';
 import { SettingsManager } from '../systems/SettingsManager';
 import { MenuNavigator } from '../systems/MenuNavigator';
 import { UIFactory } from '../ui/UIFactory';
+import { MenuBackdrop } from '../ui/MenuBackdrop';
 
 export class MainMenuScene extends Phaser.Scene {
   private menuNavigator: MenuNavigator | null = null;
+  private backdrop: MenuBackdrop | null = null;
 
   constructor() {
     super({ key: 'MainMenu' });
@@ -18,27 +20,11 @@ export class MainMenuScene extends Phaser.Scene {
     const compact = GAME.HEIGHT < 620;
     this.cameras.main.setBackgroundColor(COLORS.SKY);
 
-    // Decorative clouds
-    this.add.image(80, 120, 'world-cloud').setScale(1).setAlpha(0.7);
-    this.add.image(380, 80, 'world-cloud').setScale(1).setAlpha(0.6);
-    this.add.image(200, 200, 'world-cloud').setScale(1).setAlpha(0.8);
-
-    // Jungle trees on sides
-    this.add.image(-5, GAME.HEIGHT - 60, 'world-jungle-silhouette').setOrigin(0, 1).setScale(1);
-    this.add.image(GAME.WIDTH + 5, GAME.HEIGHT - 60, 'world-jungle-silhouette').setOrigin(1, 1).setScale(1).setFlipX(true);
-
-    // Trunk in center
-    this.add.tileSprite(GAME.WIDTH / 2, GAME.HEIGHT / 2, GAME.TRUNK_WIDTH, GAME.HEIGHT, 'world-trunk-0');
-
-    // Some decorative platforms
-    this.add.image(120, 350, 'platform-normal', 0).setScale(1);
-    this.add.image(360, 280, 'platform-normal', 2).setScale(1);
-    this.add.image(200, 500, 'platform-normal', 3).setScale(1);
-
-    // Characters on platforms
-    const charKeys = CHARACTERS.map(c => c.texture);
-    this.add.image(120, 330, charKeys[0]).setScale(1);
-    this.add.image(360, 260, charKeys[1]).setScale(1);
+    this.backdrop = new MenuBackdrop(this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.backdrop = null;
+      this.menuNavigator = null;
+    });
 
     // Title
     const title = ui.text(GAME.WIDTH / 2, compact ? 72 : 100, 'JUNGLE\nJUMPER', {
@@ -61,11 +47,6 @@ export class MainMenuScene extends Phaser.Scene {
       duration: 1500,
       ease: 'Sine.easeInOut',
     });
-
-    // Flowers
-    this.add.image(60, 160, 'world-flower-pink').setScale(1);
-    this.add.image(420, 140, 'world-flower-gold').setScale(1.0);
-    this.add.image(240, 60, 'world-fruit-berries').setScale(1);
 
     // High score
     const highScore = SettingsManager.getHighScore();
@@ -105,5 +86,9 @@ export class MainMenuScene extends Phaser.Scene {
       fontSize: '12px',
       color: '#5B3A6B',
     }).setOrigin(0.5);
+  }
+
+  update(_time: number, delta: number): void {
+    this.backdrop?.update(delta);
   }
 }
