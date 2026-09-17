@@ -386,19 +386,20 @@ export class GameScene extends Phaser.Scene {
     const overlay = this.add.rectangle(cx, cy, GAME.WIDTH, GAME.HEIGHT, 0x000000, 0.6);
     overlay.setDepth(100);
 
-    const panel = ui.panel(cx, cy, 280, 260, true).setDepth(101);
-    const title = ui.text(cx, cy - 82, 'PAUSED', {
+    const touch = this.sys.game.device.input.touch && SettingsManager.getMobileControlsEnabled();
+    const panel = ui.panel(cx, cy, 320, touch ? 380 : 260, true).setDepth(101);
+    const title = ui.text(cx, cy - (touch ? 140 : 82), 'PAUSED', {
       fontSize: '28px',
       color: '#FFFFFF',
       fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(102);
 
-    const resumeButton = ui.button(cx, cy - 10, 'RESUME', {
+    const resumeButton = ui.button(cx, cy - (touch ? 75 : 10), 'RESUME', {
       fontSize: 16,
       onActivate: () => this.togglePause(),
     }).setDepth(102);
 
-    const menuButton = ui.button(cx, cy + 58, 'MAIN MENU', {
+    const menuButton = ui.button(cx, cy + (touch ? 130 : 58), 'MAIN MENU', {
       size: 'small', fontSize: 11,
       onActivate: () => {
         if (SceneTransition.isBusy(this)) return;
@@ -415,6 +416,26 @@ export class GameScene extends Phaser.Scene {
       menuButton.container,
     ]);
     this.pauseOverlay.setDepth(100);
+    const sizeRows = touch ? (['small', 'medium', 'large'] as const).map((size, index) => {
+      const row = ui.row(cx, cy + index * 36, size.toUpperCase(), {
+        width: 256, height: 34, fontSize: 12,
+        value: SettingsManager.getTouchControlSize() === size ? 'SELECTED' : '',
+        onActivate: () => {
+          SettingsManager.setTouchControlSize(size);
+          this.inputManager.layoutTouchControls();
+          sizeRows.forEach((option, i) => {
+            option.setValue(i === index ? 'SELECTED' : '');
+            option.setActive(i === index);
+          });
+        },
+      });
+      row.setActive(SettingsManager.getTouchControlSize() === size);
+      this.pauseOverlay!.add(row.container);
+      return row;
+    }) : [];
+    if (touch) this.pauseOverlay.add(ui.text(cx, cy - 30, 'TOUCH CONTROL SIZE', {
+      fontSize: '11px', color: '#FFE6A3',
+    }).setOrigin(0.5));
 
     this.pauseMenuNavigator?.destroy();
     this.pauseMenuNavigator = new MenuNavigator(this, [
@@ -423,6 +444,11 @@ export class GameScene extends Phaser.Scene {
         onBlur: () => resumeButton.setFocused(false),
         activate: resumeButton.activate,
       },
+      ...sizeRows.map(row => ({
+        onFocus: () => row.setFocused(true),
+        onBlur: () => row.setFocused(false),
+        activate: row.activate,
+      })),
       {
         onFocus: () => menuButton.setFocused(true),
         onBlur: () => menuButton.setFocused(false),
@@ -438,8 +464,11 @@ export class GameScene extends Phaser.Scene {
       this.pauseMenuNavigator?.setIndex(0);
     });
 
+    sizeRows.forEach((row, index) => row.panel.on('pointerover', () => {
+      this.pauseMenuNavigator?.setIndex(index + 1);
+    }));
     menuButton.image.on('pointerover', () => {
-      this.pauseMenuNavigator?.setIndex(1);
+      this.pauseMenuNavigator?.setIndex(sizeRows.length + 1);
     });
   }
 

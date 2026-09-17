@@ -10,6 +10,7 @@ export interface KeyBindings {
   altJump: string;
 }
 
+export type TouchControlSize = 'small' | 'medium' | 'large';
 export type DisplayMode = 'mobile' | 'desktop';
 
 interface DisplaySettings {
@@ -22,9 +23,11 @@ const STORAGE_KEY = 'jungle-jumper-settings';
 const HIGHSCORE_KEY = 'jungle-jumper-highscore';
 const CHARACTER_KEY = 'jungle-jumper-character';
 const MOTION_KEY = 'jungle-jumper-reduced-motion';
+const TOUCH_SIZE_KEY = 'jungle-jumper-touch-size';
 const MOBILE_CONTROLS_KEY = 'jungle-jumper-mobile-controls';
 
 export class SettingsManager {
+  private static touchControlSize: TouchControlSize = 'medium';
   private static reducedMotion = false;
   private static keys: KeyBindings = { ...DEFAULT_KEYS };
   private static _selectedCharacter = 0;
@@ -39,6 +42,8 @@ export class SettingsManager {
   }
 
   static init(): void {
+    const size = localStorage.getItem(TOUCH_SIZE_KEY);
+    this.touchControlSize = size === 'small' || size === 'large' ? size : 'medium';
     const motion = localStorage.getItem(MOTION_KEY);
     this.reducedMotion = motion === null
       ? (typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -62,6 +67,13 @@ export class SettingsManager {
     if (savedMobileControls !== null) {
       this.mobileControlsEnabled = savedMobileControls === 'true';
     }
+  }
+
+  static getTouchControlSize(): TouchControlSize { return this.touchControlSize; }
+
+  static setTouchControlSize(size: TouchControlSize): void {
+    this.touchControlSize = size;
+    localStorage.setItem(TOUCH_SIZE_KEY, size);
   }
 
   static getReducedMotion(): boolean { return this.reducedMotion; }

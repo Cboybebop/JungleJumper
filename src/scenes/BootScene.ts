@@ -88,6 +88,17 @@ export class BootScene extends Phaser.Scene {
     TextureGenerator.generate(this);
     generatePixelBackgrounds(this, ALTITUDE_BANDS.map(band => band.palette));
     registerAnimations(this);
+    // Rotate the trunk's own bark into horizontal grain, retaining its palette.
+    if (!this.textures.exists('world-branch-bark')) {
+      const bark = this.textures.createCanvas('world-branch-bark', 96, 12)!;
+      const context = bark.context;
+      context.imageSmoothingEnabled = false;
+      context.translate(0, 12);
+      context.rotate(-Math.PI / 2);
+      context.drawImage(this.textures.get('world-trunk-0').getSourceImage() as HTMLImageElement,
+        8, 0, 24, 96, 0, 0, 12, 96);
+      bark.refresh();
+    }
 
     const begin = () => {
       if (!this.sys.isActive()) return;
