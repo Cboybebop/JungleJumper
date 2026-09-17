@@ -119,28 +119,45 @@ export class InputManager {
     const pointers = new Set<number>();
     const release = (id?: number) => {
       if (id === undefined) pointers.clear(); else pointers.delete(id);
-      if (pointers.size === 0 && visual.scene) { visual.setTexture(`ui-touch-${kind}-normal`); onUp(); }
+      if (pointers.size === 0 && visual.scene) {
+        visual.setTexture(`ui-touch-${kind}-normal`).clearTint();
+        visual.setDisplaySize(size, size).setPosition(hitArea.x, hitArea.y);
+        onUp();
+      }
     };
     this.touchReleases.push(release);
+    const press = (pointer: Phaser.Input.Pointer) => {
+      if (!this.enabled || !pointer.isDown || pointers.has(pointer.id)) return;
+      pointers.add(pointer.id);
+      visual.setTexture(`ui-touch-${kind}-pressed`).setTint(0xffe6a3);
+      visual.setDisplaySize(size * 0.94, size * 0.94).setY(hitArea.y + 2);
+      if (!SettingsManager.getReducedMotion()) navigator.vibrate?.(8);
+      onDown();
+    };
+    const button = { visual, hitArea, size };
+    // Read current artwork size after a pause-menu resize.
+    visual.on('touch-layout', (nextSize: number) => { size = nextSize; });
     hitArea.setInteractive({ useHandCursor: false })
-      .on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-        if (!this.enabled) return;
-        pointers.add(pointer.id); visual.setTexture(`ui-touch-${kind}-pressed`); onDown();
-      })
+      .on('pointerdown', press)
+      .on('pointerover', press)
       .on('pointerup', (pointer: Phaser.Input.Pointer) => release(pointer.id))
       .on('pointerout', (pointer: Phaser.Input.Pointer) => release(pointer.id));
 
-    return { visual, hitArea, size };
+    return button;
   }
 
-  private layoutTouchControls(): void {
+  layoutTouchControls(): void {
     const cam = this.scene.cameras.main;
     const safe = getSafeArea(this.scene, 16);
-    // Hit targets stay at least 44 CSS pixels while the artwork remains native size.
+    // Sizes are measured in CSS pixels; padded targets respond just outside the art.
     const cssScale = this.scene.scale.canvasBounds.width / this.scene.scale.width;
-    const btnSize = Math.max(64, Math.ceil(44 / Math.max(0.1, cssScale)));
+    const requestedSize = { small: 44, medium: 56, large: 68 }[SettingsManager.getTouchControlSize()];
+    const available = (cam.width - safe.left - safe.right - 24) / 3 - 12;
+    const visualSize = Math.min(available, requestedSize / Math.max(0.1, cssScale));
+    const btnSize = visualSize + 12;
     for (const button of [this.leftBtn, this.rightBtn, this.jumpBtn]) if (button) {
-      button.size = btnSize;
+      button.size = visualSize;
+      button.visual.setDisplaySize(visualSize, visualSize).emit('touch-layout', visualSize);
       button.hitArea.setSize(btnSize, btnSize);
       if (button.hitArea.input) button.hitArea.input.hitArea.setTo(0, 0, btnSize, btnSize);
     }
@@ -239,6 +256,7 @@ export class InputManager {
   setEnabled(enabled: boolean): void {
     this.enabled = enabled;
     this.resetInput();
+    this.layoutTouchControls();
     for (const button of [this.leftBtn, this.rightBtn, this.jumpBtn]) {
       if (button?.hitArea.input) button.hitArea.input.enabled = enabled;
       button?.visual.setVisible(enabled);

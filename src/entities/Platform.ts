@@ -11,7 +11,7 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
   private motionOriginX = 0;
   private movementDeltaX = 0;
   private previousX = 0;
-  private connector: Phaser.GameObjects.Graphics | null = null;
+  private connector: Phaser.GameObjects.TileSprite | null = null;
   private animationOffset = 0;
   private stateTimers: Phaser.Time.TimerEvent[] = [];
   private isCrumbling = false;
@@ -21,7 +21,7 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number, y: number, type: PlatformType, variant = 0) {
     const textureKey = `platform-${type}`;
     super(scene, x, y, textureKey);
-    // Restored grass art retains the original collision top at y - 10.
+    // Collision tops follow the visible landing surface in each sprite.
     this.setOrigin(0.5);
     if (this.texture.has('0')) this.setFrame(0);
 
@@ -39,7 +39,8 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
     const body = this.body as Phaser.Physics.Arcade.StaticBody;
     const surfaceWidth = this.getSurfaceWidth();
     body.setSize(surfaceWidth, 8);
-    body.setOffset((GAME.PLATFORM_WIDTH - surfaceWidth) / 2, 2);
+    const surfaceY = { normal: 6, moving: 11, crumbling: 3, spring: 4 }[type];
+    body.setOffset((GAME.PLATFORM_WIDTH - surfaceWidth) / 2, surfaceY);
     // Allow player to pass through from below
     body.checkCollision.down = false;
     body.checkCollision.left = false;
@@ -144,13 +145,9 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
     const trunkX = GAME.WIDTH / 2;
     const y = this.y + 2;
     if (Math.abs(this.x - trunkX) < 12) return;
-    this.connector = this.scene.add.graphics().setDepth(3);
-    this.connector.lineStyle(9, 0x352328, 1);
-    this.connector.lineBetween(trunkX, y + 3, this.x, y);
-    this.connector.lineStyle(5, 0x765039, 1);
-    this.connector.lineBetween(trunkX, y + 2, this.x, y - 1);
-    this.connector.lineStyle(2, 0xa57948, 1);
-    this.connector.lineBetween(trunkX, y, this.x, y - 3);
+    this.connector = this.scene.add.tileSprite(
+      (trunkX + this.x) / 2, y, Math.abs(this.x - trunkX), 12, 'world-branch-bark'
+    ).setDepth(3);
   }
 
   private setVisualFrame(frame: number): void {

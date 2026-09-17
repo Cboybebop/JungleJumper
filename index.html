@@ -21,11 +21,25 @@
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a2e; }
-    #game-container { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+    #game-container { position: relative; width: 100%; height: 100%; z-index: 1; }
+    .arcade-surround { image-rendering: pixelated; position: fixed; inset: 0; pointer-events: none; overflow: hidden; display: none; }
+    @media (min-width: 1000px) and (min-aspect-ratio: 4/3) {
+      .arcade-surround { display: block; background: radial-gradient(ellipse at center, #39304c, #1a1a2e 72%); }
+      .arcade-wing { position: absolute; top: 0; bottom: 0; width: calc((100vw - min(60vh, 720px)) / 2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 24px; text-align: center; color: #ffe6a3; font-family: Silkscreen, monospace; background: url('/assets/world/canopy-left.png') left top / 100% auto no-repeat, url('/assets/world/vine-curled.png') left center / 90px auto repeat-y; }
+      .arcade-wing.right { right: 0; background-image: url('/assets/world/canopy-right.png'), url('/assets/world/vine-twisting.png'); background-position: right top, right center; }
+      .arcade-wing h1 { font-size: clamp(24px, 3.5vw, 64px); line-height: 1.12; color: #badb49; text-shadow: 3px 3px #67402d, 6px 6px #100f20; transform: rotate(-5deg); }
+      .arcade-wing p { font-size: clamp(10px, 1.1vw, 18px); line-height: 1.8; letter-spacing: 2px; }
+      .arcade-wing img { width: clamp(80px, 10vw, 160px); image-rendering: pixelated; filter: drop-shadow(6px 8px 0 #100f2077); }
+      .arcade-wing::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 24%; background: url('/assets/world/leaves-large.png') center bottom / 180px auto repeat-x; }
+    }
     canvas { display: block; touch-action: none; }
   </style>
 </head>
 <body>
+  <div class="arcade-surround" aria-hidden="true">
+    <div class="arcade-wing"><h1>Jungle<br>Jumper</h1><img src="/assets/characters/miko/miko-portrait.png" alt=""><p>One more jump.<br>One more high score.</p></div>
+    <div class="arcade-wing right"><p>Into the canopy</p><img src="/assets/characters/hoppy/hoppy-portrait.png" alt=""><p>Climb higher<br>★ ★ ★<br>Arcade adventure</p></div>
+  </div>
   <div id="game-container"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
