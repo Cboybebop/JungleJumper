@@ -27,8 +27,12 @@ export class MenuBackdrop {
 
     CHARACTERS.forEach((character, index) => {
       const x = GAME.WIDTH * [0.24, 0.76, 0.29, 0.71, 0.22][index % 5];
-      const platform = scene.add.image(0, 0, 'platform-normal', index % 4);
-      const sprite = scene.add.sprite(0, -8, character.texture).setOrigin(0.5, 1);
+      const variant = index % 4;
+      const platform = scene.add.image(0, 0, 'platform-normal', variant);
+      // Match gameplay's grass surface and foot anchor, excluding transparent padding.
+      // Both idle frames have their visible soles at row 30 of the 32px frame.
+      const surfaceY = (variant === 2 ? 7 : 6) - platform.displayOriginY;
+      const sprite = scene.add.sprite(0, surfaceY, character.texture).setOrigin(0.5, 30 / 32);
       const animation = getAnimationKey(character, 'idle');
       if (!this.reducedMotion && scene.anims.exists(animation)) sprite.play(animation);
       const flower = scene.add.image(index % 2 ? -25 : 25, -8,
