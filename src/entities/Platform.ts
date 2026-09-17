@@ -24,6 +24,7 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
     // Collision tops follow the visible landing surface in each sprite.
     this.setOrigin(0.5);
     if (this.texture.has('0')) this.setFrame(0);
+    if (type === 'normal') this.setVisualFrame(variant % PLATFORM_FRAME_COUNT);
 
     this.platformType = type;
     scene.add.existing(this);
@@ -39,7 +40,10 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
     const body = this.body as Phaser.Physics.Arcade.StaticBody;
     const surfaceWidth = this.getSurfaceWidth();
     body.setSize(surfaceWidth, 8);
-    const surfaceY = { normal: 6, moving: 11, crumbling: 3, spring: 4 }[type];
+    // Normal variant 2 has its continuous grass surface one row lower.
+    const surfaceY = type === 'normal'
+      ? (String(this.frame.name) === '2' ? 7 : 6)
+      : { moving: 11, crumbling: 3, spring: 4 }[type];
     body.setOffset((GAME.PLATFORM_WIDTH - surfaceWidth) / 2, surfaceY);
     // Allow player to pass through from below
     body.checkCollision.down = false;
@@ -52,8 +56,6 @@ export class Platform extends Phaser.Physics.Arcade.Sprite {
       this.motionOriginX = x;
       this.previousX = x;
       this.animationOffset = variant % PLATFORM_FRAME_COUNT;
-    } else if (type === 'normal') {
-      this.setVisualFrame(variant % PLATFORM_FRAME_COUNT);
     }
     if (type !== 'moving') this.createTreeConnector();
   }

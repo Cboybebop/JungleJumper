@@ -14,9 +14,40 @@ try {
  // Verify landing contact against actual opaque platform pixels, for all characters.
  const contacts=await page.evaluate(async()=>{const {Player}=await import('/src/entities/Player.ts');const {Platform}=await import('/src/entities/Platform.ts');const {SettingsManager}=await import('/src/systems/SettingsManager.ts');const s=window.__visualQA.scene.getScene('Game');s.physics.pause();const results=[];for(let i=0;i<5;i++){SettingsManager.selectedCharacter=i;const p=new Player(s,240,300);p.anims.stop();p.setFrame(0);p.syncVisual();let lastOpaque = 0;
 for(let y=0;y<32;y++) for(let x=7;x<25;x++) if(s.textures.getPixelAlpha(x,y,p.texture.key,0)>200) lastOpaque=Math.max(lastOpaque,y+1);
-const foot=p.visual.y-p.visual.displayOriginY+lastOpaque;results.push({character:i,foot,bodyBottom:p.y+14});p.destroy();}SettingsManager.selectedCharacter=0;for(const type of ['normal','moving','crumbling','spring']){const p=new Platform(s,240,400,type);const top=p.y-p.displayOriginY+p.body.offset.y;let surface = 0;
-for(let y=0;y<24;y++){let count=0;for(let x=20;x<60;x++) if(s.textures.getPixelAlpha(x,y,p.texture.key,0)>200)count++;if(count>=30){surface=y;break;}}
-results.push({type,top,artTop:p.y-p.displayOriginY+surface});p.destroy();}return results;});console.log('Contacts',contacts);assert(contacts.slice(0,5).every(c=>c.foot===c.bodyBottom));assert(contacts.slice(5).every(c=>Math.abs(c.top-c.artTop)<=1));
+const foot=p.visual.y-p.visual.displayOriginY+lastOpaque;results.push({character:i,foot,bodyBottom:p.y+14});p.destroy();}
+SettingsManager.selectedCharacter=0;
+for (const type of ['normal', 'moving', 'crumbling', 'spring']) {
+  // Include every normal frame and wrapped generator variants (4 through 7).
+  for (let variant = 0; variant < (type === 'normal' ? 8 : 1); variant++) {
+    const p = new Platform(s, 240, 400, type, variant);
+    let surface = -1;
+    for (let y = 0; y < 24; y++) {
+      let count = 0;
+      for (let x = 20; x < 60; x++) {
+        if (s.textures.getPixelAlpha(x, y, p.texture.key, p.frame.name) > 200) count++;
+      }
+      if (count >= 30) { surface = y; break; }
+    }
+    results.push({ type, variant, frame: Number(p.frame.name), surface,
+      top: p.body.top, artTop: p.y - p.displayOriginY + surface });
+    p.destroy();
+  }
+}
+return results;
+});
+console.log('Contacts', contacts);
+assert(contacts.slice(0, 5).every(c => c.foot === c.bodyBottom));
+for (const contact of contacts.slice(5)) {
+  assert(contact.surface >= 0, `Missing visible surface: ${JSON.stringify(contact)}`);
+  if (contact.type === 'normal') {
+    assert.equal(contact.frame, contact.variant % 4);
+    assert.equal(contact.top, contact.artTop,
+      `Normal variant ${contact.variant} must land exactly on the visible grass`);
+  } else {
+    assert(Math.abs(contact.top - contact.artTop) <= 1);
+  }
+}
+
  const mobile=await open(375,667,true);await start(mobile);await mobile.evaluate(()=>window.__visualQA.scene.getScene('Game').togglePause());await mobile.screenshot({path:out+'/mobile-pause.png'});
  for(const size of ['small','medium','large']){
  const point=await mobile.evaluate(size=>{const s=window.__visualQA.scene.getScene('Game');const row=s.pauseOverlay.list.find(o=>o.list?.some(t=>t.text===size.toUpperCase()));const panel=row.list[0];const b=panel.getBounds();const c=s.cameras.main;return {x:b.centerX-c.scrollX,y:b.centerY-c.scrollY};},size);
