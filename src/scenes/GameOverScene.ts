@@ -128,9 +128,6 @@ export class GameOverScene extends Phaser.Scene {
       });
     });
 
-    // Decorative elements
-    this.add.image(80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(1).setAlpha(0.3);
-    this.add.image(GAME.WIDTH - 80, GAME.HEIGHT - 50, 'world-jungle-silhouette').setScale(1).setAlpha(0.3).setFlipX(true);
   }
 
   private transitionTo(sceneKey: string): void {
