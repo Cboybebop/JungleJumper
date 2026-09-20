@@ -82,3 +82,16 @@ From the Settings screen you can:
 ## Build Output
 
 Production files are emitted to `dist/`.
+
+### Website metadata and icons
+
+Set `VITE_SITE_URL` to the deployed game's full public URL (including any subdirectory)
+in your build environment or `.env.production.local` before running `npm run build`.
+The build then adds a canonical URL, absolute social preview image URLs, a sitemap,
+and a sitemap reference in `robots.txt`. Without it, the build omits domain-specific
+metadata so local previews do not advertise an incorrect production address.
+
+Browser favicons, iOS home-screen icons, Android icons (including maskable), and
+the web manifest are included in `public/`. Regenerate the code-drawn pixel monkey
+icons and social preview card with `python scripts/generate-web-icons.py` (Pillow required).
+The manifest enables standalone home-screen presentation; offline play is not provided.
