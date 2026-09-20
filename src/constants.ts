@@ -57,10 +57,11 @@ export const GAME = {
   HEIGHT: 800,
   GRAVITY: 800,
   PLAYER_SPEED: 200,
-  JUMP_VELOCITY: -450,
+  // Height is proportional to velocity squared: sqrt(1.05) gives 5% more height.
+  JUMP_VELOCITY: -450 * Math.sqrt(1.05),
   AIR_JUMP_COUNT: 1,
   DOUBLE_JUMP_COOLDOWN_MS: 180,
-  SPRING_VELOCITY: -650,
+  SPRING_VELOCITY: -650 * Math.sqrt(1.05),
   MAX_PLATFORM_GAP: 120,
   MIN_PLATFORM_GAP: 60,
   MAX_SAFE_PLATFORM_GAP: 100,

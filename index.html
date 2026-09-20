@@ -3,7 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Jungle Jumper</title>
+  <title>Jungle Jumper | Jungle Platformer Game</title>
+  <meta name="description" content="Jump into Jungle Jumper, a jungle platformer with five animal characters. Dodge obstacles, bounce on spring platforms, and climb for a new high score.">
+  <meta name="theme-color" content="#211936">
+  <meta name="application-name" content="Jungle Jumper">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Jungle Jumper">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" sizes="any">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" sizes="180x180">
+  <link rel="manifest" href="./site.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Jungle Jumper">
+  <meta property="og:title" content="Jungle Jumper | Jungle Platformer Game">
+  <meta property="og:description" content="Five animal heroes. Endless jungle platforms. Jump into the canopy and chase your next high score.">
+  <meta property="og:image" content="./social-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Jungle Jumper — climb higher, one jump at a time.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jungle Jumper | Jungle Platformer Game">
+  <meta name="twitter:description" content="Choose your animal hero, dodge obstacles, and climb through the jungle for a new high score.">
+  <meta name="twitter:image" content="./social-card.png">
+  <meta name="twitter:image:alt" content="Jungle Jumper — climb higher, one jump at a time.">
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"VideoGame","name":"Jungle Jumper","description":"A jungle-themed vertical platformer with five playable animal characters, spring platforms, obstacles, and high scores.","genre":["Platformer","Arcade"],"gamePlatform":"Web browser","applicationCategory":"Game","operatingSystem":"Any with a modern web browser","inLanguage":"en","playMode":"SinglePlayer"}
+  </script>
   <style>
     @font-face {
       font-family: 'Silkscreen';
@@ -41,6 +67,7 @@
     <div class="arcade-wing right"><p>Into the canopy</p><img src="/assets/characters/hoppy/hoppy-portrait.png" alt=""><p>Climb higher<br>★ ★ ★<br>Arcade adventure</p></div>
   </div>
   <div id="game-container"></div>
+  <noscript><p style="position:fixed;inset:20px;z-index:2;color:#ffe6a3">Jungle Jumper is a jungle platformer with five animal heroes. Enable JavaScript to play, jump between platforms, and chase your highest score.</p></noscript>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
